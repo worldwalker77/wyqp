@@ -2,8 +2,8 @@ package cn.worldwalker.game.wyqp.common.enums;
 
 public enum GameTypeEnum {
 	
-	thka(1, "泰和ka包"),
-	thmj(2, "泰和麻将");
+	nn(1, "牛牛"),
+	mj(2, "麻将");
 	
 	public Integer gameType;
 	public String desc;

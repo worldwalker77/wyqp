@@ -30,10 +30,10 @@ public class GameDispather {
 		BaseRequest request = null;
 		try {
 			switch (gameTypeEnum) {
-				case thka:
+				case nn:
 					
 					break;
-				case thmj:
+				case mj:
 					request = JsonUtil.toObject(textMsg, MjRequest.class);
 					mjMsgDisPatcher.textMsgProcess(ctx, request);
 					break;

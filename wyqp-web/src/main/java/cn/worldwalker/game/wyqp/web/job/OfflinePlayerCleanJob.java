@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
-import cn.worldwalker.game.wyqp.common.domain.mj.MjRoomInfo;
+import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.result.Result;
@@ -32,8 +32,8 @@ public class OfflinePlayerCleanJob extends SingleServerJobByRedis{
 		for(RedisRelaModel model : list){
 			if (System.currentTimeMillis() - model.getUpdateTime() > 20*60*1000L) {
 				BaseRoomInfo roomInfo = null;
-				if (GameTypeEnum.thmj.gameType.equals(model.getGameType()) ) {
-					roomInfo = redisOperationService.getRoomInfoByRoomId(model.getRoomId(), MjRoomInfo.class);
+				if (GameTypeEnum.nn.gameType.equals(model.getGameType()) ) {
+					roomInfo = redisOperationService.getRoomInfoByRoomId(model.getRoomId(), NnRoomInfo.class);
 				}
 				if (roomInfo == null) {
 					/**如果无房间信息，则说明可能其他离线玩家已经将房间删除，不需要再推送消息给其他玩家*/

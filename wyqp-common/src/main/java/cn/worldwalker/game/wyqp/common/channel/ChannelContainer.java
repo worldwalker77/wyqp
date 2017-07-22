@@ -22,7 +22,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
-import cn.worldwalker.game.wyqp.common.domain.mj.MjRoomInfo;
+import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
@@ -129,9 +129,9 @@ public class ChannelContainer {
 				GameTypeEnum gameTypeEnum = GameTypeEnum.getGameTypeEnumByType(gameType);
 				/**设置当前玩家为离线状态并通知其他玩家此玩家离线*/
 				BaseRoomInfo roomInfo = null;
-				if (GameTypeEnum.thmj.gameType == gameType) {
-					roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, MjRoomInfo.class);
-				}else if(GameTypeEnum.thka.gameType == gameType){
+				if (GameTypeEnum.nn.gameType == gameType) {
+					roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+				}else if(GameTypeEnum.mj.gameType == gameType){
 					
 				}
 				List playerList = roomInfo.getPlayerList();

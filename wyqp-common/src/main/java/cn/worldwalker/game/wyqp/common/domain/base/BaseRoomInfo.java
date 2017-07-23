@@ -144,6 +144,6 @@ public class BaseRoomInfo {
 
 	public void setPlayerList(List playerList) {
 		this.playerList = playerList;
-	};
-	
+	}
+
 }

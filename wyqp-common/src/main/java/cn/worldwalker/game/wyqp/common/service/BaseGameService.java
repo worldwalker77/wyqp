@@ -138,7 +138,6 @@ public abstract class BaseGameService {
 		/**组装房间对象*/
 		roomInfo.setRoomId(roomId);
 		roomInfo.setRoomOwnerId(msg.getPlayerId());
-		roomInfo.setRoomBankerId(msg.getPlayerId());
 		roomInfo.setPayType(msg.getPayType());
 		roomInfo.setTotalGames(msg.getTotalGames());
 		roomInfo.setCurGame(0);
@@ -211,6 +210,7 @@ public abstract class BaseGameService {
 		
 		BaseRoomInfo roomInfo = doEntryRoom(ctx, request, userInfo);
 		List playerList = roomInfo.getPlayerList();
+		/**取list最后一个，即为本次加入的玩家，设置公共信息*/
 		BasePlayerInfo playerInfo = (BasePlayerInfo)playerList.get(playerList.size() - 1);
 		playerInfo.setPlayerId(userInfo.getPlayerId());
 		playerInfo.setNickName(userInfo.getNickName());
@@ -241,6 +241,10 @@ public abstract class BaseGameService {
 	}
 	
 	public abstract BaseRoomInfo doEntryRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
+	
+	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
+	
+	public void robBanker(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 	
 	public void dissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Result result = new Result();

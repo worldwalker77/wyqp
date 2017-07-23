@@ -25,11 +25,14 @@ public enum MsgTypeEnum {
 	heartBeat(20, "心跳检测"),
 	roomCardNumUpdate(21, "房卡数更新"),
 	sendEmoticon(22, "给某个玩家发送特殊的表情符号"),
-	syncPlayerLocation(23, "同步玩家地理位置信息");
+	syncPlayerLocation(23, "同步玩家地理位置信息"),
 	
 	/**斗牛特有100-199*/
-	
-	
+	readyRobBanker(100, "准备抢庄"),
+	robBanker(101, "抢庄"),
+	robBankerOverTime(102, "抢庄超过10s时间限制"),
+	readyStake(103, "准备压分"),
+	stake(104, "压分");
 	/**麻将特有200-299*/
 	
 	

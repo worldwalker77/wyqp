@@ -133,7 +133,10 @@ public class NnGameService extends BaseGameService{
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 	}
 	
-	
+	/**
+	 * 抢庄
+	 * 
+	 * */
 	public void robBanker(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
 		
 		Result result = new Result();
@@ -172,6 +175,19 @@ public class NnGameService extends BaseGameService{
 		data.put("isRobBanker", msg.getIsRobBanker());
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 	}
+	
+	public void robBankerOverTime(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
 	
 	private int getReadyNotRobNum(List playerList){
 		

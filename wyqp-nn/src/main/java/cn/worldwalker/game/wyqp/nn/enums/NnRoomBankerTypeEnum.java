@@ -4,8 +4,8 @@ public enum NnRoomBankerTypeEnum {
 	
 	inTurnBanker(1, "轮流坐庄"),
 	overLordBanker(2, "霸王庄"),
-	robBanker(2, "抢庄"),
-	winnerBanker(2, "赢家坐庄");
+	robBanker(3, "抢庄"),
+	winnerBanker(4, "赢家坐庄");
 	
 	public Integer type;
 	public String desc;

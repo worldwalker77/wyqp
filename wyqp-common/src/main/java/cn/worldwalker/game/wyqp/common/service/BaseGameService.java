@@ -244,8 +244,6 @@ public abstract class BaseGameService {
 	
 	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 	
-	public void robBanker(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
-	
 	public void dissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
@@ -278,4 +276,10 @@ public abstract class BaseGameService {
 	}
 	
 	public abstract BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
+	
+	
+	
+	public void robBanker(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
+	
+	public void robBankerOverTime(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 }

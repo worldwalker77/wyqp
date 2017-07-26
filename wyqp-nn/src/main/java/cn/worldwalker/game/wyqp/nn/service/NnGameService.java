@@ -23,8 +23,8 @@ import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
 import cn.worldwalker.game.wyqp.common.result.Result;
 import cn.worldwalker.game.wyqp.common.service.BaseGameService;
 import cn.worldwalker.game.wyqp.common.utils.GameUtil;
-import cn.worldwalker.game.wyqp.nn.cards.CardResource;
-import cn.worldwalker.game.wyqp.nn.cards.CardRule;
+import cn.worldwalker.game.wyqp.nn.cards.NnCardResource;
+import cn.worldwalker.game.wyqp.nn.cards.NnCardRule;
 import cn.worldwalker.game.wyqp.nn.enums.NnPlayerStatusEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnRoomBankerTypeEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnRoomStatusEnum;
@@ -83,12 +83,12 @@ public class NnGameService extends BaseGameService{
 			/**开始发牌时将房间内当前局数+1*/
 			roomInfo.setCurGame(roomInfo.getCurGame() + 1);
 			/**发牌*/
-			List<List<Card>> playerCards = CardResource.dealCards(size);
+			List<List<Card>> playerCards = NnCardResource.dealCards(size);
 			/**为每个玩家设置牌及牌型*/
 			for(int i = 0; i < size; i++ ){
 				NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
 				player.setCardList(playerCards.get(i));
-				player.setCardType(CardRule.calculateCardType(playerCards.get(i)));
+				player.setCardType(NnCardRule.calculateCardType(playerCards.get(i)));
 				player.setCurScore(0);
 				/**设置每个玩家的解散房间状态为不同意解散，后面大结算返回大厅的时候回根据此状态判断是否解散房间*/
 				player.setDissolveStatus(DissolveStatusEnum.disagree.status);

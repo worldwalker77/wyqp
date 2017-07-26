@@ -8,7 +8,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.Card;
 import cn.worldwalker.game.wyqp.common.enums.CardSuitEnum;
 import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 
-public class CardResource {
+public class NnCardResource {
 	
 	/**总共52张牌*/
 	private static final Integer CARD_MAX_VALUE = 52;
@@ -69,7 +69,7 @@ public class CardResource {
 				playerCards.get(j).add(card);
 			}
 		}
-//		CardRule.rankCards(playerCards);
+		NnCardRule.rankCards(playerCards);
 		System.out.println(JsonUtil.toJson(playerCards));
 		return playerCards;
 	}

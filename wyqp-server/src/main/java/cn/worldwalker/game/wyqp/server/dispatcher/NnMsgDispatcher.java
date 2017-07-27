@@ -2,26 +2,30 @@ package cn.worldwalker.game.wyqp.server.dispatcher;
 
 import io.netty.channel.ChannelHandlerContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
-@Service(value="mjMsgDisPatcher")
-public class MjMsgDispatcher extends BaseMsgDisPatcher {
-
+import cn.worldwalker.game.wyqp.nn.service.NnGameService;
+@Service(value="nnMsgDisPatcher")
+public class NnMsgDispatcher extends BaseMsgDisPatcher {
+	@Autowired
+	private NnGameService nnGameService;
 	@Override
 	public void requestDispatcher(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Integer msgType = request.getMsgType();
 		MsgTypeEnum msgTypeEnum= MsgTypeEnum.getMsgTypeEnumByType(msgType);
 		switch (msgTypeEnum) {
 			case createRoom:
+				nnGameService.createRoom(ctx, request, userInfo);
 				break;
 			case entryRoom:
+				nnGameService.entryRoom(ctx, request, userInfo);
 				break;
 			case ready:
-				break;
-			case dealCards:
+				nnGameService.ready(ctx, request, userInfo);
 				break;
 			case dissolveRoom:
 				break;
@@ -29,13 +33,8 @@ public class MjMsgDispatcher extends BaseMsgDisPatcher {
 				break;
 			case disagreeDissolveRoom:
 				break;
-				
-			case successDissolveRoom://服务端主动推送的消息
-				break;
-				
 			case delRoomConfirmBeforeReturnHall:
 				break;
-				
 			case refreshRoom:
 				break;
 			case queryPlayerInfo:
@@ -52,7 +51,6 @@ public class MjMsgDispatcher extends BaseMsgDisPatcher {
 				break;
 			case syncPlayerLocation:
 				break;
-				
 			default:
 				break;
 		}

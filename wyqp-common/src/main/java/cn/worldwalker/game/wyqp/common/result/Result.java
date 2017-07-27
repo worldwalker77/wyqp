@@ -2,6 +2,8 @@ package cn.worldwalker.game.wyqp.common.result;
 
 import java.io.Serializable;
 
+import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
+
 
 public class Result implements Serializable{
 	
@@ -23,6 +25,18 @@ public class Result implements Serializable{
 	public Result(int code, String desc, int msgType, int gameType){
 		this.code = code;
 		this.desc = desc;
+		this.msgType = msgType;
+		this.gameType = gameType;
+	}
+	
+	public Result(int gameType, int msgType, ExceptionEnum exceptionEnum){
+		this.code = exceptionEnum.index;
+		this.desc = exceptionEnum.description;
+		this.msgType = msgType;
+		this.gameType = gameType;
+	}
+	
+	public Result(int gameType, int msgType){
 		this.msgType = msgType;
 		this.gameType = gameType;
 	}

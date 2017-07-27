@@ -6,11 +6,13 @@ import javax.annotation.Resource;
 
 import net.sf.json.JSONObject;
 
-import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.mj.MjRequest;
+import cn.worldwalker.game.wyqp.common.domain.nn.NnRequest;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
@@ -18,10 +20,12 @@ import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 @Service
 public class GameDispather {
 	
-	private static final Logger log = Logger.getLogger(GameDispather.class);
-	
+	@Autowired
+	public ChannelContainer channelContainer;
 	@Resource(name="mjMsgDisPatcher")
 	private BaseMsgDisPatcher mjMsgDisPatcher;
+	@Resource(name="nnMsgDispatcher")
+	private BaseMsgDisPatcher nnMsgDispatcher;
 	
 	public void gameProcess(ChannelHandlerContext ctx, String textMsg){
 		JSONObject obj = JSONObject.fromObject(textMsg);
@@ -31,7 +35,8 @@ public class GameDispather {
 		try {
 			switch (gameTypeEnum) {
 				case nn:
-					
+					request = JsonUtil.toObject(textMsg, NnRequest.class);
+					nnMsgDispatcher.textMsgProcess(ctx, request);
 					break;
 				case mj:
 					request = JsonUtil.toObject(textMsg, MjRequest.class);
@@ -41,11 +46,10 @@ public class GameDispather {
 					break;
 				}
 		} catch (BusinessException e) {
-			log.error(e.getBussinessCode() + ":" + e.getMessage(), e);
+			channelContainer.sendErrorMsg(ctx, ExceptionEnum.getExceptionEnum(e.getBussinessCode()), request);
 			
 		}catch (Exception e) {
-			log.error(ExceptionEnum.SYSTEM_ERROR.index + ":" + ExceptionEnum.SYSTEM_ERROR.description, e);
-			
+			channelContainer.sendErrorMsg(ctx, ExceptionEnum.SYSTEM_ERROR, request);
 		}
 	}
 }

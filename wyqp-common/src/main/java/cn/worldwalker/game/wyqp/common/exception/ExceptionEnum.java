@@ -18,4 +18,13 @@ public enum ExceptionEnum {
         this.index = index;
         this.description = description;
     }
+    
+    public static ExceptionEnum getExceptionEnum(Integer index){
+    	for(ExceptionEnum exceptionEnum : ExceptionEnum.values()){
+    		if (exceptionEnum.index.equals(index)) {
+				return exceptionEnum;
+			}
+    	}
+    	return null;
+    }
 }

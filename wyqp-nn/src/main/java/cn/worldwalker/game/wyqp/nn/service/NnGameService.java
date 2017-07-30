@@ -191,10 +191,13 @@ public class NnGameService extends BaseGameService{
 		Integer playerId = userInfo.getPlayerId();
 		Integer roomId = userInfo.getRoomId();
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+		if (roomInfo.getRoomBankerId().equals(playerId)) {
+			throw new BusinessException(ExceptionEnum.ROOM_BANKER_CAN_NOT_STAKE_SCORE);
+		}
 		List playerList = roomInfo.getPlayerList();
-		/**玩家已经抢庄计数*/
+		/**玩家已经压分计数*/
 		int stakeScoreCount = 0;
-		int size = getReadyNotRobNum(playerList);
+		int size = playerList.size() - 1;
 		for(int i = 0; i < size; i++){
 			NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
 			if (player.getPlayerId().equals(playerId)) {
@@ -208,7 +211,7 @@ public class NnGameService extends BaseGameService{
 		}
 		
 		/**如果都压完分,则发牌*/
-		if (stakeScoreCount > 1 && stakeScoreCount == size) {
+		if (stakeScoreCount == size) {
 			roomInfo.setStatus(NnRoomStatusEnum.inGame.status);
 			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			result.setMsgType(MsgTypeEnum.dealCards.msgType);
@@ -222,8 +225,9 @@ public class NnGameService extends BaseGameService{
 			return ;
 		}
 		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+		result.setMsgType(MsgTypeEnum.stakeScore.msgType);
 		data.put("playerId", playerId);
-		data.put("isRobBanker", msg.getIsRobBanker());
+		data.put("stakeScore", msg.getStakeScore());
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 	}
 	

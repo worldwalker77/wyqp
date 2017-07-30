@@ -9,7 +9,8 @@ public enum ExceptionEnum {
     ROOM_ID_NOT_EXIST(3, "房间号不存在"),
     GEN_ROOM_ID_FAIL(4, "生成房间号失败"),
     PLAYER_NOT_IN_ROOM(5, "玩家不在房间中"),
-    ROOM_CARD_DEDUCT_THREE_TIMES_FAIL(6, "三次扣除房卡重试失败");
+    ROOM_CARD_DEDUCT_THREE_TIMES_FAIL(6, "三次扣除房卡重试失败"),
+    ROOM_BANKER_CAN_NOT_STAKE_SCORE(7, "庄家不能压分");
 
     public Integer   index;
     public String description;

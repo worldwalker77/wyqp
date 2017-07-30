@@ -4,6 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
@@ -12,7 +14,7 @@ import cn.worldwalker.game.wyqp.common.domain.mj.MjRoomInfo;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
 import cn.worldwalker.game.wyqp.common.service.BaseGameService;
-
+@Service(value="mjGameService")
 public class MjGameService extends BaseGameService{
 
 	@Override

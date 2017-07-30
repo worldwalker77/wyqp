@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.worldwalker.game.wyqp.common.domain.nn.NnPlayerInfo;
+
 public class BaseRoomInfo {
 	/**房间id*/
 	private Integer roomId;
@@ -32,7 +34,7 @@ public class BaseRoomInfo {
 	/**当前房间状态*/
 	private Integer status;
 	
-	private List playerList = new ArrayList();
+	private List playerList;
 
 	public Integer getRoomId() {
 		return roomId;
@@ -140,10 +142,6 @@ public class BaseRoomInfo {
 
 	public List getPlayerList() {
 		return playerList;
-	}
-
-	public void setPlayerList(List playerList) {
-		this.playerList = playerList;
 	}
 
 }

@@ -35,7 +35,7 @@ public class GameController {
 		if (redisOperationService.isLogFuseOpen()) {
 			result = commonGameService.login(code, deviceType, request);
 		}else{
-			
+			result = commonGameService.login1(code, deviceType, request);
 		}
 		return result;
 	}

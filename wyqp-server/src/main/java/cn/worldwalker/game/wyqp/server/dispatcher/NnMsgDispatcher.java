@@ -9,7 +9,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.nn.service.NnGameService;
-@Service(value="nnMsgDisPatcher")
+@Service(value="nnMsgDispatcher")
 public class NnMsgDispatcher extends BaseMsgDisPatcher {
 	@Autowired
 	private NnGameService nnGameService;
@@ -26,6 +26,9 @@ public class NnMsgDispatcher extends BaseMsgDisPatcher {
 				break;
 			case ready:
 				nnGameService.ready(ctx, request, userInfo);
+				break;
+			case stakeScore:
+				nnGameService.stakeScore(ctx, request, userInfo);
 				break;
 			case dissolveRoom:
 				break;

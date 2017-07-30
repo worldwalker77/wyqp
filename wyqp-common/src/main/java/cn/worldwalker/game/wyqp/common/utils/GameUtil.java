@@ -18,6 +18,14 @@ public class GameUtil {
 		return s;
 	}
 	
+	public static Integer genPlayerId(){
+		int max=999999;
+		int min=100000;
+        Random random = new Random();
+        int s = random.nextInt(max)%(max-min+1) + min;
+		return s;
+	}
+	
 	public static String genToken(Integer playerId){
 		String temp = playerId + System.currentTimeMillis() + Thread.currentThread().getName();
 		return MD5Util.encryptByMD5(temp);
@@ -49,6 +57,20 @@ public class GameUtil {
 		for(int i = 0; i < size; i++){
 			BasePlayerInfo playerInfo = (BasePlayerInfo)playerList.get(i);
 			if (!playerId.equals(playerInfo.getPlayerId())) {
+				playerIdList.add(playerInfo.getPlayerId());
+			}
+		}
+		Integer[] arr = new Integer[playerIdList.size()];
+		playerIdList.toArray(arr);
+		return arr;
+	}
+	
+	public static Integer[] getPlayerIdArrWithOutRoomBanker(List playerList, Integer roomBankerId){
+		int size = playerList.size();
+		List<Integer> playerIdList = new ArrayList<Integer>();
+		for(int i = 0; i < size; i++){
+			BasePlayerInfo playerInfo = (BasePlayerInfo)playerList.get(i);
+			if (!roomBankerId.equals(playerInfo.getPlayerId())) {
 				playerIdList.add(playerInfo.getPlayerId());
 			}
 		}

@@ -32,7 +32,7 @@ public enum MsgTypeEnum {
 	robBanker(101, "抢庄"),
 	robBankerOverTime(102, "抢庄超过10s时间限制"),
 	readyStake(103, "准备压分"),
-	stake(104, "压分"),
+	stakeScore(104, "压分"),
 	showCard(105, "亮牌");
 	/**麻将特有200-299*/
 	

@@ -8,6 +8,10 @@ public class NnMsg extends BaseMsg{
 	/**是否抢庄 3不抢 4 抢*/
 	private Integer isRobBanker;
 	
+	private Integer stakeScore;
+	
+	private Integer multipleLimit;
+	
 	public Integer getRoomBankerType() {
 		return roomBankerType;
 	}
@@ -22,6 +26,22 @@ public class NnMsg extends BaseMsg{
 
 	public void setIsRobBanker(Integer isRobBanker) {
 		this.isRobBanker = isRobBanker;
+	}
+
+	public Integer getStakeScore() {
+		return stakeScore;
+	}
+
+	public void setStakeScore(Integer stakeScore) {
+		this.stakeScore = stakeScore;
+	}
+
+	public Integer getMultipleLimit() {
+		return multipleLimit;
+	}
+
+	public void setMultipleLimit(Integer multipleLimit) {
+		this.multipleLimit = multipleLimit;
 	}
 	
 }

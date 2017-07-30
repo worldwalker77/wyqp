@@ -4,9 +4,10 @@ public enum NnRoomStatusEnum {
 	
 	justBegin(1, "刚开始准备阶段"),
 	inRob(2, "抢庄中"),
-	inGame(3, "小局中"),
-	curGameOver(4, "小局结束"),
-	totalGameOver(5, "一圈结束");
+	inStakeScore(3, "压分中"),
+	inGame(4, "小局中"),
+	curGameOver(5, "小局结束"),
+	totalGameOver(6, "一圈结束");
 	
 	public Integer status;
 	public String desc;

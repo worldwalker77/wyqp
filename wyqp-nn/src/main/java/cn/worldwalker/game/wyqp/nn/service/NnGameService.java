@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.Card;
@@ -28,7 +30,7 @@ import cn.worldwalker.game.wyqp.nn.cards.NnCardRule;
 import cn.worldwalker.game.wyqp.nn.enums.NnPlayerStatusEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnRoomBankerTypeEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnRoomStatusEnum;
-
+@Service(value="nnGameService")
 public class NnGameService extends BaseGameService{
 
 	@Override
@@ -37,8 +39,12 @@ public class NnGameService extends BaseGameService{
 		if (msg.getRoomBankerType() == null) {
 			throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
 		}
-		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(userInfo.getRoomId(), NnRoomInfo.class);
+		NnRoomInfo roomInfo = new NnRoomInfo();
 		roomInfo.setRoomBankerType(msg.getRoomBankerType());
+		roomInfo.setMultipleLimit(msg.getMultipleLimit());
+		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
+		NnPlayerInfo player = new NnPlayerInfo();
+		playerList.add(player);
 		return roomInfo;
 	}
 
@@ -176,13 +182,77 @@ public class NnGameService extends BaseGameService{
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 	}
 	
-	public void robBankerOverTime(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+	public void stakeScore(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		Result result = new Result();
+		result.setGameType(GameTypeEnum.nn.gameType);
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		NnMsg msg = (NnMsg)request.getMsg();
+		Integer playerId = userInfo.getPlayerId();
+		Integer roomId = userInfo.getRoomId();
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+		List playerList = roomInfo.getPlayerList();
+		/**玩家已经抢庄计数*/
+		int stakeScoreCount = 0;
+		int size = getReadyNotRobNum(playerList);
+		for(int i = 0; i < size; i++){
+			NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+			if (player.getPlayerId().equals(playerId)) {
+				/**设置所压分数*/
+				player.setStakeScore(msg.getStakeScore());
+				player.setStatus(NnPlayerStatusEnum.stakeScore.status);
+			}
+			if (NnPlayerStatusEnum.stakeScore.status.equals(player.getStatus())) {
+				stakeScoreCount++;
+			}
+		}
 		
-		
-		
-		
+		/**如果都压完分,则发牌*/
+		if (stakeScoreCount > 1 && stakeScoreCount == size) {
+			roomInfo.setStatus(NnRoomStatusEnum.inGame.status);
+			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+			result.setMsgType(MsgTypeEnum.dealCards.msgType);
+			for(int i = 0; i < size; i++ ){
+				NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+				List<Card> cardList = player.getCardList();
+				data.put("cardList", cardList);
+				data.put("playerId", player.getPlayerId());
+				channelContainer.sendTextMsgByPlayerIds(result, player.getPlayerId());
+			}
+			return ;
+		}
+		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+		data.put("playerId", playerId);
+		data.put("isRobBanker", msg.getIsRobBanker());
+		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 	}
 	
+	public void showCard(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		Result result = new Result();
+		result.setGameType(GameTypeEnum.nn.gameType);
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		NnMsg msg = (NnMsg)request.getMsg();
+		Integer playerId = userInfo.getPlayerId();
+		Integer roomId = userInfo.getRoomId();
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+		List playerList = roomInfo.getPlayerList();
+		List<Card> cardList = null;
+		int size = playerList.size();
+		for(int i = 0; i < size; i++){
+			NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+			if (player.getPlayerId().equals(playerId)) {
+				player.setStatus(NnPlayerStatusEnum.showCard.status);
+				cardList = player.getCardList();
+				break;
+			}
+		}
+		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+		data.put("playerId", playerId);
+		data.put("cardList", cardList);
+		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
+		
+	}
 	
 	
 	

@@ -91,6 +91,27 @@ public abstract class BaseGameService {
 		return result;
 	}
 	
+	public Result login1(String code, String deviceType,HttpServletRequest request) {
+		Result result = new Result();
+		Integer roomId = null;
+		Integer playerId = GameUtil.genPlayerId();
+		UserInfo userInfo = new UserInfo();
+		userInfo.setPlayerId(playerId);
+		userInfo.setRoomId(roomId);
+		userInfo.setNickName("nickName_" + playerId);
+		userInfo.setLevel(1);
+		userInfo.setServerIp("119.23.57.236");
+		userInfo.setPort("3389");
+		userInfo.setRemoteIp(IPUtil.getRemoteIp(request));
+		String loginToken =GameUtil.genToken(playerId);
+		redisOperationService.setUserInfo(loginToken, userInfo);
+		userInfo.setHeadImgUrl("http://wx.qlogo.cn/mmopen/wibbRT31wkCR4W9XNicL2h2pgaLepmrmEsXbWKbV0v9ugtdibibDgR1ybONiaWFtVeVtYWGWhObRiaiaicMgw8zat8Y5p6YzQbjdstE2/0");
+		userInfo.setToken(loginToken);
+		userInfo.setRoomCardNum(10);
+		result.setData(userInfo);
+		return result;
+	}
+	
 	public void entryHall(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
 		Result result = null;
 		result = new Result();
@@ -186,12 +207,13 @@ public abstract class BaseGameService {
 		Result result = null;
 		BaseMsg msg = request.getMsg();
 		Integer playerId = userInfo.getPlayerId();
-		Integer roomId = userInfo.getRoomId();
+		/**进入房间的时候，房间号参数是前台传过来的，所以不能从userInfo里面取得*/
+		Integer roomId = msg.getRoomId();
 		/**参数为空*/
 		if (roomId == null) {
 			throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
 		}
-		if (redisOperationService.isRoomIdExist(roomId)) {
+		if (!redisOperationService.isRoomIdExist(roomId)) {
 			throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
 		}
 		
@@ -210,6 +232,13 @@ public abstract class BaseGameService {
 		
 		BaseRoomInfo roomInfo = doEntryRoom(ctx, request, userInfo);
 		List playerList = roomInfo.getPlayerList();
+		int size = playerList.size();
+		for(int i = 0; i < size; i++ ){
+			BasePlayerInfo tempPlayerInfo = (BasePlayerInfo)playerList.get(i);
+			if (playerId.equals(tempPlayerInfo.getPlayerId())) {
+				playerList.remove(i);
+			}
+		}
 		/**取list最后一个，即为本次加入的玩家，设置公共信息*/
 		BasePlayerInfo playerInfo = (BasePlayerInfo)playerList.get(playerList.size() - 1);
 		playerInfo.setPlayerId(userInfo.getPlayerId());
@@ -241,8 +270,6 @@ public abstract class BaseGameService {
 	}
 	
 	public abstract BaseRoomInfo doEntryRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
-	
-	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 	
 	public void dissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Result result = new Result();
@@ -277,9 +304,12 @@ public abstract class BaseGameService {
 	
 	public abstract BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
 	
-	
+	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 	
 	public void robBanker(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 	
-	public void robBankerOverTime(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
+	public void stakeScore(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
+	
+	public void showCard(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
+	
 }

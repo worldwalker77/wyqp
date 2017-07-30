@@ -17,6 +17,8 @@ import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
 import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
+
+
 @Service
 public class GameDispather {
 	
@@ -26,6 +28,8 @@ public class GameDispather {
 	private BaseMsgDisPatcher mjMsgDisPatcher;
 	@Resource(name="nnMsgDispatcher")
 	private BaseMsgDisPatcher nnMsgDispatcher;
+	@Resource(name="commonMsgDispatcher")
+	private BaseMsgDisPatcher commonMsgDispatcher;
 	
 	public void gameProcess(ChannelHandlerContext ctx, String textMsg){
 		JSONObject obj = JSONObject.fromObject(textMsg);
@@ -34,6 +38,10 @@ public class GameDispather {
 		BaseRequest request = null;
 		try {
 			switch (gameTypeEnum) {
+				case common:
+					request = JsonUtil.toObject(textMsg, BaseRequest.class);
+					commonMsgDispatcher.textMsgProcess(ctx, request);
+					break;
 				case nn:
 					request = JsonUtil.toObject(textMsg, NnRequest.class);
 					nnMsgDispatcher.textMsgProcess(ctx, request);

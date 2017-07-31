@@ -51,7 +51,7 @@ public class NnGameService extends BaseGameService{
 	@Override
 	public BaseRoomInfo doEntryRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(userInfo.getRoomId(), NnRoomInfo.class);
-		List playerList = roomInfo.getPlayerList();
+		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		NnPlayerInfo player = new NnPlayerInfo();
 		playerList.add(player);
 		return roomInfo;
@@ -69,12 +69,12 @@ public class NnGameService extends BaseGameService{
 		Integer playerId = userInfo.getPlayerId();
 		Integer roomId = userInfo.getRoomId();
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
-		List playerList = roomInfo.getPlayerList();
+		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		/**玩家已经准备计数*/
 		int readyCount = 0;
 		int size = playerList.size();
 		for(int i = 0; i < size; i++){
-			NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+			NnPlayerInfo player = playerList.get(i);
 			if (player.getPlayerId().equals(playerId)) {
 				/**设置状态为已准备*/
 				player.setStatus(NnPlayerStatusEnum.ready.status);
@@ -92,7 +92,7 @@ public class NnGameService extends BaseGameService{
 			List<List<Card>> playerCards = NnCardResource.dealCards(size);
 			/**为每个玩家设置牌及牌型*/
 			for(int i = 0; i < size; i++ ){
-				NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+				NnPlayerInfo player = playerList.get(i);
 				player.setCardList(playerCards.get(i));
 				player.setCardType(NnCardRule.calculateCardType(playerCards.get(i)));
 				player.setCurScore(0);
@@ -119,7 +119,7 @@ public class NnGameService extends BaseGameService{
 			if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
 				result.setMsgType(MsgTypeEnum.readyRobBanker.msgType);
 				for(int i = 0; i < size; i++ ){
-					NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+					NnPlayerInfo player = playerList.get(i);
 					List<Card> cardList = player.getCardList().subList(0, 4);
 					data.put("cardList", cardList);
 					channelContainer.sendTextMsgByPlayerIds(result, player.getPlayerId());
@@ -153,12 +153,12 @@ public class NnGameService extends BaseGameService{
 		Integer playerId = userInfo.getPlayerId();
 		Integer roomId = userInfo.getRoomId();
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
-		List playerList = roomInfo.getPlayerList();
+		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		/**玩家已经抢庄计数*/
 		int robCount = 0;
-		int size = getReadyNotRobNum(playerList);
+		int size = playerList.size();
 		for(int i = 0; i < size; i++){
-			NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+			NnPlayerInfo player = playerList.get(i);
 			if (player.getPlayerId().equals(playerId)) {
 				/**设置状态为已抢庄*/
 				player.setStatus(msg.getIsRobBanker());
@@ -194,12 +194,12 @@ public class NnGameService extends BaseGameService{
 		if (roomInfo.getRoomBankerId().equals(playerId)) {
 			throw new BusinessException(ExceptionEnum.ROOM_BANKER_CAN_NOT_STAKE_SCORE);
 		}
-		List playerList = roomInfo.getPlayerList();
+		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		/**玩家已经压分计数*/
 		int stakeScoreCount = 0;
 		int size = playerList.size() - 1;
 		for(int i = 0; i < size; i++){
-			NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+			NnPlayerInfo player = playerList.get(i);
 			if (player.getPlayerId().equals(playerId)) {
 				/**设置所压分数*/
 				player.setStakeScore(msg.getStakeScore());
@@ -216,7 +216,7 @@ public class NnGameService extends BaseGameService{
 			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			result.setMsgType(MsgTypeEnum.dealCards.msgType);
 			for(int i = 0; i < size; i++ ){
-				NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+				NnPlayerInfo player = playerList.get(i);
 				List<Card> cardList = player.getCardList();
 				data.put("cardList", cardList);
 				data.put("playerId", player.getPlayerId());
@@ -240,11 +240,11 @@ public class NnGameService extends BaseGameService{
 		Integer playerId = userInfo.getPlayerId();
 		Integer roomId = userInfo.getRoomId();
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
-		List playerList = roomInfo.getPlayerList();
+		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		List<Card> cardList = null;
 		int size = playerList.size();
 		for(int i = 0; i < size; i++){
-			NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+			NnPlayerInfo player = playerList.get(i);
 			if (player.getPlayerId().equals(playerId)) {
 				player.setStatus(NnPlayerStatusEnum.showCard.status);
 				cardList = player.getCardList();
@@ -259,16 +259,6 @@ public class NnGameService extends BaseGameService{
 	}
 	
 	
-	
-	
-	
-	
-	private int getReadyNotRobNum(List playerList){
-		
-		return playerList.size();
-	}
-	
-	
 	private void setRoomBankerId(NnRoomInfo roomInfo){
 		
 		NnRoomBankerTypeEnum typeEnum = NnRoomBankerTypeEnum.getNnRoomBankerTypeEnum(roomInfo.getRoomBankerType());
@@ -279,16 +269,16 @@ public class NnGameService extends BaseGameService{
 				if (roomInfo.getRoomBankerId() == null) {
 					roomInfo.setRoomBankerId(roomInfo.getRoomOwnerId());
 				}else{
-					List playerList = roomInfo.getPlayerList();
+					List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 					int size = playerList.size();
 					for(int i = 0; i < size; i++){
-						NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+						NnPlayerInfo player = playerList.get(i);
 						if (player.getPlayerId().equals(roomInfo.getRoomBankerId())) {
 							if (i == size - 1) {
-								roomInfo.setRoomBankerId(((NnPlayerInfo)playerList.get(0)).getPlayerId());
+								roomInfo.setRoomBankerId((playerList.get(0)).getPlayerId());
 								break;
 							}else{
-								roomInfo.setRoomBankerId(((NnPlayerInfo)playerList.get(i + 1)).getPlayerId());
+								roomInfo.setRoomBankerId((playerList.get(i + 1)).getPlayerId());
 								break;
 							}
 						}
@@ -299,11 +289,11 @@ public class NnGameService extends BaseGameService{
 				roomInfo.setRoomBankerId(roomInfo.getRoomOwnerId());		
 				break;
 			case robBanker:
-				List playerList = roomInfo.getPlayerList();
+				List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 				int size = playerList.size();
-				NnPlayerInfo bankerPlayer = (NnPlayerInfo)playerList.get(0);
+				NnPlayerInfo bankerPlayer = playerList.get(0);
 				for(int i = 0; i < size; i++){
-					NnPlayerInfo player = (NnPlayerInfo)playerList.get(i);
+					NnPlayerInfo player = playerList.get(i);
 					if (NnPlayerStatusEnum.rob.status.equals(player.getStatus())) {
 						if (!NnPlayerStatusEnum.rob.status.equals(bankerPlayer.getStatus())) {
 							bankerPlayer = player;

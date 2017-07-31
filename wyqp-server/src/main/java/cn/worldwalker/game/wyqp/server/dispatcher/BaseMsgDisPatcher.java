@@ -19,6 +19,7 @@ import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
 import cn.worldwalker.game.wyqp.common.roomlocks.RoomLockContainer;
 import cn.worldwalker.game.wyqp.common.service.RedisOperationService;
+import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 
 public abstract class BaseMsgDisPatcher {
 	
@@ -55,6 +56,7 @@ public abstract class BaseMsgDisPatcher {
 		if (!MsgTypeEnum.entryRoom.equals(msgTypeEnum)) {
 			msg.setRoomId(userInfo.getRoomId());
 		}
+		log.info("请求：" + JsonUtil.toJson(request));
 		Lock lock = null;
 		try {
 			if (!notNeedLockMsgTypeMap.containsKey(request.getMsgType())) {

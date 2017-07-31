@@ -22,7 +22,7 @@ public abstract class SingleServerJobByRedis{
 
     public static String RUNING_FLAG = "1";
 
-    private String jobKeyPrefix = "jinhua.SingleServerJob_";
+    private String jobKeyPrefix = "wyqp.SingleServerJob_";
 
     protected String jobName = getClass().getSimpleName();
 

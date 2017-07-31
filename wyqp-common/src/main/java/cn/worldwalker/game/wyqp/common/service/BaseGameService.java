@@ -81,7 +81,7 @@ public abstract class BaseGameService {
 		userInfo.setNickName(weixinUserInfo.getName());
 		userInfo.setLevel(userModel.getUserLevel() == null ? 1 : userModel.getUserLevel());
 		userInfo.setServerIp("119.23.57.236");
-		userInfo.setPort("3389");
+		userInfo.setPort("9000");
 		userInfo.setRemoteIp(IPUtil.getRemoteIp(request));
 		String loginToken = GameUtil.genToken(userModel.getId());
 		userInfo.setHeadImgUrl(weixinUserInfo.getHeadImgUrl());
@@ -101,7 +101,7 @@ public abstract class BaseGameService {
 		userInfo.setNickName("nickName_" + playerId);
 		userInfo.setLevel(1);
 		userInfo.setServerIp("119.23.57.236");
-		userInfo.setPort("3389");
+		userInfo.setPort("9000");
 		userInfo.setRemoteIp(IPUtil.getRemoteIp(request));
 		String loginToken =GameUtil.genToken(playerId);
 		redisOperationService.setUserInfo(loginToken, userInfo);

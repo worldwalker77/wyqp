@@ -27,6 +27,9 @@ public class NnMsgDispatcher extends BaseMsgDisPatcher {
 			case ready:
 				nnGameService.ready(ctx, request, userInfo);
 				break;
+			case robBanker:
+				nnGameService.robBanker(ctx, request, userInfo);
+				break;
 			case stakeScore:
 				nnGameService.stakeScore(ctx, request, userInfo);
 				break;

@@ -20,17 +20,17 @@ public class BasePlayerInfo {
 	/**牌*/
 	private List<Card> cardList;
 	/**当前局得分*/
-	private Integer curScore;
+	private Integer curScore = 0;
 	/**一圈总得分*/
-	private Integer totalScore;
+	private Integer totalScore = 0;
 	/**赢的局数*/
-	private Integer winTimes;
+	private Integer winTimes = 0;
 	/**输的局数*/
-	private Integer loseTimes;
+	private Integer loseTimes = 0;
 	/**1 同意解散 2不同意解散*/
 	private Integer dissolveStatus;
 	/**房卡数*/
-	private Integer roomCardNum;
+	private Integer roomCardNum = 0;
 	/**最大牌型*/
 	private Integer maxCardType;
 	/**玩家ip*/

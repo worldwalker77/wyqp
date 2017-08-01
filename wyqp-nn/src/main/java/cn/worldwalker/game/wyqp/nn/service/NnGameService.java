@@ -27,6 +27,7 @@ import cn.worldwalker.game.wyqp.common.service.BaseGameService;
 import cn.worldwalker.game.wyqp.common.utils.GameUtil;
 import cn.worldwalker.game.wyqp.nn.cards.NnCardResource;
 import cn.worldwalker.game.wyqp.nn.cards.NnCardRule;
+import cn.worldwalker.game.wyqp.nn.enums.NnCardTypeEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnPlayerStatusEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnRoomBankerTypeEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnRoomStatusEnum;
@@ -215,10 +216,10 @@ public class NnGameService extends BaseGameService{
 			roomInfo.setStatus(NnRoomStatusEnum.inGame.status);
 			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			result.setMsgType(MsgTypeEnum.dealCards.msgType);
-			for(int i = 0; i < size; i++ ){
-				NnPlayerInfo player = playerList.get(i);
+			for(NnPlayerInfo player : playerList){
 				List<Card> cardList = player.getCardList();
 				data.put("cardList", cardList);
+				data.put("cardType", player.getCardType());
 				data.put("playerId", player.getPlayerId());
 				channelContainer.sendTextMsgByPlayerIds(result, player.getPlayerId());
 			}
@@ -242,19 +243,63 @@ public class NnGameService extends BaseGameService{
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		List<Card> cardList = null;
+		Integer cardType = null;
+		int showCardNum = 0;
 		int size = playerList.size();
 		for(int i = 0; i < size; i++){
 			NnPlayerInfo player = playerList.get(i);
 			if (player.getPlayerId().equals(playerId)) {
 				player.setStatus(NnPlayerStatusEnum.showCard.status);
 				cardList = player.getCardList();
-				break;
+				cardType = player.getCardType();
 			}
+			if (NnPlayerStatusEnum.showCard.status.equals(player.getStatus())) {
+				showCardNum++;
+			}
+		}
+		/**如果都已经亮牌，则计算得分及庄家（抢庄的除外）*/
+		if (showCardNum == size) {
+			calculateScoreAndRoomBanker(roomInfo);
+			
+			return;
 		}
 		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 		data.put("playerId", playerId);
 		data.put("cardList", cardList);
+		data.put("cardType", cardType);
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
+		
+	}
+	
+	private void calculateScoreAndRoomBanker(NnRoomInfo roomInfo){
+		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
+		NnPlayerInfo roomBankerPlayer = null;
+		for(NnPlayerInfo player : playerList){
+			if (roomInfo.getRoomBankerId().equals(player.getPlayerId())) {
+				roomBankerPlayer = player;
+				break;
+			}
+		}
+		
+		for(NnPlayerInfo player : playerList){
+			if (!roomInfo.getRoomBankerId().equals(player.getPlayerId())) {
+				if (NnCardRule.cardTypeCompare(player, roomBankerPlayer) > 0) {
+					Integer winScore = player.getStakeScore()*NnCardTypeEnum.getNnCardTypeEnum(player.getCardType()).multiple;
+					player.setCurScore(player.getCurScore() + winScore);
+					player.setWinTimes(player.getWinTimes() + 1);
+					roomBankerPlayer.setCurScore(roomBankerPlayer.getCurScore() - winScore);
+					roomBankerPlayer.setLoseTimes(roomBankerPlayer.getLoseTimes() + 1);
+				}else{
+					Integer winScore = player.getStakeScore()*NnCardTypeEnum.getNnCardTypeEnum(roomBankerPlayer.getCardType()).multiple;
+					player.setCurScore(player.getCurScore() - winScore);
+					player.setLoseTimes(player.getLoseTimes() + 1);
+					roomBankerPlayer.setCurScore(roomBankerPlayer.getCurScore() + winScore);
+					roomBankerPlayer.setWinTimes(roomBankerPlayer.getWinTimes() + 1);
+				}
+			}
+		}
+		
+		
 		
 	}
 	

@@ -287,13 +287,34 @@ public class NnGameService extends BaseGameService{
 				showCardNum++;
 			}
 		}
-		/**如果都已经亮牌，则计算得分及庄家（抢庄的除外）*/
 		if (showCardNum == size) {
 			calculateScoreAndRoomBanker(roomInfo);
 			
+			NnRoomInfo newRoomInfo = new NnRoomInfo();
+			newRoomInfo.setTotalWinnerId(roomInfo.getTotalWinnerId());
+			newRoomInfo.setRoomId(roomId);
+			newRoomInfo.setRoomOwnerId(roomInfo.getRoomOwnerId());
+			for(NnPlayerInfo player : playerList){
+				NnPlayerInfo newPlayer = new NnPlayerInfo();
+				newPlayer.setPlayerId(player.getPlayerId());
+				newPlayer.setCurScore(player.getCurScore());
+				newPlayer.setTotalScore(player.getTotalScore());
+				newPlayer.setMaxCardType(player.getMaxCardType());
+				newPlayer.setWinTimes(player.getWinTimes());
+				newPlayer.setLoseTimes(player.getLoseTimes());
+				newRoomInfo.getPlayerList().add(newPlayer);
+			}
+			if (NnRoomStatusEnum.totalGameOver.status.equals(roomInfo.getStatus())) {
+				result.setMsgType(MsgTypeEnum.totalSettlement.msgType);
+			}else{
+				result.setMsgType(MsgTypeEnum.curSettlement.msgType);
+			}
+			result.setData(newRoomInfo);
+			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 			return;
 		}
 		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+		result.setMsgType(MsgTypeEnum.showCard.msgType);
 		data.put("playerId", playerId);
 		data.put("cardList", cardList);
 		data.put("cardType", cardType);
@@ -337,7 +358,32 @@ public class NnGameService extends BaseGameService{
 				player.setMaxCardType(player.getCardType());
 			}
 		}
-		/**设置庄家id（抢庄的不设置）*/
+		
+		/**设置房间的总赢家*/
+		Integer totalWinnerId = playerList.get(0).getPlayerId();
+		Integer maxTotalScore = playerList.get(0).getTotalScore();
+		for(NnPlayerInfo player : playerList){
+			Integer tempTotalScore = player.getTotalScore();
+			if (tempTotalScore > maxTotalScore) {
+				maxTotalScore = tempTotalScore;
+				totalWinnerId = player.getPlayerId();
+			}
+		}
+		roomInfo.setTotalWinnerId(totalWinnerId);
+		/**如果当前局数小于总局数，则设置为当前局结束*/
+		if (roomInfo.getCurGame() < roomInfo.getTotalGames()) {
+			roomInfo.setStatus(RoomStatusEnum.curGameOver.status);
+		}else{/**如果当前局数等于总局数，则设置为一圈结束*/
+			roomInfo.setStatus(RoomStatusEnum.totalGameOver.status);
+//			addUserRecord(roomInfo.getRoomId(), playerList);
+		}
+		/**如果是第一局结束，则扣除房卡;扣除房卡异常不影响游戏进行，会将异常数据放入redis中，由定时任务进行补偿扣除*/
+		if (roomInfo.getCurGame() == 1) {
+			//TODO
+//			deductRoomCard(roomInfo);
+		}
+		
+		/**设置下一局的庄家id（抢庄的不设置）*/
 		setRoomBankerId(roomInfo);
 		
 	}

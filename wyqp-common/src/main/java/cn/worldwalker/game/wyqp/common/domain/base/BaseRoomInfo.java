@@ -22,7 +22,7 @@ public class BaseRoomInfo {
 	/**总局数*/
 	private Integer totalGames;
 	/**当前局数*/
-	private Integer curGame;
+	private Integer curGame = 0;
 	/**支付方式 1：房主付费 2：AA付费*/
 	private Integer payType;
 	/**此房间所在服务器ip*/

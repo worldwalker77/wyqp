@@ -26,6 +26,8 @@ public enum MsgTypeEnum {
 	roomCardNumUpdate(21, "房卡数更新"),
 	sendEmoticon(22, "给某个玩家发送特殊的表情符号"),
 	syncPlayerLocation(23, "同步玩家地理位置信息"),
+	curSettlement(24, "小结算"),
+	totalSettlement(25, "大结算"),
 	
 	/**斗牛特有100-199*/
 	readyRobBanker(100, "准备抢庄"),

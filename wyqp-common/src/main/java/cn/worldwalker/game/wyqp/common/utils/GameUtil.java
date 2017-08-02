@@ -25,12 +25,13 @@ public class GameUtil {
         int s = random.nextInt(max)%(max-min+1) + min;
 		return s;
 	}
-	
 	public static String genToken(Integer playerId){
 		String temp = playerId + System.currentTimeMillis() + Thread.currentThread().getName();
 		return MD5Util.encryptByMD5(temp);
 	}
-	
+	public static void main(String[] args) {
+		System.out.println(genToken(123456));
+	}
 	public static Integer[] getPlayerIdArr(List playerList){
 		int size = playerList.size();
 		Integer[] arr = new Integer[size];

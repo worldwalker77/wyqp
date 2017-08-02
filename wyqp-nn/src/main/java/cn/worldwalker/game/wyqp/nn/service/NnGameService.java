@@ -42,6 +42,10 @@ public class NnGameService extends BaseGameService{
 		}
 		NnRoomInfo roomInfo = new NnRoomInfo();
 		roomInfo.setRoomBankerType(msg.getRoomBankerType());
+		/**如果不是抢庄类型，则创建房间的时候直接设置房主为庄家*/
+		if (!NnRoomBankerTypeEnum.robBanker.type.equals(msg.getRoomBankerType())) {
+			roomInfo.setRoomBankerId(msg.getPlayerId());
+		}
 		roomInfo.setMultipleLimit(msg.getMultipleLimit());
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		NnPlayerInfo player = new NnPlayerInfo();
@@ -108,8 +112,6 @@ public class NnGameService extends BaseGameService{
 			}
 			
 			roomInfo.setUpdateTime(new Date());
-			/**设置庄家*/
-			setRoomBankerId(roomInfo);
 			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			
 			data.put("roomId", roomInfo.getRoomId());
@@ -172,12 +174,40 @@ public class NnGameService extends BaseGameService{
 		
 		/**如果都抢完庄,则通知玩家庄家并开始压分*/
 		if (robCount > 1 && robCount == size) {
+			
+			/**计算是谁抢到庄**/
+			NnPlayerInfo bankerPlayer = playerList.get(0);
+			for(int i = 1; i < size; i++){
+				NnPlayerInfo player = playerList.get(i);
+				if (NnPlayerStatusEnum.rob.status.equals(player.getStatus())) {
+					if (!NnPlayerStatusEnum.rob.status.equals(bankerPlayer.getStatus())) {
+						bankerPlayer = player;
+					}else{/**两个玩家都抢庄了，则比较抢庄的时间，先抢的先当庄*/
+						if (bankerPlayer.getRobBankerTime() > player.getRobBankerTime()) {
+							bankerPlayer = player;
+						}
+					}
+					
+				}
+			}
+			/**如果都没抢庄的话，默认是上个赢家的庄，如果是第一局，则是房主的庄*/
+			if (!NnPlayerStatusEnum.rob.status.equals(bankerPlayer.getStatus())) {
+				if (roomInfo.getCurWinnerId() != null) {
+					roomInfo.setRoomBankerId(roomInfo.getCurWinnerId());
+				}else{
+					roomInfo.setRoomBankerId(roomInfo.getRoomOwnerId());
+				}
+			}else{
+				roomInfo.setRoomBankerId(bankerPlayer.getPlayerId());
+			}
+			
+			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			result.setMsgType(MsgTypeEnum.readyStake.msgType);
 			data.put("roomBankerId", roomInfo.getRoomBankerId());
 			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 			return ;
 		}
-		
+		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 		data.put("playerId", playerId);
 		data.put("isRobBanker", msg.getIsRobBanker());
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
@@ -273,6 +303,7 @@ public class NnGameService extends BaseGameService{
 	
 	private void calculateScoreAndRoomBanker(NnRoomInfo roomInfo){
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
+		/**找出庄家*/
 		NnPlayerInfo roomBankerPlayer = null;
 		for(NnPlayerInfo player : playerList){
 			if (roomInfo.getRoomBankerId().equals(player.getPlayerId())) {
@@ -280,26 +311,34 @@ public class NnGameService extends BaseGameService{
 				break;
 			}
 		}
-		
+		/**将其他玩家的牌依次与庄家进行比较，计算各自得当前局分及总得分，最大牌型，并计算下一次庄家是谁*/
 		for(NnPlayerInfo player : playerList){
 			if (!roomInfo.getRoomBankerId().equals(player.getPlayerId())) {
 				if (NnCardRule.cardTypeCompare(player, roomBankerPlayer) > 0) {
 					Integer winScore = player.getStakeScore()*NnCardTypeEnum.getNnCardTypeEnum(player.getCardType()).multiple;
-					player.setCurScore(player.getCurScore() + winScore);
+					player.setCurScore(winScore);
+					player.setTotalScore(player.getTotalScore() + player.getCurScore());
 					player.setWinTimes(player.getWinTimes() + 1);
-					roomBankerPlayer.setCurScore(roomBankerPlayer.getCurScore() - winScore);
+					roomBankerPlayer.setCurScore(0 - winScore);
+					roomBankerPlayer.setTotalScore(roomBankerPlayer.getTotalScore() + roomBankerPlayer.getCurScore());
 					roomBankerPlayer.setLoseTimes(roomBankerPlayer.getLoseTimes() + 1);
 				}else{
 					Integer winScore = player.getStakeScore()*NnCardTypeEnum.getNnCardTypeEnum(roomBankerPlayer.getCardType()).multiple;
-					player.setCurScore(player.getCurScore() - winScore);
+					player.setCurScore(0 - winScore);
+					player.setTotalScore(player.getTotalScore() + player.getCurScore());
 					player.setLoseTimes(player.getLoseTimes() + 1);
-					roomBankerPlayer.setCurScore(roomBankerPlayer.getCurScore() + winScore);
+					roomBankerPlayer.setCurScore(winScore);
+					roomBankerPlayer.setTotalScore(roomBankerPlayer.getTotalScore() + roomBankerPlayer.getCurScore());
 					roomBankerPlayer.setWinTimes(roomBankerPlayer.getWinTimes() + 1);
 				}
 			}
+			/**计算各自的最大牌型*/
+			if (player.getCardType() > player.getMaxCardType()) {
+				player.setMaxCardType(player.getCardType());
+			}
 		}
-		
-		
+		/**设置庄家id（抢庄的不设置）*/
+		setRoomBankerId(roomInfo);
 		
 	}
 	
@@ -332,32 +371,6 @@ public class NnGameService extends BaseGameService{
 				break;
 			case overLordBanker:
 				roomInfo.setRoomBankerId(roomInfo.getRoomOwnerId());		
-				break;
-			case robBanker:
-				List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
-				int size = playerList.size();
-				NnPlayerInfo bankerPlayer = playerList.get(0);
-				for(int i = 0; i < size; i++){
-					NnPlayerInfo player = playerList.get(i);
-					if (NnPlayerStatusEnum.rob.status.equals(player.getStatus())) {
-						if (!NnPlayerStatusEnum.rob.status.equals(bankerPlayer.getStatus())) {
-							bankerPlayer = player;
-						}
-						if (bankerPlayer.getRobBankerTime() > player.getRobBankerTime()) {
-							bankerPlayer = player;
-						}
-					}
-				}
-				/**如果有人抢庄，则最先抢的那个人的庄*/
-				if (bankerPlayer != null) {
-					roomInfo.setRoomBankerId(bankerPlayer.getPlayerId());
-				}else{/**如果都没抢庄的话，默认是上个赢家的庄，如果是第一局，则是房主的庄*/
-					if (roomInfo.getCurWinnerId() != null) {
-						roomInfo.setRoomBankerId(roomInfo.getCurWinnerId());
-					}else{
-						roomInfo.setRoomBankerId(roomInfo.getRoomOwnerId());
-					}
-				}
 				break;
 			case winnerBanker:
 				if (roomInfo.getCurWinnerId() == null) {

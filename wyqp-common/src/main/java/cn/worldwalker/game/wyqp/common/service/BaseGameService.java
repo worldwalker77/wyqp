@@ -263,7 +263,7 @@ public abstract class BaseGameService {
 		
 		result = new Result();
 		result.setMsgType(request.getMsgType());
-		request.setGameType(1);
+		result.setGameType(1);
 		result.setData(roomInfo);
 		/**给此房间中的所有玩家发送消息*/
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));

@@ -294,11 +294,13 @@ public class NnGameService extends BaseGameService{
 			newRoomInfo.setTotalWinnerId(roomInfo.getTotalWinnerId());
 			newRoomInfo.setRoomId(roomId);
 			newRoomInfo.setRoomOwnerId(roomInfo.getRoomOwnerId());
+			newRoomInfo.setRoomBankerId(roomInfo.getRoomBankerId());
 			for(NnPlayerInfo player : playerList){
 				NnPlayerInfo newPlayer = new NnPlayerInfo();
 				newPlayer.setPlayerId(player.getPlayerId());
 				newPlayer.setCurScore(player.getCurScore());
 				newPlayer.setTotalScore(player.getTotalScore());
+				newPlayer.setCardType(player.getCardType());
 				newPlayer.setMaxCardType(player.getMaxCardType());
 				newPlayer.setWinTimes(player.getWinTimes());
 				newPlayer.setLoseTimes(player.getLoseTimes());

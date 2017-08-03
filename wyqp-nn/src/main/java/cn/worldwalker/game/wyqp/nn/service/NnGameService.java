@@ -64,7 +64,8 @@ public class NnGameService extends BaseGameService{
 
 	@Override
 	public BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
-		return null;
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(userInfo.getRoomId(), NnRoomInfo.class);
+		return roomInfo;
 	}
 	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Result result = new Result();
@@ -430,6 +431,13 @@ public class NnGameService extends BaseGameService{
 			default:
 				break;
 		}
+	}
+
+	@Override
+	public BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo) {
+		
+		
+		return null;
 	}
 
 }

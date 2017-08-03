@@ -42,6 +42,27 @@ public class CommonGameService extends BaseGameService{
 			}
 	}
 	
+	
+	public void commonRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		Integer roomId = userInfo.getRoomId();
+		RedisRelaModel rrm = redisOperationService.getGameTypeUpdateTimeByRoomId(roomId);
+		Integer realGameType = rrm.getGameType();
+		/**设置真是的gameType*/
+		request.setGameType(realGameType);
+		GameTypeEnum gameTypeEnum = GameTypeEnum.getGameTypeEnumByType(realGameType);
+		switch (gameTypeEnum) {
+			case nn:
+				nnGameService.entryRoom(ctx, request, userInfo);
+				break;
+			case mj:
+				mjGameService.entryRoom(ctx, request, userInfo);
+				break;
+			default:
+				break;
+			}
+	}
+	
+	
 	@Override
 	public BaseRoomInfo doCreateRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		return null;
@@ -54,6 +75,12 @@ public class CommonGameService extends BaseGameService{
 
 	@Override
 	public BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx,BaseRequest request, UserInfo userInfo) {
+		return null;
+	}
+
+
+	@Override
+	public BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx,BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo) {
 		return null;
 	}
 	

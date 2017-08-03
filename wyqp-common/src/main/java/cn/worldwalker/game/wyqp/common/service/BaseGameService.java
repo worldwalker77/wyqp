@@ -306,10 +306,11 @@ public abstract class BaseGameService {
 	
 	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 	
-	public void robBanker(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
+	public void refreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		
+		
+		
+	}
 	
-	public void stakeScore(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
-	
-	public void showCard(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
-	
+	public abstract BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo);
 }

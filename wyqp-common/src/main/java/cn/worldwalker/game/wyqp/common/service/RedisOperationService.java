@@ -183,6 +183,13 @@ public class RedisOperationService {
 	
 	
 	public boolean isLogFuseOpen(){
+		if ("1".equals(jedisTemplate.get(Constant.wyqpLogInfoFuse))) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isLoginFuseOpen(){
 		if ("1".equals(jedisTemplate.get(Constant.wyqpLoginFuse))) {
 			return true;
 		}

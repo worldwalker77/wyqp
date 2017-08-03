@@ -443,4 +443,20 @@ public class NnGameService extends BaseGameService{
 		return null;
 	}
 
+	@Override
+	public BaseRoomInfo doAgreeDissolveRoom(ChannelHandlerContext ctx,
+			BaseRequest request, UserInfo userInfo) {
+		Integer roomId = userInfo.getRoomId();
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+		return roomInfo;
+	}
+
+	@Override
+	public BaseRoomInfo doDisagreeDissolveRoom(ChannelHandlerContext ctx,
+			BaseRequest request, UserInfo userInfo) {
+		Integer roomId = userInfo.getRoomId();
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+		return roomInfo;
+	}
+
 }

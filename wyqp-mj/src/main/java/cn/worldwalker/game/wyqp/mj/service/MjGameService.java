@@ -54,5 +54,19 @@ public class MjGameService extends BaseGameService{
 		return null;
 	}
 
+	@Override
+	public BaseRoomInfo doAgreeDissolveRoom(ChannelHandlerContext ctx,
+			BaseRequest request, UserInfo userInfo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BaseRoomInfo doDisagreeDissolveRoom(ChannelHandlerContext ctx,
+			BaseRequest request, UserInfo userInfo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

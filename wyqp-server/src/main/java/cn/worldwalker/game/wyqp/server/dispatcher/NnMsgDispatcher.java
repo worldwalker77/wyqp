@@ -37,6 +37,7 @@ public class NnMsgDispatcher extends BaseMsgDisPatcher {
 				nnGameService.showCard(ctx, request, userInfo);
 				break;
 			case dissolveRoom:
+				nnGameService.dissolveRoom(ctx, request, userInfo);
 				break;
 			case agreeDissolveRoom:
 				break;

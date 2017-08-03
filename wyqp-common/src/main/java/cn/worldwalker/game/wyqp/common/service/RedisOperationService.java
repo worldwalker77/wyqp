@@ -189,4 +189,11 @@ public class RedisOperationService {
 		return false;
 	}
 	
+	public boolean isLoginFuseOpen(){
+		if ("1".equals(jedisTemplate.get(Constant.wyqpLoginFuse))) {
+			return true;
+		}
+		return false;
+	}
+	
 }

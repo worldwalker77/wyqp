@@ -284,7 +284,7 @@ public abstract class BaseGameService {
 		if (!GameUtil.isExistPlayerInRoom(playerId, playerList)) {
 			throw new BusinessException(ExceptionEnum.PLAYER_NOT_IN_ROOM);
 		}
-		GameUtil.setDissolveStatus(playerList, playerId, DissolveStatusEnum.disagree);
+		GameUtil.setDissolveStatus(playerList, playerId, DissolveStatusEnum.agree);
 		roomInfo.setUpdateTime(new Date());
 		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 		redisOperationService.setRoomIdGameTypeUpdateTime(roomId, new Date());
@@ -304,12 +304,87 @@ public abstract class BaseGameService {
 	
 	public abstract BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
 	
+	
+	public void agreeDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		
+		BaseMsg msg = request.getMsg();
+		Integer roomId = msg.getRoomId();
+		BaseRoomInfo roomInfo = doAgreeDissolveRoom(ctx, request, userInfo);
+		List playerList = roomInfo.getPlayerList();
+		if (!GameUtil.isExistPlayerInRoom(msg.getPlayerId(), playerList)) {
+			throw new BusinessException(ExceptionEnum.PLAYER_NOT_IN_ROOM);
+		}
+		int size = playerList.size();
+		int agreeDissolveCount = 0;
+		for(int i = 0; i < size; i++){
+			BasePlayerInfo player = (BasePlayerInfo)playerList.get(i);
+			if (player.getPlayerId().equals(msg.getPlayerId())) {
+				player.setDissolveStatus(DissolveStatusEnum.agree.status);
+			}
+			if (DissolveStatusEnum.agree.status.equals(player.getDissolveStatus())) {
+				agreeDissolveCount++;
+			}
+		}
+		roomInfo.setUpdateTime(new Date());
+		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+		/**如果大部分人同意，则推送解散消息并解散房间*/
+		if (agreeDissolveCount >= (playerList.size()/2 + 1)) {
+			/**解散房间*/
+			redisOperationService.cleanPlayerAndRoomInfo(roomId, GameUtil.getPlayerIdStrArr(playerList));
+			result.setMsgType(MsgTypeEnum.successDissolveRoom.msgType);
+			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
+			return ;
+		}
+		result.setMsgType(MsgTypeEnum.agreeDissolveRoom.msgType);
+		data.put("roomId", roomId);
+		data.put("playerId", msg.getPlayerId());
+		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
+	}
+	
+	public abstract BaseRoomInfo doAgreeDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
+	
+	public void disagreeDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		
+		BaseMsg msg = request.getMsg();
+		Integer roomId = msg.getRoomId();
+		BaseRoomInfo roomInfo = doDisagreeDissolveRoom(ctx, request, userInfo);
+		if (null == roomInfo) {
+			throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
+		}
+		List playerList = roomInfo.getPlayerList();
+		if (!GameUtil.isExistPlayerInRoom(msg.getPlayerId(), playerList)) {
+			throw new BusinessException(ExceptionEnum.PLAYER_NOT_IN_ROOM);
+		}
+		int size = playerList.size();
+		for(int i = 0; i < size; i++){
+			BasePlayerInfo player = (BasePlayerInfo)playerList.get(i);
+			if (player.getPlayerId().equals(msg.getPlayerId())) {
+				player.setDissolveStatus(DissolveStatusEnum.disagree.status);
+			}
+		}
+		roomInfo.setUpdateTime(new Date());
+		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+		result.setMsgType(MsgTypeEnum.disagreeDissolveRoom.msgType);
+		data.put("roomId", roomId);
+		data.put("playerId", msg.getPlayerId());
+		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
+	}
+	
+	public abstract BaseRoomInfo doDisagreeDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
+	
 	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 	
-	public void robBanker(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
+	public void refreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		
+		
+		
+	}
 	
-	public void stakeScore(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
-	
-	public void showCard(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
-	
+	public abstract BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo);
 }

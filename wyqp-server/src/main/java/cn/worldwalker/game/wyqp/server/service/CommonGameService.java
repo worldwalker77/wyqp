@@ -24,6 +24,26 @@ public class CommonGameService extends BaseGameService{
 	private MjGameService mjGameService;
 	
 	public void commonEntryRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		Integer roomId = request.getMsg().getRoomId();
+		RedisRelaModel rrm = redisOperationService.getGameTypeUpdateTimeByRoomId(roomId);
+		Integer realGameType = rrm.getGameType();
+		/**设置真是的gameType*/
+		request.setGameType(realGameType);
+		GameTypeEnum gameTypeEnum = GameTypeEnum.getGameTypeEnumByType(realGameType);
+		switch (gameTypeEnum) {
+			case nn:
+				nnGameService.entryRoom(ctx, request, userInfo);
+				break;
+			case mj:
+				mjGameService.entryRoom(ctx, request, userInfo);
+				break;
+			default:
+				break;
+			}
+	}
+	
+	
+	public void commonRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
 		Integer roomId = userInfo.getRoomId();
 		RedisRelaModel rrm = redisOperationService.getGameTypeUpdateTimeByRoomId(roomId);
 		Integer realGameType = rrm.getGameType();
@@ -42,6 +62,7 @@ public class CommonGameService extends BaseGameService{
 			}
 	}
 	
+	
 	@Override
 	public BaseRoomInfo doCreateRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		return null;
@@ -54,6 +75,28 @@ public class CommonGameService extends BaseGameService{
 
 	@Override
 	public BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx,BaseRequest request, UserInfo userInfo) {
+		return null;
+	}
+
+
+	@Override
+	public BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx,BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo) {
+		return null;
+	}
+
+
+	@Override
+	public BaseRoomInfo doAgreeDissolveRoom(ChannelHandlerContext ctx,
+			BaseRequest request, UserInfo userInfo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public BaseRoomInfo doDisagreeDissolveRoom(ChannelHandlerContext ctx,
+			BaseRequest request, UserInfo userInfo) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 	

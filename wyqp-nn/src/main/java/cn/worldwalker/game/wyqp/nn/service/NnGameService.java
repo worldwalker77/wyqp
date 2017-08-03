@@ -64,7 +64,8 @@ public class NnGameService extends BaseGameService{
 
 	@Override
 	public BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
-		return null;
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(userInfo.getRoomId(), NnRoomInfo.class);
+		return roomInfo;
 	}
 	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Result result = new Result();
@@ -430,6 +431,32 @@ public class NnGameService extends BaseGameService{
 			default:
 				break;
 		}
+	}
+
+	@Override
+	public BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo) {
+		NnMsg msg = (NnMsg)request.getMsg();
+		Integer playerId = userInfo.getPlayerId();
+		Integer roomId = userInfo.getRoomId();
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+		
+		return null;
+	}
+
+	@Override
+	public BaseRoomInfo doAgreeDissolveRoom(ChannelHandlerContext ctx,
+			BaseRequest request, UserInfo userInfo) {
+		Integer roomId = userInfo.getRoomId();
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+		return roomInfo;
+	}
+
+	@Override
+	public BaseRoomInfo doDisagreeDissolveRoom(ChannelHandlerContext ctx,
+			BaseRequest request, UserInfo userInfo) {
+		Integer roomId = userInfo.getRoomId();
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+		return roomInfo;
 	}
 
 }

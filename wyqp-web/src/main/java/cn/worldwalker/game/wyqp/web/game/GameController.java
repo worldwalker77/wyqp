@@ -32,7 +32,7 @@ public class GameController {
 	public Result login(String code, String deviceType, HttpServletResponse response, HttpServletRequest request){
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		Result result = null;
-		if (redisOperationService.isLogFuseOpen()) {
+		if (redisOperationService.isLoginFuseOpen()) {
 			result = commonGameService.login(code, deviceType, request);
 		}else{
 			result = commonGameService.login1(code, deviceType, request);

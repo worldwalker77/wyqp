@@ -22,7 +22,6 @@ public class Constant {
 	/**登录切换开关*/
 	public final static String wyqpLoginFuse = "wyqp_login_fuse";
 	
-	
 	 // // 第三方用户唯一凭证
     public static String appId = "wx7681f478b552345a";
     // // 第三方用户唯一凭证密钥

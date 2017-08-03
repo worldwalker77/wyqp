@@ -38,6 +38,7 @@ public class OfflinePlayerCleanJob extends SingleServerJobByRedis{
 				if (roomInfo == null) {
 					/**如果无房间信息，则说明可能其他离线玩家已经将房间删除，不需要再推送消息给其他玩家*/
 					redisOperationService.cleanPlayerAndRoomInfo(model.getRoomId(), String.valueOf(model.getPlayerId()));
+					return;
 				}
 				List playerList = roomInfo.getPlayerList();
 				Result result = new Result();

@@ -119,7 +119,7 @@ public class NnGameService extends BaseGameService{
 			data.put("roomOwnerId", roomInfo.getRoomOwnerId());
 			data.put("totalGames", roomInfo.getTotalGames());
 			data.put("curGame", roomInfo.getCurGame());
-			/**如果是抢庄类型，则给每个玩家返回四张牌，并通知准备抢庄*/
+			/**如果是抢庄类型，则给每个玩家返回四张牌，并通知准备抢庄.同时开启后台定时任务计数*/
 			if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
 				result.setMsgType(MsgTypeEnum.readyRobBanker.msgType);
 				for(int i = 0; i < size; i++ ){
@@ -229,7 +229,7 @@ public class NnGameService extends BaseGameService{
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		/**玩家已经压分计数*/
 		int stakeScoreCount = 0;
-		int size = playerList.size() - 1;
+		int size = playerList.size();
 		for(int i = 0; i < size; i++){
 			NnPlayerInfo player = playerList.get(i);
 			if (player.getPlayerId().equals(playerId)) {
@@ -243,7 +243,7 @@ public class NnGameService extends BaseGameService{
 		}
 		
 		/**如果都压完分,则发牌*/
-		if (stakeScoreCount == size) {
+		if (stakeScoreCount == size - 1) {
 			roomInfo.setStatus(NnRoomStatusEnum.inGame.status);
 			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			result.setMsgType(MsgTypeEnum.dealCards.msgType);
@@ -252,6 +252,7 @@ public class NnGameService extends BaseGameService{
 				data.put("cardList", cardList);
 				data.put("cardType", player.getCardType());
 				data.put("playerId", player.getPlayerId());
+				data.put("stakeScore", player.getStakeScore());
 				channelContainer.sendTextMsgByPlayerIds(result, player.getPlayerId());
 			}
 			return ;
@@ -427,6 +428,9 @@ public class NnGameService extends BaseGameService{
 				}else{
 					roomInfo.setRoomBankerId(roomInfo.getCurWinnerId());
 				}
+				break;
+			case robBanker:
+				roomInfo.setRoomBankerId(null);
 				break;
 			default:
 				break;

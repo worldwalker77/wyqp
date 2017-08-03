@@ -246,13 +246,23 @@ public class NnGameService extends BaseGameService{
 		if (stakeScoreCount == size - 1) {
 			roomInfo.setStatus(NnRoomStatusEnum.inGame.status);
 			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+			/**都压完分，先给所有玩家返回最后一个压分信息，延迟一会再发牌*/
+			result.setMsgType(MsgTypeEnum.stakeScore.msgType);
+			data.put("playerId", playerId);
+			data.put("stakeScore", msg.getStakeScore());
+			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			result.setMsgType(MsgTypeEnum.dealCards.msgType);
 			for(NnPlayerInfo player : playerList){
 				List<Card> cardList = player.getCardList();
 				data.put("cardList", cardList);
 				data.put("cardType", player.getCardType());
 				data.put("playerId", player.getPlayerId());
-				data.put("stakeScore", player.getStakeScore());
 				channelContainer.sendTextMsgByPlayerIds(result, player.getPlayerId());
 			}
 			return ;

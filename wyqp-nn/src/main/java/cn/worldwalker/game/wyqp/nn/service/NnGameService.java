@@ -435,7 +435,10 @@ public class NnGameService extends BaseGameService{
 
 	@Override
 	public BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo) {
-		
+		NnMsg msg = (NnMsg)request.getMsg();
+		Integer playerId = userInfo.getPlayerId();
+		Integer roomId = userInfo.getRoomId();
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
 		
 		return null;
 	}

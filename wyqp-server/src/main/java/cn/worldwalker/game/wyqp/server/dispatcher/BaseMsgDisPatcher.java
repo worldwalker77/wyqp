@@ -56,7 +56,7 @@ public abstract class BaseMsgDisPatcher {
 		if (!MsgTypeEnum.entryRoom.equals(msgTypeEnum)) {
 			msg.setRoomId(userInfo.getRoomId());
 		}
-		log.info("请求：" + JsonUtil.toJson(request));
+		log.info("请求," + MsgTypeEnum.getMsgTypeEnumByType(request.getMsgType()).desc + ": " + JsonUtil.toJson(request));
 		Lock lock = null;
 		try {
 			if (!notNeedLockMsgTypeMap.containsKey(request.getMsgType())) {
@@ -68,7 +68,7 @@ public abstract class BaseMsgDisPatcher {
 			}
 			requestDispatcher(ctx, request, userInfo);
 		} catch (BusinessException e) {
-			log.error(e.getBussinessCode() + ":" + e.getMessage() + ", request:" + JsonUtil.toJson(request));
+			log.error(e.getBussinessCode() + ":" + e.getMessage() + ", request:" + JsonUtil.toJson(request), e);
 			channelContainer.sendErrorMsg(ctx, ExceptionEnum.getExceptionEnum(e.getBussinessCode()), request);
 			
 		} catch (Exception e1) {

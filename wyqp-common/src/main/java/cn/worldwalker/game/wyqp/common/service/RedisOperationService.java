@@ -129,6 +129,19 @@ public class RedisOperationService {
 		return list;
 	}
 	
+	/**ip->roomId->time 映射*/
+	public void setIpRoomIdTime(Integer roomId){
+		jedisTemplate.hset(Constant.wyqpIpRoomIdTimeMap, String.valueOf(roomId), String.valueOf(System.currentTimeMillis()));
+	}
+	
+	public void delIpRoomIdTime(Integer roomId){
+		jedisTemplate.hdel(Constant.wyqpIpRoomIdTimeMap, String.valueOf(roomId));
+	}
+	
+	public Map<String, String> getAllIpRoomIdTime(){
+		return jedisTemplate.hgetAll(Constant.wyqpIpRoomIdTimeMap);
+	}
+	
 	
 	/**用户userInfo设置*/
 	public void setUserInfo(String token, UserInfo userInfo){

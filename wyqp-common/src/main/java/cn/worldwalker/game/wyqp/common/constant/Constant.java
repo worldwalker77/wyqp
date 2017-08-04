@@ -1,5 +1,7 @@
 package cn.worldwalker.game.wyqp.common.constant;
 
+import cn.worldwalker.game.wyqp.common.utils.IPUtil;
+
 public class Constant {
 	
 	/**roomId与roomInfo的映射*/
@@ -21,6 +23,10 @@ public class Constant {
 	public final static String wyqpLogInfoFuse = "wyqp_log_info_fuse";
 	/**登录切换开关*/
 	public final static String wyqpLoginFuse = "wyqp_login_fuse";
+	
+	
+	/**牛牛中，庄类型为抢庄的时候，机器ip与房间id，time的list 映射*/
+	public final static String wyqpIpRoomIdTimeMap = "wyqp_ip_room_id_time_map_" + IPUtil.getLocalIp();
 	
 	 // // 第三方用户唯一凭证
     public static String appId = "wx7681f478b552345a";

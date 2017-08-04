@@ -36,8 +36,6 @@ import cn.worldwalker.game.wyqp.nn.enums.NnRoomStatusEnum;
 @Service(value="nnGameService")
 public class NnGameService extends BaseGameService{
 	
-	@Autowired
-	private ThreadPoolTaskExecutor threadPool;
 	@Override
 	public BaseRoomInfo doCreateRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		NnMsg msg = (NnMsg)request.getMsg();
@@ -77,7 +75,7 @@ public class NnGameService extends BaseGameService{
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
 		Integer playerId = userInfo.getPlayerId();
-		Integer roomId = userInfo.getRoomId();
+		final Integer roomId = userInfo.getRoomId();
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		/**玩家已经准备计数*/
@@ -105,7 +103,6 @@ public class NnGameService extends BaseGameService{
 				NnPlayerInfo player = playerList.get(i);
 				player.setCardList(playerCards.get(i));
 				player.setCardType(NnCardRule.calculateCardType(playerCards.get(i)));
-				player.setCurScore(0);
 				/**设置每个玩家的解散房间状态为不同意解散，后面大结算返回大厅的时候回根据此状态判断是否解散房间*/
 				player.setDissolveStatus(DissolveStatusEnum.disagree.status);
 			}
@@ -125,18 +122,8 @@ public class NnGameService extends BaseGameService{
 			data.put("curGame", roomInfo.getCurGame());
 			/**如果是抢庄类型，则给每个玩家返回四张牌，并通知准备抢庄.同时开启后台定时任务计数*/
 			if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
-				threadPool.execute(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							Thread.sleep(10000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-				});
-				
-				
+				/**开启后台定时任务计数*/
+				redisOperationService.setIpRoomIdTime(roomId);
 				result.setMsgType(MsgTypeEnum.readyRobBanker.msgType);
 				for(int i = 0; i < size; i++ ){
 					NnPlayerInfo player = playerList.get(i);
@@ -217,7 +204,7 @@ public class NnGameService extends BaseGameService{
 			}else{
 				roomInfo.setRoomBankerId(bankerPlayer.getPlayerId());
 			}
-			
+			roomInfo.setStatus(NnRoomStatusEnum.inStakeScore.status);
 			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			result.setMsgType(MsgTypeEnum.readyStake.msgType);
 			data.put("roomBankerId", roomInfo.getRoomBankerId());
@@ -225,6 +212,7 @@ public class NnGameService extends BaseGameService{
 			return ;
 		}
 		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+		result.setMsgType(MsgTypeEnum.robBanker.msgType);
 		data.put("playerId", playerId);
 		data.put("isRobBanker", msg.getIsRobBanker());
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
@@ -317,7 +305,7 @@ public class NnGameService extends BaseGameService{
 		}
 		if (showCardNum == size) {
 			calculateScoreAndRoomBanker(roomInfo);
-			
+			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			NnRoomInfo newRoomInfo = new NnRoomInfo();
 			newRoomInfo.setTotalWinnerId(roomInfo.getTotalWinnerId());
 			newRoomInfo.setRoomId(roomId);
@@ -389,17 +377,25 @@ public class NnGameService extends BaseGameService{
 			}
 		}
 		
-		/**设置房间的总赢家*/
+		/**设置房间的总赢家及当前赢家*/
 		Integer totalWinnerId = playerList.get(0).getPlayerId();
+		Integer curWinnerId = playerList.get(0).getPlayerId();
 		Integer maxTotalScore = playerList.get(0).getTotalScore();
+		Integer maxCurScore = playerList.get(0).getCurScore();
 		for(NnPlayerInfo player : playerList){
 			Integer tempTotalScore = player.getTotalScore();
+			Integer tempCurScore = player.getCurScore();
 			if (tempTotalScore > maxTotalScore) {
 				maxTotalScore = tempTotalScore;
 				totalWinnerId = player.getPlayerId();
 			}
+			if (tempCurScore > maxCurScore) {
+				maxCurScore = tempCurScore;
+				curWinnerId = player.getPlayerId();
+			}
 		}
 		roomInfo.setTotalWinnerId(totalWinnerId);
+		roomInfo.setCurWinnerId(curWinnerId);
 		/**如果当前局数小于总局数，则设置为当前局结束*/
 		if (roomInfo.getCurGame() < roomInfo.getTotalGames()) {
 			roomInfo.setStatus(RoomStatusEnum.curGameOver.status);

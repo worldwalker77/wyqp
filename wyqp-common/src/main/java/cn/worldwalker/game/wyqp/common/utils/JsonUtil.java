@@ -51,9 +51,15 @@ public class JsonUtil {
     /**
      * json string convert to map
      */
-	public static <T> Map<String, Object> toMap(String jsonStr)
-            throws Exception {
-        return objectMapper.readValue(jsonStr, Map.class);
+	public static <T> Map<String, Object> toMap(String jsonStr) {
+		Map<String, Object> map = null;
+		try {
+			map = objectMapper.readValue(jsonStr, Map.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return map;
     }
 
     /**

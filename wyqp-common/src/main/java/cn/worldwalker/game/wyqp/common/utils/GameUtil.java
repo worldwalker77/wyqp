@@ -122,5 +122,20 @@ public class GameUtil {
 			}
 		}
 	}
+	/**
+	 * 设置玩家状态
+	 * @param playerList
+	 * @param playerId
+	 * @param status
+	 */
+	public static void setPlayerStatus(List playerList, Integer playerId,  Integer status){
+		int size = playerList.size();
+		for(int i = 0; i < size; i++){
+			BasePlayerInfo playerInfo = (BasePlayerInfo)playerList.get(i);
+			if (playerInfo.getPlayerId().equals(playerId)) {
+				playerInfo.setStatus(status);
+			}
+		}
+	}
 		
 }

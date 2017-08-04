@@ -15,10 +15,10 @@ public class NnCardResource {
 	
 	
 	/**生成一副扑克牌
-	 * 0-12   方块2,3,4,5....10,J,Q,K,A
-	 * 13-25 梅花2,3,4,5....10,J,Q,K,A
-	 * 26-38 红桃2,3,4,5....10,J,Q,K,A
-	 * 39-51 黑桃2,3,4,5....10,J,Q,K,A
+	 * 0-12   方块A,2,3,4,5....10,J,Q,K
+	 * 13-25 梅花A,2,3,4,5....10,J,Q,K
+	 * 26-38 红桃A,2,3,4,5....10,J,Q,K
+	 * 39-51 黑桃A,2,3,4,5....10,J,Q,K
 	 * */
 	public static List<Card> genCardResource(){
 		List<Card> cardList = new ArrayList<Card>();
@@ -28,7 +28,7 @@ public class NnCardResource {
 			CardSuitEnum suitEnum = CardSuitEnum.getCardSuitBySuit(i/13 + 1);
 			card.setCardSuit(suitEnum.suit);
 			card.setCardSuitName(suitEnum.name);
-			card.setCardValue(i%13 + 2);
+			card.setCardValue(i%13 + 1);
 			cardList.add(card);
 		}
 		return cardList;

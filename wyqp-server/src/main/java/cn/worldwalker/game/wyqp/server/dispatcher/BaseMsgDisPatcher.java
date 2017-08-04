@@ -60,14 +60,19 @@ public abstract class BaseMsgDisPatcher {
 		Lock lock = null;
 		try {
 			if (!notNeedLockMsgTypeMap.containsKey(request.getMsgType())) {
+				if (!redisOperationService.isRoomIdExist(msg.getRoomId())) {
+					throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
+				}
 				lock = RoomLockContainer.getLockByRoomId(msg.getRoomId());
 				lock.lock();
 			}
 			requestDispatcher(ctx, request, userInfo);
 		} catch (BusinessException e) {
+			log.error(e.getBussinessCode() + ":" + e.getMessage() + ", request:" + JsonUtil.toJson(request));
 			channelContainer.sendErrorMsg(ctx, ExceptionEnum.getExceptionEnum(e.getBussinessCode()), request);
 			
-		} catch (Exception e) {
+		} catch (Exception e1) {
+			log.error("系统异常, request:" + JsonUtil.toJson(request), e1);
 			channelContainer.sendErrorMsg(ctx, ExceptionEnum.SYSTEM_ERROR, request);
 		} finally{
 			if (lock != null) {

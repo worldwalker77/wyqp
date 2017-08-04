@@ -32,7 +32,7 @@ public class BasePlayerInfo {
 	/**房卡数*/
 	private Integer roomCardNum = 0;
 	/**最大牌型*/
-	private Integer maxCardType;
+	private Integer maxCardType = 0;
 	/**玩家ip*/
 	private String ip;
 	/**在线状态1在线 0离线*/

@@ -6,6 +6,8 @@ import javax.annotation.Resource;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,7 @@ import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 
 @Service
 public class GameDispather {
-	
+	private static final Log log = LogFactory.getLog(ChannelContainer.class);
 	@Autowired
 	public ChannelContainer channelContainer;
 	@Resource(name="mjMsgDisPatcher")
@@ -54,9 +56,11 @@ public class GameDispather {
 					break;
 				}
 		} catch (BusinessException e) {
+			log.error(e.getBussinessCode() + ":" + e.getMessage() + ", request:" + JsonUtil.toJson(request));
 			channelContainer.sendErrorMsg(ctx, ExceptionEnum.getExceptionEnum(e.getBussinessCode()), request);
 			
-		}catch (Exception e) {
+		}catch (Exception e1) {
+			log.error("系统异常, request:" + JsonUtil.toJson(request), e1);
 			channelContainer.sendErrorMsg(ctx, ExceptionEnum.SYSTEM_ERROR, request);
 		}
 	}

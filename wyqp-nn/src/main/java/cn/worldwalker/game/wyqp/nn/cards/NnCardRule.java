@@ -1,5 +1,6 @@
 package cn.worldwalker.game.wyqp.nn.cards;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
@@ -9,6 +10,26 @@ import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnCardTypeEnum;
 
 public class NnCardRule {
+	
+	public static void main(String[] args) {
+		List<Card> cardList = new ArrayList<Card>();
+		Card card1 = new Card();
+		card1.setCardValue(2);
+		Card card2 = new Card();
+		card2.setCardValue(4);
+		Card card3 = new Card();
+		card3.setCardValue(5);
+		Card card4 = new Card();
+		card4.setCardValue(5);
+		Card card5 = new Card();
+		card5.setCardValue(5);
+		cardList.add(card1);
+		cardList.add(card2);
+		cardList.add(card3);
+		cardList.add(card4);
+		cardList.add(card5);
+		System.out.println(calculateCardType(cardList));
+	}
 	
 	/**
 	 * 计算牌型
@@ -110,8 +131,8 @@ public class NnCardRule {
 	public static boolean isBombNiu(List<Card> cardList){
 		for(int i = 0; i < 2; i++){
 			if (cardList.get(i).getCardValue().equals(cardList.get(i + 1).getCardValue())
-				||cardList.get(i + 1).getCardValue().equals(cardList.get(i + 2).getCardValue())
-				||cardList.get(i + 2).getCardValue().equals(cardList.get(i + 3).getCardValue())){
+				&&cardList.get(i + 1).getCardValue().equals(cardList.get(i + 2).getCardValue())
+				&&cardList.get(i + 2).getCardValue().equals(cardList.get(i + 3).getCardValue())){
 				return true;
 			}
 		}

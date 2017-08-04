@@ -85,7 +85,6 @@ public class ChannelContainer {
 	}
 	
 	public Result sendErrorMsg(ChannelHandlerContext ctx, ExceptionEnum exceptionEnum, BaseRequest request){
-		log.error(exceptionEnum.description + ", request:" + JsonUtil.toJson(request));
 		Result result = new Result(exceptionEnum.index, exceptionEnum.description, request.getMsgType(), request.getGameType());
 		if (redisOperationService.isLogFuseOpen()) {
 			log.info("返回 ：" + JsonUtil.toJson(result));

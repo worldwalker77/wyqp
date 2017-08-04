@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
@@ -33,7 +35,9 @@ import cn.worldwalker.game.wyqp.nn.enums.NnRoomBankerTypeEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnRoomStatusEnum;
 @Service(value="nnGameService")
 public class NnGameService extends BaseGameService{
-
+	
+	@Autowired
+	private ThreadPoolTaskExecutor threadPool;
 	@Override
 	public BaseRoomInfo doCreateRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		NnMsg msg = (NnMsg)request.getMsg();
@@ -121,6 +125,18 @@ public class NnGameService extends BaseGameService{
 			data.put("curGame", roomInfo.getCurGame());
 			/**如果是抢庄类型，则给每个玩家返回四张牌，并通知准备抢庄.同时开启后台定时任务计数*/
 			if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
+				threadPool.execute(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(10000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				
+				
 				result.setMsgType(MsgTypeEnum.readyRobBanker.msgType);
 				for(int i = 0; i < size; i++ ){
 					NnPlayerInfo player = playerList.get(i);
@@ -336,7 +352,7 @@ public class NnGameService extends BaseGameService{
 		
 	}
 	
-	private void calculateScoreAndRoomBanker(NnRoomInfo roomInfo){
+	private static void calculateScoreAndRoomBanker(NnRoomInfo roomInfo){
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		/**找出庄家*/
 		NnPlayerInfo roomBankerPlayer = null;
@@ -402,8 +418,29 @@ public class NnGameService extends BaseGameService{
 		
 	}
 	
+	public static void main(String[] args) {
+		NnRoomInfo roomInfo = new NnRoomInfo();
+		roomInfo.setRoomId(195886);
+		roomInfo.setRoomBankerId(876917);
+		roomInfo.setRoomBankerType(1);
+		roomInfo.setCurGame(1);
+		roomInfo.setTotalGames(2);
+		roomInfo.setPayType(2);
+		
+		NnPlayerInfo player = new NnPlayerInfo();
+		player.setPlayerId(876917);
+		player.setCardType(13);
+		NnPlayerInfo player1 = new NnPlayerInfo();
+		player1.setPlayerId(432313);
+		player1.setCardType(10);
+		player1.setStakeScore(2);
+		roomInfo.getPlayerList().add(player);
+		roomInfo.getPlayerList().add(player1);
+		calculateScoreAndRoomBanker(roomInfo);
+	}
 	
-	private void setRoomBankerId(NnRoomInfo roomInfo){
+	
+	private static void setRoomBankerId(NnRoomInfo roomInfo){
 		
 		NnRoomBankerTypeEnum typeEnum = NnRoomBankerTypeEnum.getNnRoomBankerTypeEnum(roomInfo.getRoomBankerType());
 		

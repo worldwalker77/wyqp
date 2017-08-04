@@ -6,7 +6,7 @@ public class UserFeedbackModel {
 	
 	private Long id;
 	
-	private Long playerId;
+	private Integer playerId;
 	
 	private String mobilePhone;
 	
@@ -24,11 +24,11 @@ public class UserFeedbackModel {
 		this.id = id;
 	}
 
-	public Long getPlayerId() {
+	public Integer getPlayerId() {
 		return playerId;
 	}
 
-	public void setPlayerId(Long playerId) {
+	public void setPlayerId(Integer playerId) {
 		this.playerId = playerId;
 	}
 

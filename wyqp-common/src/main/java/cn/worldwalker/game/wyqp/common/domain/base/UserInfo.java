@@ -20,7 +20,13 @@ public class UserInfo {
 	
 	private String remoteIp;
 	
-	private Integer roomCardNum;
+	private Integer roomCardNum = 0;
+	
+	private String address;
+	
+	private String x;
+	
+	private String y;
 
 
 	public Integer getPlayerId() {
@@ -101,6 +107,30 @@ public class UserInfo {
 
 	public void setRoomCardNum(Integer roomCardNum) {
 		this.roomCardNum = roomCardNum;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getX() {
+		return x;
+	}
+
+	public void setX(String x) {
+		this.x = x;
+	}
+
+	public String getY() {
+		return y;
+	}
+
+	public void setY(String y) {
+		this.y = y;
 	}
 	
 }

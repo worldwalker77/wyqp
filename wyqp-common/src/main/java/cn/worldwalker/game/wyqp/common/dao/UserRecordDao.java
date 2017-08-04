@@ -10,6 +10,6 @@ public interface UserRecordDao {
 	
 	public long batchInsertRecord(List<UserRecordModel> modelList);
 	
-	public List<UserRecordModel> getUserRecord(Long playerId);
+	public List<UserRecordModel> getUserRecord(Integer playerId);
 	
 }

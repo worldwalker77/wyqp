@@ -44,10 +44,6 @@ public class MjGameService extends BaseGameService{
 		return roomInfo;
 	}
 
-	@Override
-	public BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
-		return null;
-	}
 
 	@Override
 	public BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx,BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo) {
@@ -55,14 +51,7 @@ public class MjGameService extends BaseGameService{
 	}
 
 	@Override
-	public BaseRoomInfo doAgreeDissolveRoom(ChannelHandlerContext ctx,
-			BaseRequest request, UserInfo userInfo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public BaseRoomInfo doDisagreeDissolveRoom(ChannelHandlerContext ctx,
+	public BaseRoomInfo getRoomInfo(ChannelHandlerContext ctx,
 			BaseRequest request, UserInfo userInfo) {
 		// TODO Auto-generated method stub
 		return null;

@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
+import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
+import cn.worldwalker.game.wyqp.common.result.Result;
 import cn.worldwalker.game.wyqp.nn.service.NnGameService;
 @Service(value="nnMsgDispatcher")
 public class NnMsgDispatcher extends BaseMsgDisPatcher {
@@ -40,26 +42,33 @@ public class NnMsgDispatcher extends BaseMsgDisPatcher {
 				nnGameService.dissolveRoom(ctx, request, userInfo);
 				break;
 			case agreeDissolveRoom:
+				nnGameService.agreeDissolveRoom(ctx, request, userInfo);
 				break;
 			case disagreeDissolveRoom:
+				nnGameService.disagreeDissolveRoom(ctx, request, userInfo);
 				break;
 			case delRoomConfirmBeforeReturnHall:
-				break;
-			case refreshRoom:
+				nnGameService.delRoomConfirmBeforeReturnHall(ctx, request, userInfo);
 				break;
 			case queryPlayerInfo:
+				nnGameService.queryPlayerInfo(ctx, request, userInfo);
 				break;
 			case chatMsg:
+				nnGameService.chatMsg(ctx, request, userInfo);
 				break;
 			case heartBeat:
+				channelContainer.sendTextMsgByPlayerIds(new Result(GameTypeEnum.nn.gameType, MsgTypeEnum.heartBeat.msgType), userInfo.getPlayerId());
 				break;
 			case userRecord:
+				nnGameService.userRecord(ctx, request, userInfo);
 				break;
 			case userFeedback:
-				break;
-			case sendEmoticon:
+				nnGameService.userFeedback(ctx, request, userInfo);
 				break;
 			case syncPlayerLocation:
+				nnGameService.syncPlayerLocation(ctx, request, userInfo);
+				break;
+			case refreshRoom:
 				break;
 			default:
 				break;

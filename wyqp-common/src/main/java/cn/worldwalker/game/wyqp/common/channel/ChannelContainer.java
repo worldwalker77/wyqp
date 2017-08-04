@@ -52,7 +52,7 @@ public class ChannelContainer {
 	
 	public void sendTextMsgByPlayerIds(Result result, Integer... playerIds){
 		if (redisOperationService.isLogFuseOpen()) {
-			log.info("返回 ：" + JsonUtil.toJson(result));
+			log.info("返回 ," + MsgTypeEnum.getMsgTypeEnumByType(result.getMsgType()).desc + ": " + JsonUtil.toJson(result));
 		}
 		for(Integer playerId : playerIds){
 			Channel channel = getChannel(playerId);

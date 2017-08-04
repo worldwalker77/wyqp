@@ -6,7 +6,8 @@ public enum ChatTypeEnum {
 	emotion(2, "表情"),
 	sound(3, "语音"),
 	img(4, "图片"),
-	specialEmotion(5, "给特定玩家发的特殊表情");
+	specialEmotion(5, "给特定玩家发的特殊表情"),
+	voiceChat(6, "语音聊天");
 	
 	public int type;
 	public String desc;

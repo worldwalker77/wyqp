@@ -2,6 +2,7 @@ package cn.worldwalker.game.wyqp.common.service;
 
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,14 +18,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
 import cn.worldwalker.game.wyqp.common.dao.UserDao;
+import cn.worldwalker.game.wyqp.common.dao.UserFeedbackDao;
+import cn.worldwalker.game.wyqp.common.dao.UserRecordDao;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseMsg;
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
+import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.UserModel;
+import cn.worldwalker.game.wyqp.common.domain.base.UserRecordModel;
 import cn.worldwalker.game.wyqp.common.domain.base.WeiXinUserInfo;
+import cn.worldwalker.game.wyqp.common.enums.ChatTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
@@ -36,6 +42,7 @@ import cn.worldwalker.game.wyqp.common.roomlocks.RoomLockContainer;
 import cn.worldwalker.game.wyqp.common.rpc.WeiXinRpc;
 import cn.worldwalker.game.wyqp.common.utils.GameUtil;
 import cn.worldwalker.game.wyqp.common.utils.IPUtil;
+import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 
 public abstract class BaseGameService {
 	
@@ -45,9 +52,12 @@ public abstract class BaseGameService {
 	public RedisOperationService redisOperationService;
 	@Autowired
 	public ChannelContainer channelContainer;
-	
 	@Autowired
-	public UserDao userDao;
+	private UserFeedbackDao userFeedbackDao;
+	@Autowired
+	private UserDao userDao;
+	@Autowired
+	private UserRecordDao userRecordDao;
 	
 	@Autowired
 	public WeiXinRpc weiXinRpc;
@@ -278,7 +288,7 @@ public abstract class BaseGameService {
 		
 		Integer playerId = userInfo.getPlayerId();
 		Integer roomId = userInfo.getRoomId();
-		BaseRoomInfo roomInfo = doDissolveRoom(ctx, request, userInfo);
+		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
 		
 		List playerList = roomInfo.getPlayerList();
 		if (!GameUtil.isExistPlayerInRoom(playerId, playerList)) {
@@ -302,8 +312,6 @@ public abstract class BaseGameService {
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 	}
 	
-	public abstract BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
-	
 	
 	public void agreeDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Result result = new Result();
@@ -312,7 +320,7 @@ public abstract class BaseGameService {
 		
 		BaseMsg msg = request.getMsg();
 		Integer roomId = msg.getRoomId();
-		BaseRoomInfo roomInfo = doAgreeDissolveRoom(ctx, request, userInfo);
+		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
 		List playerList = roomInfo.getPlayerList();
 		if (!GameUtil.isExistPlayerInRoom(msg.getPlayerId(), playerList)) {
 			throw new BusinessException(ExceptionEnum.PLAYER_NOT_IN_ROOM);
@@ -344,8 +352,6 @@ public abstract class BaseGameService {
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 	}
 	
-	public abstract BaseRoomInfo doAgreeDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
-	
 	public void disagreeDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
@@ -353,7 +359,7 @@ public abstract class BaseGameService {
 		
 		BaseMsg msg = request.getMsg();
 		Integer roomId = msg.getRoomId();
-		BaseRoomInfo roomInfo = doDisagreeDissolveRoom(ctx, request, userInfo);
+		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
 		if (null == roomInfo) {
 			throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
 		}
@@ -376,15 +382,176 @@ public abstract class BaseGameService {
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 	}
 	
-	public abstract BaseRoomInfo doDisagreeDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
+	public void delRoomConfirmBeforeReturnHall(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		
+		BaseMsg msg = request.getMsg();
+		Integer roomId = msg.getRoomId();
+		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
+		if (null == roomInfo) {
+			throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
+		}
+		List playerList = roomInfo.getPlayerList();
+		if (!GameUtil.isExistPlayerInRoom(msg.getPlayerId(), playerList)) {
+			throw new BusinessException(ExceptionEnum.PLAYER_NOT_IN_ROOM);
+		}
+		
+		int agreeDissolveCount = 0;
+		int size = playerList.size();
+		for(int i = 0; i < size; i++){
+			BasePlayerInfo player = (BasePlayerInfo)playerList.get(i);
+			if (player.getPlayerId().equals(msg.getPlayerId())) {
+				player.setDissolveStatus(DissolveStatusEnum.agree.status);
+			}
+			if (player.getDissolveStatus().equals(DissolveStatusEnum.agree.status)) {
+				agreeDissolveCount++;
+			}
+		}
+		roomInfo.setUpdateTime(new Date());
+		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+		/**如果所有人都有确认消息，则解散房间*/
+		if (agreeDissolveCount >= playerList.size()) {
+			/**解散房间*/
+			redisOperationService.cleanPlayerAndRoomInfo(roomId, GameUtil.getPlayerIdStrArr(playerList));
+		}
+		/**通知玩家返回大厅*/
+		result.setMsgType(MsgTypeEnum.delRoomConfirmBeforeReturnHall.msgType);
+		channelContainer.sendTextMsgByPlayerIds(result, msg.getPlayerId());
+		/**将roomId从用户信息中去除*/
+		userInfo.setRoomId(null);
+		redisOperationService.setUserInfo(request.getToken(), userInfo);
+	}
+	
+	public void chatMsg(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		
+		BaseMsg msg = request.getMsg();
+		Integer roomId = msg.getRoomId();
+		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
+		if (null == roomInfo) {
+			throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
+		}
+		List playerList = roomInfo.getPlayerList();
+		if (!GameUtil.isExistPlayerInRoom(msg.getPlayerId(), playerList)) {
+			throw new BusinessException(ExceptionEnum.PLAYER_NOT_IN_ROOM);
+		}
+		result.setMsgType(MsgTypeEnum.chatMsg.msgType);
+		if (ChatTypeEnum.specialEmotion.type == msg.getChatType()) {
+			data.put("playerId", msg.getPlayerId());
+			data.put("otherPlayerId", msg.getOtherPlayerId());
+			data.put("chatMsg", msg.getChatMsg());
+			data.put("chatType", msg.getChatType());
+			List<Integer> playerIdList = new ArrayList<Integer>();
+			Integer[] playerIdArr = new Integer[2];
+			playerIdArr[0] = msg.getPlayerId();
+			playerIdArr[1] = msg.getOtherPlayerId();
+			channelContainer.sendTextMsgByPlayerIds(result, playerIdArr);
+		}else if(ChatTypeEnum.voiceChat.type == msg.getChatType()){
+			data.put("playerId", msg.getPlayerId());
+			data.put("chatMsg", msg.getChatMsg());
+			data.put("chatType", msg.getChatType());
+			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArrWithOutSelf(playerList, msg.getPlayerId()));
+		}
+		
+		data.put("playerId", msg.getPlayerId());
+		data.put("chatMsg", msg.getChatMsg());
+		data.put("chatType", msg.getChatType());
+		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
+	}
+	
+	public void syncPlayerLocation(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+		Result result = new Result();
+		result.setMsgType(MsgTypeEnum.syncPlayerLocation.msgType);
+		BaseMsg msg = request.getMsg();
+		userInfo.setAddress(msg.getAddress());
+		userInfo.setX(msg.getX());
+		userInfo.setY(msg.getY());
+		redisOperationService.setUserInfo(request.getToken(), userInfo);
+	}
+	
+	public void queryPlayerInfo(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		
+		BaseMsg msg = request.getMsg();
+		Integer roomId = msg.getRoomId();
+		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
+		if (null == roomInfo) {
+			throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
+		}
+		List playerList = roomInfo.getPlayerList();
+		if (!GameUtil.isExistPlayerInRoom(msg.getPlayerId(), playerList)) {
+			throw new BusinessException(ExceptionEnum.PLAYER_NOT_IN_ROOM);
+		}
+		Integer otherPlayerId = msg.getOtherPlayerId();
+		Integer playerId = msg.getPlayerId();
+		BasePlayerInfo otherPlayer = null;
+		BasePlayerInfo curPlayer = null;
+		int size = playerList.size();
+		for(int i = 0; i < size; i++){
+			BasePlayerInfo player = (BasePlayerInfo)playerList.get(i);
+			if (player.getPlayerId().equals(otherPlayerId)) {
+				otherPlayer = player;
+			}else if(player.getPlayerId().equals(playerId)){
+				curPlayer = player;
+			}
+		}
+		if (otherPlayer != null) {
+			data.put("playerId", otherPlayer.getPlayerId());
+			data.put("nickName", otherPlayer.getNickName());
+			data.put("headImgUrl", otherPlayer.getHeadImgUrl());
+			data.put("address", otherPlayer.getAddress());
+			String distance = GameUtil.getLatLngDistance(curPlayer, otherPlayer);
+			data.put("distance", distance);
+		}else{
+			data.put("playerId", curPlayer.getPlayerId());
+			data.put("nickName", curPlayer.getNickName());
+			data.put("headImgUrl", curPlayer.getHeadImgUrl());
+			data.put("address", curPlayer.getAddress());
+		}
+		result.setMsgType(MsgTypeEnum.queryPlayerInfo.msgType);
+		channelContainer.sendTextMsgByPlayerIds(result, msg.getPlayerId());
+	}
+	
+	public void userRecord(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		BaseMsg msg = request.getMsg();
+		List<UserRecordModel> list = userRecordDao.getUserRecord(msg.getPlayerId());
+		for(UserRecordModel model : list){
+			model.setNickNameList(JsonUtil.toObject(model.getNickNames(), List.class));
+		}
+		result.setMsgType(MsgTypeEnum.userRecord.msgType);
+		result.setData(list);
+		channelContainer.sendTextMsgByPlayerIds(result, msg.getPlayerId());
+	}
+
+	public void userFeedback(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		BaseMsg msg = request.getMsg();
+		UserFeedbackModel model = new UserFeedbackModel();
+		model.setPlayerId(msg.getPlayerId());
+		model.setMobilePhone(msg.getMobilePhone());
+		model.setFeedBack(msg.getFeedBack());
+		model.setType(msg.getFeedBackType());
+		userFeedbackDao.insertFeedback(model);
+		result.setMsgType(MsgTypeEnum.userFeedback.msgType);
+		channelContainer.sendTextMsgByPlayerIds(result, msg.getPlayerId());
+	}
+	
+	public abstract BaseRoomInfo getRoomInfo(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
 	
 	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 	
 	public void refreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
-		
-		
-		
 	}
-	
 	public abstract BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo);
 }

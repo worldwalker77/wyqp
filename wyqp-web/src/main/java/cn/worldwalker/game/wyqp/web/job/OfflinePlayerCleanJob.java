@@ -31,9 +31,11 @@ public class OfflinePlayerCleanJob extends SingleServerJobByRedis{
 		List<RedisRelaModel> list = redisOperationService.getAllOfflinePlayerIdRoomIdGameTypeTime();
 		for(RedisRelaModel model : list){
 			if (System.currentTimeMillis() - model.getUpdateTime() > 20*60*1000L) {
+				Result result = new Result();
 				BaseRoomInfo roomInfo = null;
 				if (GameTypeEnum.nn.gameType.equals(model.getGameType()) ) {
 					roomInfo = redisOperationService.getRoomInfoByRoomId(model.getRoomId(), NnRoomInfo.class);
+					result.setGameType(GameTypeEnum.nn.gameType);
 				}
 				if (roomInfo == null) {
 					/**如果无房间信息，则说明可能其他离线玩家已经将房间删除，不需要再推送消息给其他玩家*/
@@ -41,7 +43,6 @@ public class OfflinePlayerCleanJob extends SingleServerJobByRedis{
 					return;
 				}
 				List playerList = roomInfo.getPlayerList();
-				Result result = new Result();
 				result.setMsgType(MsgTypeEnum.dissolveRoomCausedByOffline.msgType);
 				Map<String, Object> data = new HashMap<String, Object>();
 				data.put("playerId", model.getPlayerId());

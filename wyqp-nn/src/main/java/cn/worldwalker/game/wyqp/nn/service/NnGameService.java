@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
@@ -64,11 +62,6 @@ public class NnGameService extends BaseGameService{
 		return roomInfo;
 	}
 
-	@Override
-	public BaseRoomInfo doDissolveRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
-		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(userInfo.getRoomId(), NnRoomInfo.class);
-		return roomInfo;
-	}
 	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Result result = new Result();
 		result.setGameType(GameTypeEnum.nn.gameType);
@@ -491,15 +484,7 @@ public class NnGameService extends BaseGameService{
 	}
 
 	@Override
-	public BaseRoomInfo doAgreeDissolveRoom(ChannelHandlerContext ctx,
-			BaseRequest request, UserInfo userInfo) {
-		Integer roomId = userInfo.getRoomId();
-		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
-		return roomInfo;
-	}
-
-	@Override
-	public BaseRoomInfo doDisagreeDissolveRoom(ChannelHandlerContext ctx,
+	public BaseRoomInfo getRoomInfo(ChannelHandlerContext ctx,
 			BaseRequest request, UserInfo userInfo) {
 		Integer roomId = userInfo.getRoomId();
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);

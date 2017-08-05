@@ -210,6 +210,7 @@ public class NnCardRule {
 		}else{/**如果牌型相同，则比较最大牌的牌值（除炸弹牛外）*/
 			if (NnCardTypeEnum.NIU_NIU.cardType.equals(player1.getCardType())
 				|| NnCardTypeEnum.GOLD_NIU.cardType.equals(player1.getCardType())
+				|| NnCardTypeEnum.NO_NIU.cardType.equals(player1.getCardType())
 				|| NnCardTypeEnum.FIVE_SMALL_NIU.cardType.equals(player1.getCardType())) {
 				if (compareTwoCardWithCardValueAndSuit(player1.getCardList().get(4), player2.getCardList().get(4)) == 1) {
 					return 1;

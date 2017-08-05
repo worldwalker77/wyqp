@@ -428,7 +428,7 @@ public abstract class BaseGameService {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
-		
+		result.setGameType(request.getGameType());
 		BaseMsg msg = request.getMsg();
 		Integer roomId = msg.getRoomId();
 		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);

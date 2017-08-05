@@ -148,6 +148,7 @@ public class ChannelContainer {
 				Map<String, Object> data = new HashMap<String, Object>();
 				data.put("playerId", playerId);
 				result.setData(data);
+				result.setGameType(gameType);
 				sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArrWithOutSelf(playerList, playerId));
 			}
 		}

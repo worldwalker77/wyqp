@@ -315,6 +315,18 @@ public class NnGameService extends BaseGameService{
 				newPlayer.setLoseTimes(player.getLoseTimes());
 				newRoomInfo.getPlayerList().add(newPlayer);
 			}
+			
+			result.setMsgType(MsgTypeEnum.showCard.msgType);
+			data.put("playerId", playerId);
+			data.put("cardList", cardList);
+			data.put("cardType", cardType);
+			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (NnRoomStatusEnum.totalGameOver.status.equals(roomInfo.getStatus())) {
 				result.setMsgType(MsgTypeEnum.totalSettlement.msgType);
 			}else{
@@ -391,9 +403,9 @@ public class NnGameService extends BaseGameService{
 		roomInfo.setCurWinnerId(curWinnerId);
 		/**如果当前局数小于总局数，则设置为当前局结束*/
 		if (roomInfo.getCurGame() < roomInfo.getTotalGames()) {
-			roomInfo.setStatus(RoomStatusEnum.curGameOver.status);
+			roomInfo.setStatus(NnRoomStatusEnum.curGameOver.status);
 		}else{/**如果当前局数等于总局数，则设置为一圈结束*/
-			roomInfo.setStatus(RoomStatusEnum.totalGameOver.status);
+			roomInfo.setStatus(NnRoomStatusEnum.totalGameOver.status);
 //			addUserRecord(roomInfo.getRoomId(), playerList);
 		}
 		/**如果是第一局结束，则扣除房卡;扣除房卡异常不影响游戏进行，会将异常数据放入redis中，由定时任务进行补偿扣除*/

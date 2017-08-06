@@ -3,6 +3,8 @@ package cn.worldwalker.game.wyqp.nn.cards;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.CollectionUtils;
+
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.Card;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
@@ -28,7 +30,7 @@ public class NnCardRule {
 		cardList.add(card3);
 		cardList.add(card4);
 		cardList.add(card5);
-		System.out.println(calculateCardType(cardList));
+		List<Card> nnCardList = new ArrayList<Card>();
 	}
 	
 	/**
@@ -36,7 +38,15 @@ public class NnCardRule {
 	 * @param cardList
 	 * @return
 	 */
-	public static Integer calculateCardType(List<Card> cardList){
+	public static Integer calculateCardType(List<Card> cardList, List<Card> nnCardList, List<Card> robFourCardList, Card fifthCard){
+		for(int i = 0; i < 4; i++){
+			Card card = new Card();
+			cardCopy(cardList.get(i), card);
+			robFourCardList.add(card);
+		}
+		cardCopy(cardList.get(4), fifthCard);
+		/**排序*/
+		rankSinglePlayerCards(cardList);
 		/**炸弹牛*/
 		if (isBombNiu(cardList)) {
 			return NnCardTypeEnum.BOMB_NIU.cardType;
@@ -64,6 +74,9 @@ public class NnCardRule {
 				for(int k = j + 1; k < 5; k++){
 					value2 = getRealValue(cardList.get(k));
 					if ((value0 + value1 + value2)%10 == 0) {
+						nnCardList.add(cardList.get(i));
+						nnCardList.add(cardList.get(j));
+						nnCardList.add(cardList.get(k));
 						return getNiuNum(cardList, i, j, k);
 					}
 				}
@@ -71,6 +84,13 @@ public class NnCardRule {
 		}
 		/**无牛*/
 		return NnCardTypeEnum.NO_NIU.cardType;
+	}
+	
+	public static void cardCopy(Card srcCard, Card tarCard){
+		tarCard.setCardIndex(srcCard.getCardIndex());
+		tarCard.setCardSuit(srcCard.getCardSuit());
+		tarCard.setCardSuitName(srcCard.getCardSuitName());
+		tarCard.setCardValue(srcCard.getCardValue());
 	}
 	
 	public static Integer getNiuNum(List<Card> cardList, int i, int j, int k){
@@ -202,29 +222,47 @@ public class NnCardRule {
 		}
 	}
 	
+	/**
+	 * 对单个玩家的牌进行排序，从小到大
+	 * @param playerCards
+	 */
+	public static void rankSinglePlayerCards(List<Card> cards){
+		int size = cards.size();
+		for(int i = 0; i< size - 1; i++){
+			for(int j = 0; j < size - 1 - i; j++){
+				if (cards.get(j).getCardValue() > cards.get(j + 1).getCardValue()) {
+					Card tempCard = cards.get(j);
+					cards.set(j, cards.get(j + 1));
+					cards.set(j + 1, tempCard);
+				}else if(cards.get(j).getCardValue().equals(cards.get(j + 1).getCardValue())){
+					if (cards.get(j).getCardSuit() >  cards.get(j + 1).getCardSuit()) {
+						Card tempCard = cards.get(j);
+						cards.set(j, cards.get(j + 1));
+						cards.set(j + 1, tempCard);
+					}
+				}
+			}
+		}
+	}
+	
 	public static int cardTypeCompare(BasePlayerInfo player1, BasePlayerInfo player2){
 		if (player1.getCardType() > player2.getCardType()) {
 			return 1;
 		}else if(player1.getCardType() < player2.getCardType()){
 			return -1;
 		}else{/**如果牌型相同，则比较最大牌的牌值（除炸弹牛外）*/
-			if (NnCardTypeEnum.NIU_NIU.cardType.equals(player1.getCardType())
-				|| NnCardTypeEnum.GOLD_NIU.cardType.equals(player1.getCardType())
-				|| NnCardTypeEnum.NO_NIU.cardType.equals(player1.getCardType())
-				|| NnCardTypeEnum.FIVE_SMALL_NIU.cardType.equals(player1.getCardType())) {
-				if (compareTwoCardWithCardValueAndSuit(player1.getCardList().get(4), player2.getCardList().get(4)) == 1) {
-					return 1;
-				}else{
-					return -1;
-				}
-			}else if(NnCardTypeEnum.BOMB_NIU.cardType.equals(player1.getCardType())){
+			if(NnCardTypeEnum.BOMB_NIU.cardType.equals(player1.getCardType())){
 				if (player1.getCardList().get(1).getCardValue() > player2.getCardList().get(1).getCardValue()) {
 					return 1;
 				}else{
 					return -1;
 				}
 			}else{
-				throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
+				if (compareTwoCardWithCardValueAndSuit(player1.getCardList().get(4), player2.getCardList().get(4)) == 1) {
+					return 1;
+				}else{
+					return -1;
+				}
 			}
 		}
 	}

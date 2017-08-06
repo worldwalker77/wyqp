@@ -2,6 +2,7 @@ package cn.worldwalker.game.wyqp.nn.service;
 
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -90,12 +91,19 @@ public class NnGameService extends BaseGameService{
 			/**开始发牌时将房间内当前局数+1*/
 			roomInfo.setCurGame(roomInfo.getCurGame() + 1);
 			/**发牌*/
-			List<List<Card>> playerCards = NnCardResource.dealCards(size);
+			List<List<Card>> playerCards = NnCardResource.dealCardsWithOutRank(size);
 			/**为每个玩家设置牌及牌型*/
 			for(int i = 0; i < size; i++ ){
 				NnPlayerInfo player = playerList.get(i);
-				player.setCardList(playerCards.get(i));
-				player.setCardType(NnCardRule.calculateCardType(playerCards.get(i)));
+				List<Card> cardList = playerCards.get(i);
+				List<Card> nnCardList = new ArrayList<Card>();
+				List<Card> robFourCardList = new ArrayList<Card>();
+				Card fifthCard = new Card();
+				player.setCardType(NnCardRule.calculateCardType(cardList, nnCardList, robFourCardList, fifthCard));
+				player.setCardList(cardList);
+				player.setNnCardList(nnCardList);
+				player.setRobFourCardList(robFourCardList);
+				player.setFifthCard(fifthCard);
 				/**设置每个玩家的解散房间状态为不同意解散，后面大结算返回大厅的时候回根据此状态判断是否解散房间*/
 				player.setDissolveStatus(DissolveStatusEnum.disagree.status);
 			}
@@ -120,7 +128,7 @@ public class NnGameService extends BaseGameService{
 				result.setMsgType(MsgTypeEnum.readyRobBanker.msgType);
 				for(int i = 0; i < size; i++ ){
 					NnPlayerInfo player = playerList.get(i);
-					List<Card> cardList = player.getCardList().subList(0, 4);
+					List<Card> cardList = player.getRobFourCardList();
 					data.put("cardList", cardList);
 					channelContainer.sendTextMsgByPlayerIds(result, player.getPlayerId());
 				}
@@ -249,15 +257,20 @@ public class NnGameService extends BaseGameService{
 			data.put("stakeScore", msg.getStakeScore());
 			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			result.setMsgType(MsgTypeEnum.dealCards.msgType);
 			for(NnPlayerInfo player : playerList){
-				List<Card> cardList = player.getCardList();
-				data.put("cardList", cardList);
+				if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
+					List<Card> list = player.getRobFourCardList();
+					list.add(player.getFifthCard());
+					data.put("cardList", list);
+				}else{
+					data.put("cardList", player.getCardList());
+				}
 				data.put("cardType", player.getCardType());
 				data.put("playerId", player.getPlayerId());
 				channelContainer.sendTextMsgByPlayerIds(result, player.getPlayerId());
@@ -282,6 +295,7 @@ public class NnGameService extends BaseGameService{
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		List<Card> cardList = null;
+		List<Card> nnCardList = null;
 		Integer cardType = null;
 		int showCardNum = 0;
 		int size = playerList.size();
@@ -289,8 +303,16 @@ public class NnGameService extends BaseGameService{
 			NnPlayerInfo player = playerList.get(i);
 			if (player.getPlayerId().equals(playerId)) {
 				player.setStatus(NnPlayerStatusEnum.showCard.status);
-				cardList = player.getCardList();
+				if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
+					List<Card> list = player.getRobFourCardList();
+					list.add(player.getFifthCard());
+					cardList = list;
+				}else{
+					cardList = player.getCardList();
+				}
+				
 				cardType = player.getCardType();
+				nnCardList = player.getNnCardList();
 			}
 			if (NnPlayerStatusEnum.showCard.status.equals(player.getStatus())) {
 				showCardNum++;
@@ -320,9 +342,10 @@ public class NnGameService extends BaseGameService{
 			data.put("playerId", playerId);
 			data.put("cardList", cardList);
 			data.put("cardType", cardType);
+			data.put("nnCardList", nnCardList);
 			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -341,6 +364,7 @@ public class NnGameService extends BaseGameService{
 		data.put("playerId", playerId);
 		data.put("cardList", cardList);
 		data.put("cardType", cardType);
+		data.put("nnCardList", nnCardList);
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 		
 	}

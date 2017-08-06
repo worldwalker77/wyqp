@@ -243,7 +243,7 @@ public abstract class BaseGameService {
 		BaseRoomInfo roomInfo = doEntryRoom(ctx, request, userInfo);
 		List playerList = roomInfo.getPlayerList();
 		int size = playerList.size();
-		for(int i = 0; i < size; i++ ){
+		for(int i = 0; i < playerList.size(); i++ ){
 			BasePlayerInfo tempPlayerInfo = (BasePlayerInfo)playerList.get(i);
 			if (playerId.equals(tempPlayerInfo.getPlayerId())) {
 				playerList.remove(i);
@@ -272,8 +272,8 @@ public abstract class BaseGameService {
 		redisOperationService.setPlayerIdRoomIdGameType(userInfo.getPlayerId(), roomId, request.getGameType());
 		
 		result = new Result();
-		result.setMsgType(request.getMsgType());
-		result.setGameType(1);
+		result.setGameType(request.getGameType());
+		result.setMsgType(MsgTypeEnum.entryRoom.msgType);
 		result.setData(roomInfo);
 		/**给此房间中的所有玩家发送消息*/
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
@@ -285,7 +285,7 @@ public abstract class BaseGameService {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
-		
+		result.setGameType(request.getGameType());
 		Integer playerId = userInfo.getPlayerId();
 		Integer roomId = userInfo.getRoomId();
 		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
@@ -317,7 +317,7 @@ public abstract class BaseGameService {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
-		
+		result.setGameType(request.getGameType());
 		BaseMsg msg = request.getMsg();
 		Integer roomId = msg.getRoomId();
 		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
@@ -356,7 +356,7 @@ public abstract class BaseGameService {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
-		
+		result.setGameType(request.getGameType());
 		BaseMsg msg = request.getMsg();
 		Integer roomId = msg.getRoomId();
 		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
@@ -386,7 +386,7 @@ public abstract class BaseGameService {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
-		
+		result.setGameType(request.getGameType());
 		BaseMsg msg = request.getMsg();
 		Integer roomId = msg.getRoomId();
 		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
@@ -465,6 +465,7 @@ public abstract class BaseGameService {
 	
 	public void syncPlayerLocation(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Result result = new Result();
+		result.setGameType(request.getGameType());
 		result.setMsgType(MsgTypeEnum.syncPlayerLocation.msgType);
 		BaseMsg msg = request.getMsg();
 		userInfo.setAddress(msg.getAddress());
@@ -477,7 +478,7 @@ public abstract class BaseGameService {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
-		
+		result.setGameType(request.getGameType());
 		BaseMsg msg = request.getMsg();
 		Integer roomId = msg.getRoomId();
 		BaseRoomInfo roomInfo = getRoomInfo(ctx, request, userInfo);
@@ -522,6 +523,7 @@ public abstract class BaseGameService {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
+		result.setGameType(request.getGameType());
 		BaseMsg msg = request.getMsg();
 		List<UserRecordModel> list = userRecordDao.getUserRecord(msg.getPlayerId());
 		for(UserRecordModel model : list){
@@ -536,6 +538,7 @@ public abstract class BaseGameService {
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
+		result.setGameType(request.getGameType());
 		BaseMsg msg = request.getMsg();
 		UserFeedbackModel model = new UserFeedbackModel();
 		model.setPlayerId(msg.getPlayerId());

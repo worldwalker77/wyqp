@@ -74,6 +74,28 @@ public class NnCardResource {
 		return playerCards;
 	}
 	
+	/**
+	 * 模拟发牌，每个玩家发5张，一张一张的发牌
+	 * @param playerNum 玩家数
+	 * @return
+	 */
+	public static List<List<Card>> dealCardsWithOutRank(int playerNum){
+		
+		List<List<Card>> playerCards = new ArrayList<List<Card>>();
+		for(int j = 0; j < playerNum; j++){
+			playerCards.add(new ArrayList<Card>());
+		}
+		List<Card> cardResource = genCardResource();
+		for(int i = 0; i < 5; i++){
+			for(int j = 0; j < playerNum; j++){
+				Card card = genCard(cardResource, 0, cardResource.size());
+				playerCards.get(j).add(card);
+			}
+		}
+		System.out.println(JsonUtil.toJson(playerCards));
+		return playerCards;
+	}
+	
 	
 	public static void main(String[] args) {
 	//	genCardResource();

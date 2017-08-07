@@ -543,18 +543,53 @@ public class NnGameService extends BaseGameService{
 				case justBegin:
 					break;
 				case inRob:
+					/**如果是自己，则设置四张牌返回*/
+					if (playerId.equals(player.getPlayerId())) {
+						newPlayer.setCardList(player.getRobFourCardList());
+					}
 					break;
 				case inStakeScore:
 					newPlayer.setStakeScore(player.getStakeScore());
+					if (playerId.equals(player.getPlayerId())) {
+						if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
+							if (NnPlayerStatusEnum.stakeScore.status.equals(player.getStatus())) {
+								List<Card> list = player.getRobFourCardList();
+								list.add(player.getFifthCard());
+								newPlayer.setCardList(list);
+							}else{
+								newPlayer.setCardList(player.getRobFourCardList());
+							}
+						}else{
+							newPlayer.setCardList(player.getCardList());
+						}
+					}
 					break;
 				case inGame:
 					newPlayer.setStakeScore(player.getStakeScore());
+					/**如果玩家是自己或者已经亮牌，则返回牌信息*/
+					if (playerId.equals(player.getPlayerId()) || NnPlayerStatusEnum.showCard.status.equals(player.getStatus())) {
+						if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
+							List<Card> list = player.getRobFourCardList();
+							list.add(player.getFifthCard());
+							newPlayer.setCardList(list);
+						}else{
+							newPlayer.setCardList(player.getCardList());
+						}
+						newPlayer.setCardType(player.getCardType());
+					}
 					break;
 				case curGameOver:
 					newPlayer.setCurScore(player.getCurScore());
+					if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
+						List<Card> list = player.getRobFourCardList();
+						list.add(player.getFifthCard());
+						newPlayer.setCardList(list);
+					}else{
+						newPlayer.setCardList(player.getCardList());
+					}
+					newPlayer.setCardType(player.getCardType());
 					break;
 				case totalGameOver:
-					newPlayer.setCurScore(player.getCurScore());
 					newPlayer.setMaxCardType(player.getMaxCardType());
 					newPlayer.setWinTimes(player.getWinTimes());
 					newPlayer.setLoseTimes(player.getLoseTimes());

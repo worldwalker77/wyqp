@@ -20,6 +20,7 @@ import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
+import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
@@ -509,11 +510,59 @@ public class NnGameService extends BaseGameService{
 		Integer playerId = userInfo.getPlayerId();
 		Integer roomId = userInfo.getRoomId();
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
-		NnRoomInfo returnRoomInfo = new NnRoomInfo();
+		NnRoomInfo newRoomInfo = new NnRoomInfo();
 		roomInfoList.add(roomInfo);
-		roomInfoList.add(returnRoomInfo);
+		roomInfoList.add(newRoomInfo);
+		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
+		
 		
 		/**根据不同的房间及玩家状态设置返回房间信息*/
+		NnRoomStatusEnum roomStatusEnum = NnRoomStatusEnum.getRoomStatusEnum(roomInfo.getStatus());
+		newRoomInfo.setGameType(roomInfo.getGameType());
+		newRoomInfo.setStatus(roomStatusEnum.status);
+		newRoomInfo.setRoomId(roomId);
+		newRoomInfo.setRoomOwnerId(roomInfo.getRoomOwnerId());
+		newRoomInfo.setRoomBankerId(roomInfo.getRoomBankerId());
+		newRoomInfo.setTotalGames(roomInfo.getTotalGames());
+		newRoomInfo.setCurGame(roomInfo.getCurGame());
+		newRoomInfo.setPayType(roomInfo.getPayType());
+		
+		for(NnPlayerInfo player : playerList){
+			NnPlayerInfo newPlayer = new NnPlayerInfo();
+			newPlayer.setPlayerId(player.getPlayerId());
+			newPlayer.setNickName(player.getNickName());
+			newPlayer.setHeadImgUrl(player.getHeadImgUrl());
+			newPlayer.setOrder(player.getOrder());
+			newPlayer.setRoomCardNum(player.getRoomCardNum());
+			newPlayer.setLevel(player.getLevel());
+			newPlayer.setStatus(player.getStatus());
+			newPlayer.setOnlineStatus(player.getOnlineStatus());
+			newPlayer.setTotalScore(player.getTotalScore());
+			newRoomInfo.getPlayerList().add(newPlayer);
+			switch (roomStatusEnum) {
+				case justBegin:
+					break;
+				case inRob:
+					break;
+				case inStakeScore:
+					newPlayer.setStakeScore(player.getStakeScore());
+					break;
+				case inGame:
+					newPlayer.setStakeScore(player.getStakeScore());
+					break;
+				case curGameOver:
+					newPlayer.setCurScore(player.getCurScore());
+					break;
+				case totalGameOver:
+					newPlayer.setCurScore(player.getCurScore());
+					newPlayer.setMaxCardType(player.getMaxCardType());
+					newPlayer.setWinTimes(player.getWinTimes());
+					newPlayer.setLoseTimes(player.getLoseTimes());
+					break;
+				default:
+					break;
+			}
+		}
 		
 		return roomInfoList;
 	}

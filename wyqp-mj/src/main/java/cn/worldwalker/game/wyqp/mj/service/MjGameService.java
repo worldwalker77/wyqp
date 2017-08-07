@@ -46,7 +46,7 @@ public class MjGameService extends BaseGameService{
 
 
 	@Override
-	public BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx,BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo) {
+	public List<BaseRoomInfo> doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		return null;
 	}
 

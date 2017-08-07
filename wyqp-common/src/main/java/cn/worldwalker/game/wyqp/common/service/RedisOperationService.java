@@ -99,9 +99,13 @@ public class RedisOperationService {
 		return new RedisRelaModel(playerId, Integer.valueOf(arr[0]), Integer.valueOf(arr[1]), null);
 	}
 	
-	/**playerId->roomId,gameType 映射*/
+	/**offline playerId->roomId,gameType 映射*/
 	public void setOfflinePlayerIdRoomIdGameTypeTime(Integer playerId, Integer roomId, Integer gameType, Date time){
 		jedisTemplate.hset(Constant.wyqpOfflinePlayerIdRoomIdGameTypeTimeMap, String.valueOf(playerId), roomId + "_" + gameType + "_" + time.getTime());
+	}
+	
+	public void hdelOfflinePlayerIdRoomIdGameTypeTime(Integer playerId){
+		jedisTemplate.hdel(Constant.wyqpOfflinePlayerIdRoomIdGameTypeTimeMap, String.valueOf(playerId));
 	}
 	
 	public RedisRelaModel getRoomIdGameTypeTimeByOfflinePlayerId(Integer playerId){

@@ -35,6 +35,8 @@ public class BaseRoomInfo {
 	private Integer status;
 	
 	private List playerList;
+	
+	private Integer gameType;
 
 	public Integer getRoomId() {
 		return roomId;
@@ -142,6 +144,14 @@ public class BaseRoomInfo {
 
 	public List getPlayerList() {
 		return playerList;
+	}
+
+	public Integer getGameType() {
+		return gameType;
+	}
+
+	public void setGameType(Integer gameType) {
+		this.gameType = gameType;
 	}
 
 }

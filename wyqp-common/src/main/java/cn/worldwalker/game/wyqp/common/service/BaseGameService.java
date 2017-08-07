@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
+import cn.worldwalker.game.wyqp.common.constant.Constant;
 import cn.worldwalker.game.wyqp.common.dao.UserDao;
 import cn.worldwalker.game.wyqp.common.dao.UserFeedbackDao;
 import cn.worldwalker.game.wyqp.common.dao.UserRecordDao;
@@ -33,6 +34,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.WeiXinUserInfo;
 import cn.worldwalker.game.wyqp.common.enums.ChatTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
+import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
@@ -243,6 +245,9 @@ public abstract class BaseGameService {
 		BaseRoomInfo roomInfo = doEntryRoom(ctx, request, userInfo);
 		List playerList = roomInfo.getPlayerList();
 		int size = playerList.size();
+		if (size == 6) {
+			throw new BusinessException(ExceptionEnum.EXCEED_MAX_PLAYER_NUM);
+		}
 		for(int i = 0; i < playerList.size(); i++ ){
 			BasePlayerInfo tempPlayerInfo = (BasePlayerInfo)playerList.get(i);
 			if (playerId.equals(tempPlayerInfo.getPlayerId())) {
@@ -555,6 +560,46 @@ public abstract class BaseGameService {
 	public void ready(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){}
 	
 	public void refreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		
+		BaseMsg msg = request.getMsg();
+		Integer roomId = msg.getRoomId();
+		Integer playerId = msg.getPlayerId();
+		List<BaseRoomInfo> roomInfoList = doRefreshRoom(ctx, request, userInfo);
+		BaseRoomInfo roomInfo = roomInfoList.get(0);
+		BaseRoomInfo returnRoomInfo = roomInfoList.get(1);
+		if (null == roomInfo) {
+			channelContainer.sendTextMsgByPlayerIds(new Result(0, MsgTypeEnum.entryHall.msgType), playerId);
+			return;
+		}
+		List playerList = roomInfo.getPlayerList();
+		if (GameUtil.isExistPlayerInRoom(playerId, playerList)) {
+			channelContainer.sendTextMsgByPlayerIds(new Result(0, MsgTypeEnum.entryHall.msgType), playerId);
+			return;
+		}
+		result.setGameType(roomInfo.getGameType());
+		result.setMsgType(MsgTypeEnum.refreshRoom.msgType);
+		result.setData(returnRoomInfo);
+		/**返回给当前玩家刷新信息*/
+		channelContainer.sendTextMsgByPlayerIds(result, playerId);
+		
+		
+		/**设置当前玩家缓存中为在线状态*/
+		GameUtil.setOnlineStatus(playerList, playerId, OnlineStatusEnum.online);
+		redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
+		/**给其他的玩家发送当前玩家上线通知*/
+		Result result1 = new Result();
+		Map<String, Object> data1 = new HashMap<String, Object>();
+		result1.setData(data1);
+		data1.put("playerId", msg.getPlayerId());
+		result1.setGameType(roomInfo.getGameType());
+		result1.setMsgType(MsgTypeEnum.onlineNotice.msgType);
+		channelContainer.sendTextMsgByPlayerIds(result1, GameUtil.getPlayerIdArrWithOutSelf(playerList, playerId));
+		/**删除此玩家的离线标记*/
+		redisOperationService.hdelOfflinePlayerIdRoomIdGameTypeTime(playerId);
 	}
-	public abstract BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo);
+	
+	public abstract List<BaseRoomInfo> doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
 }

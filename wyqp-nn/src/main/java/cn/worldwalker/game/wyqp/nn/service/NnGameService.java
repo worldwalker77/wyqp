@@ -42,6 +42,7 @@ public class NnGameService extends BaseGameService{
 			throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
 		}
 		NnRoomInfo roomInfo = new NnRoomInfo();
+		roomInfo.setGameType(GameTypeEnum.nn.gameType);
 		roomInfo.setRoomBankerType(msg.getRoomBankerType());
 		/**如果不是抢庄类型，则创建房间的时候直接设置房主为庄家*/
 		if (!NnRoomBankerTypeEnum.robBanker.type.equals(msg.getRoomBankerType())) {
@@ -255,13 +256,8 @@ public class NnGameService extends BaseGameService{
 			result.setMsgType(MsgTypeEnum.stakeScore.msgType);
 			data.put("playerId", playerId);
 			data.put("stakeScore", msg.getStakeScore());
+			data.put("isLastStakeScore", 1);
 			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			result.setMsgType(MsgTypeEnum.dealCards.msgType);
 			for(NnPlayerInfo player : playerList){
 				if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
@@ -281,6 +277,7 @@ public class NnGameService extends BaseGameService{
 		result.setMsgType(MsgTypeEnum.stakeScore.msgType);
 		data.put("playerId", playerId);
 		data.put("stakeScore", msg.getStakeScore());
+		data.put("isLastStakeScore", 0);
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 	}
 	
@@ -343,13 +340,8 @@ public class NnGameService extends BaseGameService{
 			data.put("cardList", cardList);
 			data.put("cardType", cardType);
 			data.put("nnCardList", nnCardList);
+			data.put("isLastShowCard", 1);
 			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			if (NnRoomStatusEnum.totalGameOver.status.equals(roomInfo.getStatus())) {
 				result.setMsgType(MsgTypeEnum.totalSettlement.msgType);
 			}else{
@@ -365,6 +357,7 @@ public class NnGameService extends BaseGameService{
 		data.put("cardList", cardList);
 		data.put("cardType", cardType);
 		data.put("nnCardList", nnCardList);
+		data.put("isLastShowCard", 0);
 		channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 		
 	}
@@ -510,13 +503,19 @@ public class NnGameService extends BaseGameService{
 	}
 
 	@Override
-	public BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo) {
+	public List<BaseRoomInfo> doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+		List<BaseRoomInfo> roomInfoList = new ArrayList<BaseRoomInfo>();
 		NnMsg msg = (NnMsg)request.getMsg();
 		Integer playerId = userInfo.getPlayerId();
 		Integer roomId = userInfo.getRoomId();
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
+		NnRoomInfo returnRoomInfo = new NnRoomInfo();
+		roomInfoList.add(roomInfo);
+		roomInfoList.add(returnRoomInfo);
 		
-		return null;
+		/**根据不同的房间及玩家状态设置返回房间信息*/
+		
+		return roomInfoList;
 	}
 
 	@Override

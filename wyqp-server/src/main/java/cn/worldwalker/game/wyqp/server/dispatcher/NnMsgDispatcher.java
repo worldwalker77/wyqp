@@ -56,20 +56,6 @@ public class NnMsgDispatcher extends BaseMsgDisPatcher {
 			case chatMsg:
 				nnGameService.chatMsg(ctx, request, userInfo);
 				break;
-			case heartBeat:
-				channelContainer.sendTextMsgByPlayerIds(new Result(GameTypeEnum.nn.gameType, MsgTypeEnum.heartBeat.msgType), userInfo.getPlayerId());
-				break;
-			case userRecord:
-				nnGameService.userRecord(ctx, request, userInfo);
-				break;
-			case userFeedback:
-				nnGameService.userFeedback(ctx, request, userInfo);
-				break;
-			case syncPlayerLocation:
-				nnGameService.syncPlayerLocation(ctx, request, userInfo);
-				break;
-			case refreshRoom:
-				break;
 			default:
 				break;
 		}

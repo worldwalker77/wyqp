@@ -1,5 +1,7 @@
 package cn.worldwalker.game.wyqp.server.service;
 
+import java.util.List;
+
 import io.netty.channel.ChannelHandlerContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
+import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
+import cn.worldwalker.game.wyqp.common.result.Result;
 import cn.worldwalker.game.wyqp.common.service.BaseGameService;
 import cn.worldwalker.game.wyqp.mj.service.MjGameService;
 import cn.worldwalker.game.wyqp.nn.service.NnGameService;
@@ -45,6 +49,10 @@ public class CommonGameService extends BaseGameService{
 	
 	public void commonRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
 		Integer roomId = userInfo.getRoomId();
+		if (roomId == null) {
+			channelContainer.sendTextMsgByPlayerIds(new Result(0, MsgTypeEnum.entryHall.msgType), userInfo.getPlayerId());
+			return;
+		}
 		RedisRelaModel rrm = redisOperationService.getGameTypeUpdateTimeByRoomId(roomId);
 		Integer realGameType = rrm.getGameType();
 		/**设置真是的gameType*/
@@ -52,10 +60,10 @@ public class CommonGameService extends BaseGameService{
 		GameTypeEnum gameTypeEnum = GameTypeEnum.getGameTypeEnumByType(realGameType);
 		switch (gameTypeEnum) {
 			case nn:
-				nnGameService.entryRoom(ctx, request, userInfo);
+				nnGameService.refreshRoom(ctx, request, userInfo);
 				break;
 			case mj:
-				mjGameService.entryRoom(ctx, request, userInfo);
+				nnGameService.refreshRoom(ctx, request, userInfo);
 				break;
 			default:
 				break;
@@ -74,7 +82,7 @@ public class CommonGameService extends BaseGameService{
 	}
 
 	@Override
-	public BaseRoomInfo doRefreshRoom(ChannelHandlerContext ctx,BaseRequest request, UserInfo userInfo, BaseRoomInfo newRoomInfo) {
+	public List<BaseRoomInfo> doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		return null;
 	}
 

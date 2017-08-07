@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseMsg;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
+import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
+import cn.worldwalker.game.wyqp.common.result.Result;
 import cn.worldwalker.game.wyqp.server.service.CommonGameService;
 
 @Service(value="commonMsgDispatcher")
@@ -27,15 +29,22 @@ public class CommonMsgDisPatcher extends BaseMsgDisPatcher{
 				commonGameService.entryHall(ctx, request, userInfo);
 				break;
 			case syncPlayerLocation:
+				commonGameService.syncPlayerLocation(ctx, request, userInfo);
 				break;
 			case entryRoom:
 				commonGameService.commonEntryRoom(ctx, request, userInfo);
 				break;
-			case refreshRoom:
-				break;
 			case userRecord:
+				commonGameService.userRecord(ctx, request, userInfo);
 				break;
 			case userFeedback:
+				commonGameService.userFeedback(ctx, request, userInfo);
+				break;
+			case heartBeat:
+				channelContainer.sendTextMsgByPlayerIds(new Result(GameTypeEnum.nn.gameType, MsgTypeEnum.heartBeat.msgType), userInfo.getPlayerId());
+				break;
+			case refreshRoom:
+				commonGameService.commonRefreshRoom(ctx, request, userInfo);
 				break;
 			default:
 				break;

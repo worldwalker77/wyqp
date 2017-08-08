@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -64,6 +65,13 @@ public abstract class BaseMsgDisPatcher {
 					throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
 				}
 				lock = RoomLockContainer.getLockByRoomId(msg.getRoomId());
+				if (lock == null) {
+					synchronized (BaseMsgDisPatcher.class) {
+						if (lock == null) {
+							RoomLockContainer.setLockByRoomId(msg.getRoomId(), new ReentrantLock());
+						}
+					}
+				}
 				lock.lock();
 			}
 			requestDispatcher(ctx, request, userInfo);

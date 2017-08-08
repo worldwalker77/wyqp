@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import cn.worldwalker.game.wyqp.common.dao.UserFeedbackDao;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.Card;
@@ -20,7 +21,6 @@ import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
-import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
 import cn.worldwalker.game.wyqp.common.result.Result;
@@ -363,7 +363,7 @@ public class NnGameService extends BaseGameService{
 		
 	}
 	
-	private static void calculateScoreAndRoomBanker(NnRoomInfo roomInfo){
+	private void calculateScoreAndRoomBanker(NnRoomInfo roomInfo){
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		/**找出庄家*/
 		NnPlayerInfo roomBankerPlayer = null;
@@ -428,6 +428,7 @@ public class NnGameService extends BaseGameService{
 		}
 		/**如果是第一局结束，则扣除房卡;扣除房卡异常不影响游戏进行，会将异常数据放入redis中，由定时任务进行补偿扣除*/
 		if (roomInfo.getCurGame() == 1) {
+//			commonManager.doDeductRoomCard(playerId, payType, totalGames, operationEnum);
 			//TODO
 //			deductRoomCard(roomInfo);
 		}
@@ -455,7 +456,6 @@ public class NnGameService extends BaseGameService{
 		player1.setStakeScore(2);
 		roomInfo.getPlayerList().add(player);
 		roomInfo.getPlayerList().add(player1);
-		calculateScoreAndRoomBanker(roomInfo);
 	}
 	
 	
@@ -522,6 +522,7 @@ public class NnGameService extends BaseGameService{
 		newRoomInfo.setRoomId(roomId);
 		newRoomInfo.setRoomOwnerId(roomInfo.getRoomOwnerId());
 		newRoomInfo.setRoomBankerId(roomInfo.getRoomBankerId());
+		newRoomInfo.setRoomBankerType(roomInfo.getRoomBankerType());
 		newRoomInfo.setTotalGames(roomInfo.getTotalGames());
 		newRoomInfo.setCurGame(roomInfo.getCurGame());
 		newRoomInfo.setPayType(roomInfo.getPayType());

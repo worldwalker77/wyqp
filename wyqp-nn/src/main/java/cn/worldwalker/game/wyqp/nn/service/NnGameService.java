@@ -20,7 +20,6 @@ import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
-import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
@@ -324,6 +323,7 @@ public class NnGameService extends BaseGameService{
 			newRoomInfo.setRoomId(roomId);
 			newRoomInfo.setRoomOwnerId(roomInfo.getRoomOwnerId());
 			newRoomInfo.setRoomBankerId(roomInfo.getRoomBankerId());
+			newRoomInfo.setUpdateTime(roomInfo.getUpdateTime());
 			for(NnPlayerInfo player : playerList){
 				NnPlayerInfo newPlayer = new NnPlayerInfo();
 				newPlayer.setPlayerId(player.getPlayerId());
@@ -506,7 +506,6 @@ public class NnGameService extends BaseGameService{
 	@Override
 	public List<BaseRoomInfo> doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		List<BaseRoomInfo> roomInfoList = new ArrayList<BaseRoomInfo>();
-		NnMsg msg = (NnMsg)request.getMsg();
 		Integer playerId = userInfo.getPlayerId();
 		Integer roomId = userInfo.getRoomId();
 		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
@@ -526,6 +525,7 @@ public class NnGameService extends BaseGameService{
 		newRoomInfo.setTotalGames(roomInfo.getTotalGames());
 		newRoomInfo.setCurGame(roomInfo.getCurGame());
 		newRoomInfo.setPayType(roomInfo.getPayType());
+		newRoomInfo.setMultipleLimit(roomInfo.getMultipleLimit());
 		
 		for(NnPlayerInfo player : playerList){
 			NnPlayerInfo newPlayer = new NnPlayerInfo();

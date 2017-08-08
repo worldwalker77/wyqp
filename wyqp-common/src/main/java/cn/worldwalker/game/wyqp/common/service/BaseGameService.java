@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
-import cn.worldwalker.game.wyqp.common.constant.Constant;
 import cn.worldwalker.game.wyqp.common.dao.UserDao;
 import cn.worldwalker.game.wyqp.common.dao.UserFeedbackDao;
 import cn.worldwalker.game.wyqp.common.dao.UserRecordDao;
@@ -39,6 +38,7 @@ import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
+import cn.worldwalker.game.wyqp.common.manager.CommonManager;
 import cn.worldwalker.game.wyqp.common.result.Result;
 import cn.worldwalker.game.wyqp.common.roomlocks.RoomLockContainer;
 import cn.worldwalker.game.wyqp.common.rpc.WeiXinRpc;
@@ -54,6 +54,8 @@ public abstract class BaseGameService {
 	public RedisOperationService redisOperationService;
 	@Autowired
 	public ChannelContainer channelContainer;
+	@Autowired
+	public CommonManager commonManager;
 	@Autowired
 	private UserFeedbackDao userFeedbackDao;
 	@Autowired
@@ -186,6 +188,7 @@ public abstract class BaseGameService {
 		playerInfo.setLevel(1);
 		playerInfo.setOrder(1);
 		playerInfo.setStatus(PlayerStatusEnum.notReady.status);
+		playerInfo.setOnlineStatus(OnlineStatusEnum.online.status);
 		playerInfo.setRoomCardNum(10);
 		playerInfo.setWinTimes(0);
 		playerInfo.setLoseTimes(0);
@@ -262,6 +265,7 @@ public abstract class BaseGameService {
 		playerInfo.setLevel(1);
 		playerInfo.setOrder(playerList.size());
 		playerInfo.setStatus(PlayerStatusEnum.notReady.status);
+		playerInfo.setOnlineStatus(OnlineStatusEnum.online.status);
 		playerInfo.setRoomCardNum(10);
 		playerInfo.setWinTimes(0);
 		playerInfo.setLoseTimes(0);
@@ -575,7 +579,7 @@ public abstract class BaseGameService {
 			return;
 		}
 		List playerList = roomInfo.getPlayerList();
-		if (GameUtil.isExistPlayerInRoom(playerId, playerList)) {
+		if (!GameUtil.isExistPlayerInRoom(playerId, playerList)) {
 			channelContainer.sendTextMsgByPlayerIds(new Result(0, MsgTypeEnum.entryHall.msgType), playerId);
 			return;
 		}

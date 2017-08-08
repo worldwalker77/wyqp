@@ -112,7 +112,7 @@ public class NnGameService extends BaseGameService{
 			if (NnRoomBankerTypeEnum.robBanker.type.equals(roomInfo.getRoomBankerType())) {
 				roomInfo.setStatus(NnRoomStatusEnum.inRob.status);
 			}else{
-				roomInfo.setStatus(RoomStatusEnum.inGame.status);
+				roomInfo.setStatus(NnRoomStatusEnum.inStakeScore.status);
 			}
 			
 			roomInfo.setUpdateTime(new Date());

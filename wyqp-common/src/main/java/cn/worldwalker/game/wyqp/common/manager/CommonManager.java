@@ -23,4 +23,6 @@ public interface CommonManager {
 	public Integer doDeductRoomCard(Integer gameType, Integer payType, Integer totalGames, RoomCardOperationEnum operationEnum, Integer playerId);
 	
 	public void addUserRecord(BaseRoomInfo roomInfo);
+	
+	public void roomCardCheck(Integer playerId, Integer gameType, Integer payType, Integer totalGames);
 }

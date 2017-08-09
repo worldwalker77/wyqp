@@ -17,9 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
-import cn.worldwalker.game.wyqp.common.dao.UserDao;
-import cn.worldwalker.game.wyqp.common.dao.UserFeedbackDao;
-import cn.worldwalker.game.wyqp.common.dao.UserRecordDao;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseMsg;
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
@@ -56,12 +53,6 @@ public abstract class BaseGameService {
 	public ChannelContainer channelContainer;
 	@Autowired
 	public CommonManager commonManager;
-	@Autowired
-	private UserFeedbackDao userFeedbackDao;
-	@Autowired
-	private UserDao userDao;
-	@Autowired
-	private UserRecordDao userRecordDao;
 	
 	@Autowired
 	public WeiXinRpc weiXinRpc;
@@ -142,11 +133,9 @@ public abstract class BaseGameService {
 		
 		/**校验房卡数量是否足够*/
 		//TODO
-//		ResultCode resultCode = commonService.roomCardCheck(msg.getPlayerId(), msg.getPayType(), msg.getTotalGames());
-//		if (!ResultCode.SUCCESS.equals(resultCode)) {
-//			channelContainer.sendErrorMsg(ctx, resultCode, MsgTypeEnum.createRoom.msgType, request);
-//			return result;
-//		}
+		if (redisOperationService.isLoginFuseOpen()) {
+			commonManager.roomCardCheck(userInfo.getPlayerId(), request.getGameType(), msg.getPayType(), msg.getTotalGames());
+		}
 		
 		Integer roomId = GameUtil.genRoomId();
 		int i = 0;

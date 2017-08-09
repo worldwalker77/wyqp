@@ -377,7 +377,16 @@ public class NnGameService extends BaseGameService{
 		for(NnPlayerInfo player : playerList){
 			if (!roomInfo.getRoomBankerId().equals(player.getPlayerId())) {
 				if (NnCardRule.cardTypeCompare(player, roomBankerPlayer) > 0) {
-					Integer winScore = player.getStakeScore()*NnCardTypeEnum.getNnCardTypeEnum(player.getCardType()).multiple;
+					
+					Integer cardTypeMultiple = NnCardTypeEnum.getNnCardTypeEnum(player.getCardType()).multiple;
+					Integer settedMultiple = roomInfo.getMultipleLimit();
+					Integer multiple = cardTypeMultiple;
+					if (cardTypeMultiple > settedMultiple) {
+						multiple = settedMultiple;
+					}else{
+						multiple = cardTypeMultiple;
+					}
+					Integer winScore = player.getStakeScore()*multiple;
 					player.setCurScore(winScore);
 					player.setTotalScore(player.getTotalScore() + player.getCurScore());
 					player.setWinTimes(player.getWinTimes() + 1);
@@ -385,7 +394,15 @@ public class NnGameService extends BaseGameService{
 					roomBankerPlayer.setTotalScore(roomBankerPlayer.getTotalScore() + roomBankerPlayer.getCurScore());
 					roomBankerPlayer.setLoseTimes(roomBankerPlayer.getLoseTimes() + 1);
 				}else{
-					Integer winScore = player.getStakeScore()*NnCardTypeEnum.getNnCardTypeEnum(roomBankerPlayer.getCardType()).multiple;
+					Integer cardTypeMultiple = NnCardTypeEnum.getNnCardTypeEnum(player.getCardType()).multiple;
+					Integer settedMultiple = roomInfo.getMultipleLimit();
+					Integer multiple = cardTypeMultiple;
+					if (cardTypeMultiple > settedMultiple) {
+						multiple = settedMultiple;
+					}else{
+						multiple = cardTypeMultiple;
+					}
+					Integer winScore = player.getStakeScore()*multiple;
 					player.setCurScore(0 - winScore);
 					player.setTotalScore(player.getTotalScore() + player.getCurScore());
 					player.setLoseTimes(player.getLoseTimes() + 1);
@@ -432,10 +449,12 @@ public class NnGameService extends BaseGameService{
 		}
 		/**如果是第一局结束，则扣除房卡;扣除房卡异常不影响游戏进行，会将异常数据放入redis中，由定时任务进行补偿扣除*/
 		if (roomInfo.getCurGame() == 1) {
-			try {
-				commonManager.deductRoomCard(roomInfo, RoomCardOperationEnum.consumeCard);
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (redisOperationService.isLoginFuseOpen()) {
+				try {
+					commonManager.deductRoomCard(roomInfo, RoomCardOperationEnum.consumeCard);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		

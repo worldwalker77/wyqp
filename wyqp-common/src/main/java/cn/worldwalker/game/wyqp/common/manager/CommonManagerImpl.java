@@ -144,4 +144,16 @@ public class CommonManagerImpl implements CommonManager{
 		}
 		userRecordDao.batchInsertRecord(modelList);
 	}
+	@Override
+	public void roomCardCheck(Integer playerId, Integer gameType, Integer payType, Integer totalGames) {
+		RoomCardConsumeEnum consumeEnum = RoomCardConsumeEnum.getRoomCardConsumeEnum(gameType,payType, totalGames);
+		if (consumeEnum == null) {
+			throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
+		}
+		UserModel userModel = userDao.getUserById(playerId);
+		Integer roomCardNum = userModel.getRoomCardNum();
+		if (roomCardNum < consumeEnum.needRoomCardNum) {
+			throw new BusinessException(ExceptionEnum.ROOM_CARD_NOT_ENOUGH);
+		}
+	}
 }

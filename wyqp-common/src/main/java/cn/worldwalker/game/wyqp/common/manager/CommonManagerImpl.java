@@ -138,7 +138,7 @@ public class CommonManagerImpl implements CommonManager{
 			model.setTotalGames(roomInfo.getTotalGames());
 			model.setScore(player.getTotalScore());
 			model.setNickNames(nickNames);
-			model.setRemark(RoomCardConsumeEnum.getRoomCardConsumeEnum(roomInfo.getGameType(), roomInfo.getPayType(), roomInfo.getTotalGames()).desc);
+//			model.setRemark(RoomCardConsumeEnum.getRoomCardConsumeEnum(roomInfo.getGameType(), roomInfo.getPayType(), roomInfo.getTotalGames()).desc);
 			model.setCreateTime(createTime);
 			modelList.add(model);
 		}

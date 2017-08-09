@@ -57,7 +57,9 @@ public abstract class BaseMsgDisPatcher {
 		if (!MsgTypeEnum.entryRoom.equals(msgTypeEnum)) {
 			msg.setRoomId(userInfo.getRoomId());
 		}
-		log.info("请求," + MsgTypeEnum.getMsgTypeEnumByType(request.getMsgType()).desc + ": " + JsonUtil.toJson(request));
+		if (!MsgTypeEnum.heartBeat.equals(msgTypeEnum) ) {
+			log.info("请求," + MsgTypeEnum.getMsgTypeEnumByType(request.getMsgType()).desc + ": " + JsonUtil.toJson(request));
+		}
 		Lock lock = null;
 		try {
 			if (!notNeedLockMsgTypeMap.containsKey(request.getMsgType())) {

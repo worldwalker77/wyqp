@@ -51,7 +51,7 @@ public class ChannelContainer {
 	}
 	
 	public void sendTextMsgByPlayerIds(Result result, Integer... playerIds){
-		if (redisOperationService.isLogFuseOpen()) {
+		if (redisOperationService.isLogFuseOpen() && result.getMsgType() != MsgTypeEnum.heartBeat.msgType) {
 			log.info("返回 ," + MsgTypeEnum.getMsgTypeEnumByType(result.getMsgType()).desc + ": " + JsonUtil.toJson(result));
 		}
 		for(Integer playerId : playerIds){

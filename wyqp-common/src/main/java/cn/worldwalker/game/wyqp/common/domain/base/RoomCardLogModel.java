@@ -20,6 +20,8 @@ public class RoomCardLogModel {
 	
 	private Date createTime;
 
+	private Integer gameType;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -82,6 +84,14 @@ public class RoomCardLogModel {
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	public Integer getGameType() {
+		return gameType;
+	}
+
+	public void setGameType(Integer gameType) {
+		this.gameType = gameType;
 	}
 
 	

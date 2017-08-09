@@ -75,13 +75,13 @@ public abstract class BaseGameService {
 		if (null == weixinUserInfo) {
 			throw new BusinessException(ExceptionEnum.SYSTEM_ERROR);
 		}
-		UserModel userModel = userDao.getUserByWxOpenId(weixinUserInfo.getOpneid());
+		UserModel userModel = commonManager.getUserByWxOpenId(weixinUserInfo.getOpneid());
 		if (null == userModel) {
 			userModel = new UserModel();
 			userModel.setNickName(weixinUserInfo.getName());
 			userModel.setHeadImgUrl(weixinUserInfo.getHeadImgUrl());
 			userModel.setWxOpenId(weixinUserInfo.getOpneid());
-			userDao.insertUser(userModel);
+			commonManager.insertUser(userModel);
 		}
 		/**从redis查看此用户是否有roomId*/
 		Integer roomId = null;
@@ -534,7 +534,10 @@ public abstract class BaseGameService {
 		result.setData(data);
 		result.setGameType(request.getGameType());
 		BaseMsg msg = request.getMsg();
-		List<UserRecordModel> list = userRecordDao.getUserRecord(msg.getPlayerId());
+		UserRecordModel qmodel = new UserRecordModel();
+		qmodel.setGameType(request.getGameType());
+		qmodel.setPlayerId(userInfo.getPlayerId());
+		List<UserRecordModel> list = commonManager.getUserRecord(qmodel);
 		for(UserRecordModel model : list){
 			model.setNickNameList(JsonUtil.toObject(model.getNickNames(), List.class));
 		}
@@ -554,7 +557,7 @@ public abstract class BaseGameService {
 		model.setMobilePhone(msg.getMobilePhone());
 		model.setFeedBack(msg.getFeedBack());
 		model.setType(msg.getFeedBackType());
-		userFeedbackDao.insertFeedback(model);
+		commonManager.insertFeedback(model);
 		result.setMsgType(MsgTypeEnum.userFeedback.msgType);
 		channelContainer.sendTextMsgByPlayerIds(result, msg.getPlayerId());
 	}

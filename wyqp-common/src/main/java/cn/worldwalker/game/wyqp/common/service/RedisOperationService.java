@@ -182,7 +182,7 @@ public class RedisOperationService {
 		RoomLockContainer.delLockByRoomId(roomId);
 	}
 	
-	/***/
+	/**房卡操作失败补偿*/
 	public void lpushRoomCardOperationFailInfo(Integer playerId, Integer gameType, Integer payType, 
 													Integer totalGames, RoomCardOperationEnum roomCardOperationEnum){
 		RoomCardOperationFailInfo failInfo = new RoomCardOperationFailInfo(playerId,gameType,payType,totalGames,roomCardOperationEnum.type);

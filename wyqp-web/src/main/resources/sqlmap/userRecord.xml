@@ -7,9 +7,13 @@
 	<resultMap id="userRecordResultMap" type="cn.worldwalker.game.wyqp.common.domain.base.UserRecordModel" >
 		<id column="id" property="id"/>
 		<result column="player_id" property="playerId"/>
+		<result column="game_type" property="gameType"/>
 		<result column="room_id" property="roomId"/>
+		<result column="pay_type" property="payType"/>
+		<result column="total_games" property="totalGames"/>
 		<result column="score" property="score"/>
 		<result column="nick_names" property="nickNames"/>
+		<result column="remark" property="remark"/>
 		<result column="create_time" property="createTime"/>
 	</resultMap>
 	
@@ -21,31 +25,44 @@
 	     </selectKey>  
 	     insert into t_user_record( 
 	     					player_id, 
+	     					game_type,
 	     					room_id,
+	     					pay_type,
+	     					total_games,
 	     					score, 
 	     					nick_names,
+	     					remark,
 	     					create_time) 
 	     			values(  
 	     					#{playerId}, 
+	     					#{gameType},
 	     					#{roomId}, 
+	     					#{payType},
+	     					#{totalGames},
 	     					#{score},
 	     					#{nickNames},
+	     					#{remark},
 	     					#{createTime})    
     </insert> 
     <insert id="batchInsertRecord" parameterType="java.util.List">  
         insert into t_user_record ( 
 	     					player_id, 
+	     					game_type,
 	     					room_id,
+	     					pay_type,
+	     					total_games,
 	     					score,
 	     					nick_names, 
+	     					remark,
 	     					create_time)  
         values  
         <foreach collection="list" item="item" index="index" separator="," >  
-            (#{item.playerId},#{item.roomId},#{item.score},#{item.nickNames},#{item.createTime})  
+            (#{item.playerId},#{item.gameType},#{item.roomId},#{item.payType},#{item.totalGames},#{item.score},#{item.nickNames},#{item.remark},#{item.createTime})  
         </foreach>  
     </insert>  
-    <select id="getUserRecord"  parameterType = "Long" resultMap="userRecordResultMap">
-	    select id, player_id, room_id, score, nick_names, create_time from t_user_record where player_id = #{playerId} order by create_time desc,score desc limit 20
+    
+    <select id="getUserRecord"  parameterType = "cn.worldwalker.game.wyqp.common.domain.base.UserRecordModel" resultMap="userRecordResultMap">
+	    select * from t_user_record where player_id = #{playerId} and game_type = #{gameType} order by create_time desc,score desc limit 20
 	</select>
 </mapper>
 

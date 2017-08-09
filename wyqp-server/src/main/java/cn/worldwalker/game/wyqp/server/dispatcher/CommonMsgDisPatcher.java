@@ -34,9 +34,6 @@ public class CommonMsgDisPatcher extends BaseMsgDisPatcher{
 			case entryRoom:
 				commonGameService.commonEntryRoom(ctx, request, userInfo);
 				break;
-			case userRecord:
-				commonGameService.userRecord(ctx, request, userInfo);
-				break;
 			case userFeedback:
 				commonGameService.userFeedback(ctx, request, userInfo);
 				break;

@@ -8,15 +8,23 @@ public class UserRecordModel {
 	
 	private Long id;
 	
-	private Long playerId;
+	private Integer gameType;
 	
-	private Long roomId;
+	private Integer playerId;
+	
+	private Integer roomId;
+	
+	private Integer payType;
+	
+	private Integer totalGames;
 	
 	private Integer score;
 	
 	private String nickNames;
 	
 	private List<String> nickNameList = new ArrayList<String>();
+	
+	private String remark; 
 	
 	private Date createTime;
 
@@ -28,20 +36,27 @@ public class UserRecordModel {
 		this.id = id;
 	}
 
-	public Long getPlayerId() {
+	public Integer getGameType() {
+		return gameType;
+	}
+
+	public void setGameType(Integer gameType) {
+		this.gameType = gameType;
+	}
+
+	public Integer getPlayerId() {
 		return playerId;
 	}
 
-	public void setPlayerId(Long playerId) {
+	public void setPlayerId(Integer playerId) {
 		this.playerId = playerId;
 	}
 
-
-	public Long getRoomId() {
+	public Integer getRoomId() {
 		return roomId;
 	}
 
-	public void setRoomId(Long roomId) {
+	public void setRoomId(Integer roomId) {
 		this.roomId = roomId;
 	}
 
@@ -51,14 +66,6 @@ public class UserRecordModel {
 
 	public void setScore(Integer score) {
 		this.score = score;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
 	}
 
 	public String getNickNames() {
@@ -76,5 +83,37 @@ public class UserRecordModel {
 	public void setNickNameList(List<String> nickNameList) {
 		this.nickNameList = nickNameList;
 	}
-	
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Integer getPayType() {
+		return payType;
+	}
+
+	public void setPayType(Integer payType) {
+		this.payType = payType;
+	}
+
+	public Integer getTotalGames() {
+		return totalGames;
+	}
+
+	public void setTotalGames(Integer totalGames) {
+		this.totalGames = totalGames;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
 }

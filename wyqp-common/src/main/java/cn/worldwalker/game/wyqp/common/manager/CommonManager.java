@@ -1,7 +1,26 @@
 package cn.worldwalker.game.wyqp.common.manager;
 
+import java.util.List;
+
+import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
+import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
+import cn.worldwalker.game.wyqp.common.domain.base.UserModel;
+import cn.worldwalker.game.wyqp.common.domain.base.UserRecordModel;
 import cn.worldwalker.game.wyqp.common.enums.RoomCardOperationEnum;
 
 public interface CommonManager {
-	public Integer doDeductRoomCard(Integer playerId, Integer payType, Integer totalGames, RoomCardOperationEnum operationEnum);
+	
+	public UserModel getUserByWxOpenId(String openId);
+	
+	public void insertUser(UserModel userModel);
+	
+	public void insertFeedback(UserFeedbackModel model);
+	
+	public List<UserRecordModel> getUserRecord(UserRecordModel model);
+	
+	public void deductRoomCard(BaseRoomInfo roomInfo, RoomCardOperationEnum operationEnum);
+	
+	public Integer doDeductRoomCard(Integer gameType, Integer payType, Integer totalGames, RoomCardOperationEnum operationEnum, Integer playerId);
+	
+	public void addUserRecord(BaseRoomInfo roomInfo);
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import cn.worldwalker.game.wyqp.common.dao.UserFeedbackDao;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.Card;
@@ -21,6 +20,7 @@ import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
+import cn.worldwalker.game.wyqp.common.enums.RoomCardOperationEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
 import cn.worldwalker.game.wyqp.common.result.Result;
@@ -424,13 +424,19 @@ public class NnGameService extends BaseGameService{
 			roomInfo.setStatus(NnRoomStatusEnum.curGameOver.status);
 		}else{/**如果当前局数等于总局数，则设置为一圈结束*/
 			roomInfo.setStatus(NnRoomStatusEnum.totalGameOver.status);
-//			addUserRecord(roomInfo.getRoomId(), playerList);
+			try {
+				commonManager.addUserRecord(roomInfo);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		/**如果是第一局结束，则扣除房卡;扣除房卡异常不影响游戏进行，会将异常数据放入redis中，由定时任务进行补偿扣除*/
 		if (roomInfo.getCurGame() == 1) {
-//			commonManager.doDeductRoomCard(playerId, payType, totalGames, operationEnum);
-			//TODO
-//			deductRoomCard(roomInfo);
+			try {
+				commonManager.deductRoomCard(roomInfo, RoomCardOperationEnum.consumeCard);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		/**设置下一局的庄家id（抢庄的不设置）*/

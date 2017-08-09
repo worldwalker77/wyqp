@@ -43,7 +43,7 @@ public class RoomCardOperationFailProcessJob extends SingleServerJobByRedis {
 			}
 			if (RoomCardOperationEnum.consumeCard.type.equals(failInfo.getRoomCardOperationType())) {
 				try {
-					Integer curRoomCardNum = commonManager.doDeductRoomCard(failInfo.getPlayerId(), failInfo.getPayType(), failInfo.getTotalGames(), RoomCardOperationEnum.jobCompensateConsumeCard);
+					Integer curRoomCardNum = commonManager.doDeductRoomCard(failInfo.getGameType(), failInfo.getPayType(), failInfo.getTotalGames(), RoomCardOperationEnum.jobCompensateConsumeCard, failInfo.getPlayerId());
 					data.put("playerId", failInfo.getPlayerId());
 					data.put("roomCardNum", curRoomCardNum);
 					/**房卡更新通知消息*/

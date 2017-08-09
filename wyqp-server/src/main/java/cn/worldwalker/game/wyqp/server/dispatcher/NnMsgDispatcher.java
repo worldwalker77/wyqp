@@ -56,6 +56,9 @@ public class NnMsgDispatcher extends BaseMsgDisPatcher {
 			case chatMsg:
 				nnGameService.chatMsg(ctx, request, userInfo);
 				break;
+			case userRecord:
+				nnGameService.userRecord(ctx, request, userInfo);
+				break;
 			default:
 				break;
 		}

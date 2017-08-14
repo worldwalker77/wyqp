@@ -12,7 +12,9 @@ public enum ExceptionEnum {
     ROOM_CARD_DEDUCT_THREE_TIMES_FAIL(6, "三次扣除房卡重试失败"),
     ROOM_BANKER_CAN_NOT_STAKE_SCORE(7, "庄家不能压分"),
     EXCEED_MAX_PLAYER_NUM(8, "此房间已满"),
-    ROOM_CARD_NOT_ENOUGH(9, "房卡数不够");
+    ROOM_CARD_NOT_ENOUGH(9, "房卡数不够"),
+    INSERT_ORDER_FAIL(10, "插入订单失败"),
+    UPDATE_ORDER_FAIL(11, "更新订单支付状态失败");
 
     public Integer   index;
     public String description;

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cn.worldwalker.game.wyqp.common.dao.OrderDao;
+import cn.worldwalker.game.wyqp.common.dao.ProductDao;
 import cn.worldwalker.game.wyqp.common.dao.RoomCardLogDao;
 import cn.worldwalker.game.wyqp.common.dao.UserDao;
 import cn.worldwalker.game.wyqp.common.dao.UserFeedbackDao;
@@ -21,6 +22,7 @@ import cn.worldwalker.game.wyqp.common.dao.UserRecordDao;
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.OrderModel;
+import cn.worldwalker.game.wyqp.common.domain.base.ProductModel;
 import cn.worldwalker.game.wyqp.common.domain.base.RoomCardLogModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserModel;
@@ -45,6 +47,8 @@ public class CommonManagerImpl implements CommonManager{
 	private UserRecordDao userRecordDao;
 	@Autowired
 	private OrderDao orderDao;
+	@Autowired
+	private ProductDao productDao;
 	
 	@Override
 	public UserModel getUserByWxOpenId(String openId){
@@ -174,6 +178,7 @@ public class CommonManagerImpl implements CommonManager{
 		}
 		return orderModel.getOrderId();
 	}
+	@Transactional
 	@Override
 	public void updateOrder(Long orderId, String transactionId,
 			Integer wxPayPrice) {
@@ -185,5 +190,13 @@ public class CommonManagerImpl implements CommonManager{
 		if (res <= 0) {
 			throw new BusinessException(ExceptionEnum.UPDATE_ORDER_FAIL);
 		}
+	}
+	@Override
+	public ProductModel getProductById(Integer productId) {
+		return productDao.getProductById(productId);
+	}
+	@Override
+	public List<ProductModel> getProductList() {
+		return productDao.getProductList();
 	}
 }

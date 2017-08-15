@@ -3,6 +3,7 @@ package cn.worldwalker.game.wyqp.common.manager;
 import java.util.List;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
+import cn.worldwalker.game.wyqp.common.domain.base.ProductModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserRecordModel;
@@ -29,4 +30,8 @@ public interface CommonManager {
 	public Long insertOrder(Integer playerId, Integer productId, Integer roomCardNum, Integer price);
 	 
 	public void updateOrder(Long orderId, String transactionId, Integer wxPayPrice);
+	
+	public ProductModel getProductById(Integer productId);
+	 
+	public List<ProductModel> getProductList();
 }

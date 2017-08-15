@@ -28,6 +28,7 @@ public enum MsgTypeEnum {
 	syncPlayerLocation(23, "同步玩家地理位置信息"),
 	curSettlement(24, "小结算"),
 	totalSettlement(25, "大结算"),
+	productList(26, "房卡商品列表"),
 	
 	/**斗牛特有100-199*/
 	readyRobBanker(100, "准备抢庄"),

@@ -43,6 +43,9 @@ public class CommonMsgDisPatcher extends BaseMsgDisPatcher{
 			case refreshRoom:
 				commonGameService.commonRefreshRoom(ctx, request, userInfo);
 				break;
+			case productList:
+				commonGameService.productList(ctx, request, userInfo);
+				break;
 			default:
 				break;
 			}

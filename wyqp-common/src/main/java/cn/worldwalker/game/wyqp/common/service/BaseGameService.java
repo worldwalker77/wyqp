@@ -23,6 +23,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.BaseMsg;
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
+import cn.worldwalker.game.wyqp.common.domain.base.ProductModel;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
@@ -31,6 +32,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.UserRecordModel;
 import cn.worldwalker.game.wyqp.common.domain.base.WeiXinUserInfo;
 import cn.worldwalker.game.wyqp.common.enums.ChatTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
+import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
@@ -612,7 +614,17 @@ public abstract class BaseGameService {
 	
 	public abstract List<BaseRoomInfo> doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
 	
-	
+	public void productList(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		result.setGameType(GameTypeEnum.common.gameType);
+		result.setMsgType(MsgTypeEnum.productList.msgType);
+		commonManager.getProductList();
+		result.setData(commonManager.getProductList());
+		/**返回给当前玩家刷新信息*/
+		channelContainer.sendTextMsgByPlayerIds(result, userInfo.getPlayerId());
+	}
 	
 	/**
 	 *  微信预支付 统一下单入口
@@ -624,12 +636,12 @@ public abstract class BaseGameService {
 	 */
 	public Result unifiedOrder(Integer productId, Integer playerId, String ip) throws Exception{
 		Result result = new Result();
-		ProductEnum productEnum = ProductEnum.getProductEnum(productId);
-		if (productEnum == null) {
+		ProductModel productModel = commonManager.getProductById(productId);
+		if (productModel == null) {
 			throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
 		}
-		Long orderId = commonManager.insertOrder(playerId, productId, productEnum.roomCardNum, productEnum.price);
-		SortedMap<String, Object> parameters = prepareOrder(ip, String.valueOf(orderId),productEnum.price);
+		Long orderId = commonManager.insertOrder(playerId, productId, productModel.getRoomCardNum(), productModel.getPrice());
+		SortedMap<String, Object> parameters = prepareOrder(ip, String.valueOf(orderId), productModel.getPrice());
 		/**生成签名*/
 		parameters.put("sign", PayCommonUtil.createSign(Charsets.UTF_8.toString(), parameters));
 		/**生成xml格式字符串*/

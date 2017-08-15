@@ -116,7 +116,7 @@ public class WxPayController {
 		return result;
 	}
 	
-	@RequestMapping("notice")
+	@RequestMapping("aaaaaaa")
 	@ResponseBody
 	public Result queryOrder(String outTradeNo, String transactionId){
 		Result result = new Result();

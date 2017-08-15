@@ -11,8 +11,8 @@ public class ConfigUtil {
 	/**
 	 * 服务号相关信息
 	 */
-	public final static String APPID = "xxxx";// 应用号
-	public final static String APP_SECRECT = "xxxxx";// 应用密码
+	public final static String APPID = "wx8c5ef676dbc373bf";// 应用号
+	public final static String APP_SECRECT = "24ad27bef1473bb34c53c5dc9b4f6927";// 应用密码
 	// public final static String TOKEN = "weixinCourse";//服务号的配置token
 	public final static String MCH_ID = "xxx";// 商户号 xxxx 公众号商户id
 														// xxxxx

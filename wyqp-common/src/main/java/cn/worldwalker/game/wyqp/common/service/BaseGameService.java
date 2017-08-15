@@ -237,7 +237,7 @@ public abstract class BaseGameService {
 		BaseRoomInfo roomInfo = doEntryRoom(ctx, request, userInfo);
 		List playerList = roomInfo.getPlayerList();
 		int size = playerList.size();
-		if (size == 6) {
+		if (size >= 6) {
 			throw new BusinessException(ExceptionEnum.EXCEED_MAX_PLAYER_NUM);
 		}
 		for(int i = 0; i < playerList.size(); i++ ){

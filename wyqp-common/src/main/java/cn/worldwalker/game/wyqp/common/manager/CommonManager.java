@@ -25,4 +25,8 @@ public interface CommonManager {
 	public void addUserRecord(BaseRoomInfo roomInfo);
 	
 	public void roomCardCheck(Integer playerId, Integer gameType, Integer payType, Integer totalGames);
+	
+	public Long insertOrder(Integer playerId, Integer productId, Integer roomCardNum, Integer price);
+	 
+	public void updateOrder(Long orderId, String transactionId, Integer wxPayPrice);
 }

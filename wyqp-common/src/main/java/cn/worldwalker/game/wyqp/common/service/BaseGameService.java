@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
+import cn.worldwalker.game.wyqp.common.enums.ProductEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
@@ -42,6 +44,12 @@ import cn.worldwalker.game.wyqp.common.rpc.WeiXinRpc;
 import cn.worldwalker.game.wyqp.common.utils.GameUtil;
 import cn.worldwalker.game.wyqp.common.utils.IPUtil;
 import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
+import cn.worldwalker.game.wyqp.common.utils.wxpay.ConfigUtil;
+import cn.worldwalker.game.wyqp.common.utils.wxpay.MapUtils;
+import cn.worldwalker.game.wyqp.common.utils.wxpay.PayCommonUtil;
+import cn.worldwalker.game.wyqp.common.utils.wxpay.WeixinConstant;
+
+import com.google.common.collect.ImmutableMap;
 
 public abstract class BaseGameService {
 	
@@ -598,4 +606,41 @@ public abstract class BaseGameService {
 	}
 	
 	public abstract List<BaseRoomInfo> doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
+	
+	public Result unifiedOrder(Integer productId, Integer playerId, String ip){
+		Result result = new Result();
+		ProductEnum productEnum = ProductEnum.getProductEnum(productId);
+		if (productEnum == null) {
+			result.setCode(ExceptionEnum.PARAMS_ERROR.index);
+			result.setDesc(ExceptionEnum.PARAMS_ERROR.description);
+			return result;
+		}
+		Long orderId = commonManager.insertOrder(playerId, productId, productEnum.roomCardNum, productEnum.price);
+		
+		
+		
+		return null;
+	}
+	
+	/**
+	 * 生成订单信息
+	 * 
+	 * @param ip
+	 * @param orderId
+	 * @return
+	 */
+	private SortedMap<String, Object> prepareOrder(String ip, String orderId, int price) {
+		Map<String, Object> oparams = ImmutableMap.<String, Object> builder()
+				.put("appid", ConfigUtil.APPID)// 服务号的应用号
+				.put("body", WeixinConstant.PRODUCT_BODY)// 商品描述
+				.put("mch_id", ConfigUtil.MCH_ID)// 商户号 ？
+				.put("nonce_str", PayCommonUtil.CreateNoncestr())// 16随机字符串(大小写字母加数字)
+				.put("out_trade_no", orderId)// 商户订单号
+				.put("total_fee", price)// 支付金额 单位分 注意:前端负责传入分
+				.put("spbill_create_ip", ip)// IP地址
+				.put("notify_url", ConfigUtil.NOTIFY_URL) // 微信回调地址
+				.put("trade_type", ConfigUtil.TRADE_TYPE)// 支付类型 app
+				.build();
+		return MapUtils.sortMap(oparams);
+	}
 }

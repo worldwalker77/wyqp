@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.worldwalker.game.wyqp.common.dao.OrderDao">
+	
+    <insert id="insertOrder" parameterType="cn.worldwalker.game.wyqp.common.domain.base.OrderModel">  
+	     <!-- 使用这种方式要注意，resultType是要设置的，否则将抛异常，该值对应的User类中的主键类型 -->  
+	     <!-- keyProperty对应的是UserModel类中的主键名，假设取名为user_id，则这边也要改成user_id -->  
+	     <selectKey keyProperty="orderId" resultType="Long">  
+	         select LAST_INSERT_ID()  
+	     </selectKey>  
+	     insert into t_order( 
+	     					player_id, 
+	     					product_id, 
+	     					room_card_num, 
+	     					price,
+	     					create_time,
+	     					update_time
+	     				   ) 
+	     			values( 
+	     					#{playerId}, 
+	     					#{productId}, 
+	     					#{roomCardNum}, 
+	     					#{price}, 
+	     					now(), 
+	     					now()
+	     				  )    
+    </insert>  
+	
+	
+	<update id="updateOrder"  parameterType = "cn.worldwalker.game.wyqp.common.domain.base.OrderModel">
+		update t_order 
+		set wx_pay_price = #{wxPayPrice}, transaction_id = #{transactionId} ,pay_status = 1, update_time = now()
+		where order_id = #{id}
+	</update>
+	
+	
+</mapper>
+
+

@@ -2,6 +2,7 @@ package cn.worldwalker.game.wyqp.common.service;
 
 import io.netty.channel.ChannelHandlerContext;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,10 +46,14 @@ import cn.worldwalker.game.wyqp.common.utils.GameUtil;
 import cn.worldwalker.game.wyqp.common.utils.IPUtil;
 import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.ConfigUtil;
+import cn.worldwalker.game.wyqp.common.utils.wxpay.DateUtils;
+import cn.worldwalker.game.wyqp.common.utils.wxpay.HttpUtil;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.MapUtils;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.PayCommonUtil;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.WeixinConstant;
+import cn.worldwalker.game.wyqp.common.utils.wxpay.XMLUtil;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 
 public abstract class BaseGameService {
@@ -607,19 +612,86 @@ public abstract class BaseGameService {
 	
 	public abstract List<BaseRoomInfo> doRefreshRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
 	
-	public Result unifiedOrder(Integer productId, Integer playerId, String ip){
+	
+	
+	/**
+	 *  微信预支付 统一下单入口
+	 * @param productId
+	 * @param playerId
+	 * @param ip
+	 * @return
+	 * @throws Exception
+	 */
+	public Result unifiedOrder(Integer productId, Integer playerId, String ip) throws Exception{
 		Result result = new Result();
 		ProductEnum productEnum = ProductEnum.getProductEnum(productId);
 		if (productEnum == null) {
-			result.setCode(ExceptionEnum.PARAMS_ERROR.index);
-			result.setDesc(ExceptionEnum.PARAMS_ERROR.description);
-			return result;
+			throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
 		}
 		Long orderId = commonManager.insertOrder(playerId, productId, productEnum.roomCardNum, productEnum.price);
-		
-		
-		
-		return null;
+		SortedMap<String, Object> parameters = prepareOrder(ip, String.valueOf(orderId),productEnum.price);
+		/**生成签名*/
+		parameters.put("sign", PayCommonUtil.createSign(Charsets.UTF_8.toString(), parameters));
+		/**生成xml格式字符串*/
+		String requestXML = PayCommonUtil.getRequestXml(parameters);
+		String responseStr = HttpUtil.httpsRequest(ConfigUtil.UNIFIED_ORDER_URL, "POST", requestXML);
+		/**检验API返回的数据里面的签名是否合法，避免数据在传输的过程中被第三方篡改*/
+		if (!PayCommonUtil.checkIsSignValidFromResponseString(responseStr)) {
+			log.error("微信统一下单失败,签名可能被篡改 "+responseStr);
+			throw new BusinessException(ExceptionEnum.UNIFIED_ORDER_FAIL);
+		}
+		/**解析结果 resultStr*/
+		SortedMap<String, Object> resutlMap = XMLUtil.doXMLParse(responseStr);
+		if (resutlMap != null && WeixinConstant.FAIL.equals(resutlMap.get("return_code"))) {
+			log.error("微信统一下单失败,订单编号: " + orderId + " 失败原因:"+ resutlMap.get("return_msg"));
+			throw new BusinessException(ExceptionEnum.UNIFIED_ORDER_FAIL);
+		}
+		/**获取到 prepayid*/
+		/**商户系统先调用该接口在微信支付服务后台生成预支付交易单，返回正确的预支付交易回话标识后再在APP里面调起支付。*/
+		SortedMap<String, Object> map = buildClientJson(resutlMap);
+		map.put("outTradeNo", orderId);
+		log.info("统一下定单成功 "+map.toString());
+		result.setData(map);
+		return result;
+	}
+	
+	
+	/**
+	 * 微信回调告诉微信支付结果 注意：同样的通知可能会多次发送给此接口，注意处理重复的通知。
+	 * 对于支付结果通知的内容做签名验证，防止数据泄漏导致出现“假通知”，造成资金损失。
+	 * 
+	 * @param params
+	 * @return
+	 */
+	public String callback(String responseStr) {
+		try {
+			Map<String, Object> map = XMLUtil.doXMLParse(responseStr);
+			/**校验签名 防止数据泄漏导致出现“假通知”，造成资金损失*/
+			if (!PayCommonUtil.checkIsSignValidFromResponseString(responseStr)) {
+				log.error("微信回调失败,签名可能被篡改 " + responseStr);
+				return PayCommonUtil.setXML(WeixinConstant.FAIL, "invalid sign");
+			}
+			if (WeixinConstant.FAIL.equalsIgnoreCase(map.get("result_code").toString())) {
+				log.error("微信回调失败的原因："+responseStr);
+				return PayCommonUtil.setXML(WeixinConstant.FAIL, "weixin pay fail");
+			}
+			if (WeixinConstant.SUCCESS.equalsIgnoreCase(map.get("result_code")
+					.toString())) {
+				/**对数据库的操作,更新订单状态为已付款*/
+				String outTradeNo = (String) map.get("out_trade_no");
+				String transactionId = (String) map.get("transaction_id");
+				String totlaFee = (String) map.get("total_fee");
+				Integer totalPrice = Integer.valueOf(totlaFee);
+				commonManager.updateOrder(Long.valueOf(outTradeNo), transactionId, totalPrice);
+				/**告诉微信服务器，我收到信息了，不要在调用回调action了*/
+				log.info("回调成功："+responseStr);
+				return PayCommonUtil.setXML(WeixinConstant.SUCCESS, "OK");
+			}
+		} catch (Exception e) {
+			log.error("回调异常" + e.getMessage());
+			return PayCommonUtil.setXML(WeixinConstant.FAIL,"weixin pay server exception");
+		}
+		return PayCommonUtil.setXML(WeixinConstant.FAIL, "weixin pay fail");
 	}
 	
 	/**
@@ -642,5 +714,32 @@ public abstract class BaseGameService {
 				.put("trade_type", ConfigUtil.TRADE_TYPE)// 支付类型 app
 				.build();
 		return MapUtils.sortMap(oparams);
+	}
+	
+	/**
+	 * 生成预付快订单完成，返回给android,ios唤起微信所需要的参数。
+	 * 
+	 * @param resutlMap
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	private SortedMap<String, Object> buildClientJson(
+			Map<String, Object> resutlMap) throws UnsupportedEncodingException {
+		// 获取微信返回的签名
+		Map<String, Object> params = ImmutableMap.<String, Object> builder()
+				.put("appid", ConfigUtil.APPID)
+				.put("noncestr", PayCommonUtil.CreateNoncestr())
+				.put("package", "Sign=WXPay")
+				.put("partnerid", ConfigUtil.MCH_ID)
+				.put("prepayid", resutlMap.get("prepay_id"))
+				.put("timestamp", DateUtils.getTimeStamp()) // 10 位时间戳
+				.build();
+		// key ASCII排序 // 这里用treemap也是可以的 可以用treemap // TODO
+		SortedMap<String, Object> sortMap = MapUtils.sortMap(params);
+		sortMap.put("package", "Sign=WXPay");
+		// paySign的生成规则和Sign的生成规则同理
+		String paySign = PayCommonUtil.createSign(Charsets.UTF_8.toString(), sortMap);
+		sortMap.put("sign", paySign);
+		return sortMap;
 	}
 }

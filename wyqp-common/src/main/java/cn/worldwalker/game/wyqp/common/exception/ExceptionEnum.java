@@ -14,7 +14,8 @@ public enum ExceptionEnum {
     EXCEED_MAX_PLAYER_NUM(8, "此房间已满"),
     ROOM_CARD_NOT_ENOUGH(9, "房卡数不够"),
     INSERT_ORDER_FAIL(10, "插入订单失败"),
-    UPDATE_ORDER_FAIL(11, "更新订单支付状态失败");
+    UPDATE_ORDER_FAIL(11, "更新订单支付状态失败"),
+    UNIFIED_ORDER_FAIL(12, "统一下单失败");
 
     public Integer   index;
     public String description;

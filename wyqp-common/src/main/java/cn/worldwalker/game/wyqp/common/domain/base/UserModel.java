@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class UserModel {
 	
-	private Integer id;
+	private Integer playerId;
 	
 	private String nickName;
 	
@@ -23,12 +23,13 @@ public class UserModel {
 	private Date updateTime;
 
 
-	public Integer getId() {
-		return id;
+
+	public Integer getPlayerId() {
+		return playerId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setPlayerId(Integer playerId) {
+		this.playerId = playerId;
 	}
 
 	public String getNickName() {

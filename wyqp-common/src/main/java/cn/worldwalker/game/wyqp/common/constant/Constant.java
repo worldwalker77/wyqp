@@ -29,9 +29,9 @@ public class Constant {
 	public final static String wyqpIpRoomIdTimeMap = "wyqp_ip_room_id_time_map_" + IPUtil.getLocalIp();
 	
 	 // // 第三方用户唯一凭证
-    public static String appId = "wx7681f478b552345a";
+    public static String appId = "wx8c5ef676dbc373bf";
     // // 第三方用户唯一凭证密钥
-    public static String appSecret = "aa78590d5de26457296c3dd4fc8c1a14";
+    public static String appSecret = "24ad27bef1473bb34c53c5dc9b4f6927";
 	
 	public static String getWXUserInfoUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=" + "ACCESS_TOKEN&openid=OPENID";
 	

@@ -36,7 +36,6 @@ import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
-import cn.worldwalker.game.wyqp.common.enums.ProductEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
@@ -87,23 +86,24 @@ public abstract class BaseGameService {
 			userModel.setNickName(weixinUserInfo.getName());
 			userModel.setHeadImgUrl(weixinUserInfo.getHeadImgUrl());
 			userModel.setWxOpenId(weixinUserInfo.getOpneid());
+			userModel.setRoomCardNum(20);
 			commonManager.insertUser(userModel);
 		}
 		/**从redis查看此用户是否有roomId*/
 		Integer roomId = null;
-		RedisRelaModel redisRelaModel = redisOperationService.getRoomIdGameTypeTimeByOfflinePlayerId(userModel.getId());
+		RedisRelaModel redisRelaModel = redisOperationService.getRoomIdGameTypeTimeByOfflinePlayerId(userModel.getPlayerId());
 		if (redisRelaModel != null) {
 			roomId = redisRelaModel.getRoomId();
 		}
 		UserInfo userInfo = new UserInfo();
-		userInfo.setPlayerId(userModel.getId());
+		userInfo.setPlayerId(userModel.getPlayerId());
 		userInfo.setRoomId(roomId);
 		userInfo.setNickName(weixinUserInfo.getName());
 		userInfo.setLevel(userModel.getUserLevel() == null ? 1 : userModel.getUserLevel());
 		userInfo.setServerIp("119.23.57.236");
 		userInfo.setPort("9000");
 		userInfo.setRemoteIp(IPUtil.getRemoteIp(request));
-		String loginToken = GameUtil.genToken(userModel.getId());
+		String loginToken = GameUtil.genToken(userModel.getPlayerId());
 		userInfo.setHeadImgUrl(weixinUserInfo.getHeadImgUrl());
 		redisOperationService.setUserInfo(loginToken, userInfo);
 		userInfo.setToken(loginToken);
@@ -163,8 +163,7 @@ public abstract class BaseGameService {
 			roomId = GameUtil.genRoomId();
 			i++;
 			if (i >= 3) {
-				log.error("三次生成房号都有重复......");
-				channelContainer.sendErrorMsg(ctx, ExceptionEnum.GEN_ROOM_ID_FAIL, request);
+				throw new BusinessException(ExceptionEnum.GEN_ROOM_ID_FAIL);
 			}
 		}
 		/**将当前房间号设置到userInfo中*/

@@ -5,7 +5,7 @@
 <mapper namespace="cn.worldwalker.game.wyqp.common.dao.UserDao">
 	
 	<resultMap id="UserResultMap" type="cn.worldwalker.game.wyqp.common.domain.base.UserModel" >
-		<id column="id" property="id"/>
+		<id column="player_id" property="playerId"/>
 		<result column="nick_name" property="nickName"/>
 		<result column="head_img_url" property="headImgUrl"/>
 		<result column="wx_open_id" property="wxOpenId"/>
@@ -16,11 +16,11 @@
 	</resultMap>
 	
 	<select id="getUserByWxOpenId"  parameterType = "String" resultType="cn.worldwalker.game.wyqp.common.domain.base.UserModel">
-	    select id, room_card_num, user_level from t_user where wx_open_id = #{wxOpenId} limit 1
+	    select player_id, room_card_num, user_level from t_user where wx_open_id = #{wxOpenId} limit 1
 	</select>
 	
 	<select id="getUserById"  parameterType = "Long" resultType="cn.worldwalker.game.wyqp.common.domain.base.UserModel">
-	    select room_card_num, updateTime from t_user where id = #{id}
+	    select room_card_num, updateTime from t_user where player_id = #{playerId}
 	</select>
 	
 	<update id="deductRoomCard"  parameterType = "map">
@@ -38,11 +38,13 @@
 	     insert into t_user( nick_name, 
 	     					head_img_url, 
 	     					wx_open_id,
+	     					room_card_num,
 	     					create_time,
 	     					update_time) 
 	     			values( #{nickName}, 
 	     					#{headImgUrl}, 
 	     					#{wxOpenId}, 
+	     					#{roomCardNum}, 
 	     					now(), 
 	     					now())    
     </insert>  

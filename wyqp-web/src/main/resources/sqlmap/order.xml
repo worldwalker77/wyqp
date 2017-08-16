@@ -5,7 +5,7 @@
 <mapper namespace="cn.worldwalker.game.wyqp.common.dao.OrderDao">
 
 	<resultMap id="orderResultMap" type="cn.worldwalker.game.wyqp.common.domain.base.OrderModel" >
-		<id column="player_id" property="playerId"/>
+		<result column="player_id" property="playerId"/>
 		<result column="order_id" property="orderId"/>
 		<result column="product_id" property="productId"/>
 		<result column="room_card_num" property="roomCardNum"/>
@@ -45,12 +45,12 @@
 	<update id="updateOrder"  parameterType = "cn.worldwalker.game.wyqp.common.domain.base.OrderModel">
 		update t_order 
 		set wx_pay_price = #{wxPayPrice}, transaction_id = #{transactionId} ,pay_status = 1, update_time = now()
-		where order_id = #{id}
+		where order_id = #{orderId}
 	</update>
 	
 	
 	<select id="getOderByOrderId"  parameterType = "Long" resultMap="orderResultMap">
-	    select player_id as playerId, room_card_num as roomCardNum, pay_status as payStatus from t_order where order_id = #{orderId}
+	    select player_id, room_card_num, pay_status  from t_order where order_id = #{orderId}
 	</select>
 	
 </mapper>

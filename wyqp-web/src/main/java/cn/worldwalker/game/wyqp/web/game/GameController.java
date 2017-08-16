@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BaseMsg;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
+import cn.worldwalker.game.wyqp.common.domain.base.OrderModel;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
+import cn.worldwalker.game.wyqp.common.manager.CommonManager;
 import cn.worldwalker.game.wyqp.common.result.Result;
 import cn.worldwalker.game.wyqp.common.service.BaseGameService;
 import cn.worldwalker.game.wyqp.common.service.RedisOperationService;
@@ -26,6 +28,8 @@ public class GameController {
 	private RedisOperationService redisOperationService;
 	@Resource(name="commonGameService")
 	private BaseGameService commonGameService;
+	@Autowired
+	private CommonManager commonManager;
 	
 	@RequestMapping("login")
 	@ResponseBody
@@ -43,8 +47,11 @@ public class GameController {
 	@RequestMapping("getIpByRoomId")
 	@ResponseBody
 	public Result getIpByRoomId(String token, Long roomId, HttpServletResponse response){
+		Result result = new Result();
 		response.addHeader("Access-Control-Allow-Origin", "*");
-		return null;
+		OrderModel mo = commonManager.getOderByOrderId(1004L);
+		result.setData(mo);
+		return result;
 		
 	}
 	

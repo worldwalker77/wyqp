@@ -5,7 +5,7 @@
 <mapper namespace="cn.worldwalker.game.wyqp.common.dao.UserDao">
 	
 	<resultMap id="userResultMap" type="cn.worldwalker.game.wyqp.common.domain.base.UserModel" >
-		<id column="player_id" property="playerId"/>
+		<result column="player_id" property="playerId"/>
 		<result column="nick_name" property="nickName"/>
 		<result column="head_img_url" property="headImgUrl"/>
 		<result column="wx_open_id" property="wxOpenId"/>
@@ -20,7 +20,7 @@
 	</select>
 	
 	<select id="getUserById"  parameterType = "Long" resultMap="userResultMap">
-	    select room_card_num, updateTime from t_user where player_id = #{playerId}
+	    select room_card_num, update_time from t_user where player_id = #{playerId}
 	</select>
 	
 	<update id="deductRoomCard"  parameterType = "map">
@@ -38,7 +38,7 @@
     <insert id="insertUser" parameterType="cn.worldwalker.game.wyqp.common.domain.base.UserModel">  
 	     <!-- 使用这种方式要注意，resultType是要设置的，否则将抛异常，该值对应的User类中的主键类型 -->  
 	     <!-- keyProperty对应的是UserModel类中的主键名，假设取名为user_id，则这边也要改成user_id -->  
-	     <selectKey keyProperty="id" resultType="Long">  
+	     <selectKey keyProperty="playerId" resultType="Integer">  
 	         select LAST_INSERT_ID()  
 	     </selectKey>  
 	     insert into t_user( nick_name, 

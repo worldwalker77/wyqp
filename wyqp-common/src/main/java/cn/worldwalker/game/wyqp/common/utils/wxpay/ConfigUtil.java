@@ -14,9 +14,9 @@ public class ConfigUtil {
 	public final static String APPID = "wx8c5ef676dbc373bf";// 应用号
 	public final static String APP_SECRECT = "24ad27bef1473bb34c53c5dc9b4f6927";// 应用密码
 	// public final static String TOKEN = "weixinCourse";//服务号的配置token
-	public final static String MCH_ID = "xxx";// 商户号 xxxx 公众号商户id
+	public final static String MCH_ID = "1487423432";// 商户号 xxxx 公众号商户id
 														// xxxxx
-	public final static String API_KEY = "xxxxx";// API密钥
+	public final static String API_KEY = "e9bc04Cd6f65d6E81cb9815A069dF76f";// API密钥
 	public final static String SIGN_TYPE = "MD5";// 签名加密方式
 	public final static String TRADE_TYPE = "APP";// 支付类型
 	
@@ -26,7 +26,7 @@ public class ConfigUtil {
 	// 微信支付统一接口的回调actionhttp://newcapi2.test.xxxxx.com
 	// 本地 使用 public final static String NOTIFY_URL = "http://newcapi2.test.xxxxx.com/weixin/pay/callback/pay.action";
 	// 测试服 使用 
-	public final static String NOTIFY_URL = "https://pay-test1.xxxxxx.com/weixin/pay/callback/pay.action";
+	public final static String NOTIFY_URL = "https://119.23.57.236:8081/game/wxPayCallBack";
 	// 正式服 使用如下
 //	public final static String NOTIFY_URL = "https://pay.xxxxxx.com/weixin/pay/callback/pay.action";
 	// 微信支付成功支付后跳转的地址 web端使用

@@ -16,6 +16,8 @@ public class OrderModel {
 	
 	private Integer wxPayPrice;
 	
+	private Integer payStatus;
+	
 	private String transactionId;
 	
 	private Date createtime;
@@ -92,6 +94,14 @@ public class OrderModel {
 
 	public void setPlayerId(Integer playerId) {
 		this.playerId = playerId;
+	}
+
+	public Integer getPayStatus() {
+		return payStatus;
+	}
+
+	public void setPayStatus(Integer payStatus) {
+		this.payStatus = payStatus;
 	}
 
 }

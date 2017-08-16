@@ -9,12 +9,13 @@
 		<result column="product_id" property="productId"/>
 		<result column="room_card_num" property="roomCardNum"/>
 		<result column="price" property="price"/>
+		<result column="remark" property="remark"/>
 		<result column="create_time" property="createTime"/>
 		<result column="update_time" property="updateTime"/>
 	</resultMap>
 	
 	<select id="getProductById"  parameterType = "Integer" resultMap="productResultMap">
-	    select product_id, room_card_num, price from t_product where product_id = #{productId}
+	    select product_id, room_card_num, price, remark from t_product where product_id = #{productId}
 	</select>
 	
 	<select id="getProductList" resultMap="productResultMap">

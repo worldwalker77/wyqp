@@ -4,7 +4,7 @@
 
 <mapper namespace="cn.worldwalker.game.wyqp.common.dao.UserDao">
 	
-	<resultMap id="UserResultMap" type="cn.worldwalker.game.wyqp.common.domain.base.UserModel" >
+	<resultMap id="userResultMap" type="cn.worldwalker.game.wyqp.common.domain.base.UserModel" >
 		<id column="player_id" property="playerId"/>
 		<result column="nick_name" property="nickName"/>
 		<result column="head_img_url" property="headImgUrl"/>
@@ -15,18 +15,24 @@
 		<result column="update_time" property="updateTime"/>
 	</resultMap>
 	
-	<select id="getUserByWxOpenId"  parameterType = "String" resultType="cn.worldwalker.game.wyqp.common.domain.base.UserModel">
+	<select id="getUserByWxOpenId"  parameterType = "String" resultMap="userResultMap">
 	    select player_id, room_card_num, user_level from t_user where wx_open_id = #{wxOpenId} limit 1
 	</select>
 	
-	<select id="getUserById"  parameterType = "Long" resultType="cn.worldwalker.game.wyqp.common.domain.base.UserModel">
+	<select id="getUserById"  parameterType = "Long" resultMap="userResultMap">
 	    select room_card_num, updateTime from t_user where player_id = #{playerId}
 	</select>
 	
 	<update id="deductRoomCard"  parameterType = "map">
 		update t_user 
 		set room_card_num = room_card_num - #{deductNum}, update_time = now() 
-		where id = #{id} and room_card_num = #{roomCardNum} and update_time = #{updateTime}
+		where player_id = #{playerId} and room_card_num = #{roomCardNum} and update_time = #{updateTime}
+	</update>
+	
+	<update id="addRoomCard"  parameterType = "map">
+		update t_user 
+		set room_card_num = room_card_num + #{addNum}, update_time = now() 
+		where player_id = #{playerId}
 	</update>
 	
     <insert id="insertUser" parameterType="cn.worldwalker.game.wyqp.common.domain.base.UserModel">  

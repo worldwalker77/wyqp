@@ -12,7 +12,7 @@ public class WeixinConstant {
 	
 	public static String FAIL = "FAIL";   //失败return_code
 	
-	public static String PRODUCT_BODY = "xx时长充值卡"; // 商品描述
+	public static String PRODUCT_BODY = "购买房卡"; // 商品描述
 	
 	public static String FEBDA_PAY_BODY = "xx分答支付"; // 商品描述
 	

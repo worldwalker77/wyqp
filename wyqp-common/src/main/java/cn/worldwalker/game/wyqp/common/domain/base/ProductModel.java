@@ -2,11 +2,13 @@ package cn.worldwalker.game.wyqp.common.domain.base;
 
 public class ProductModel {
 	/**商品id**/
-	public Integer productId;
+	private Integer productId;
 	/**房卡数量**/
-	public Integer roomCardNum;
+	private Integer roomCardNum;
 	/**价格，单位分**/
-	public Integer price;
+	private Integer price;
+	
+	private String remark;
 	
 	public Integer getProductId() {
 		return productId;
@@ -25,6 +27,12 @@ public class ProductModel {
 	}
 	public void setPrice(Integer price) {
 		this.price = price;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 	
 	

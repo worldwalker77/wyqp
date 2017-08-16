@@ -8,4 +8,6 @@ public interface OrderDao {
 	 
 	 public Integer updateOrder(OrderModel orderModel);
 	 
+	 public OrderModel getOderByOrderId(Long orderId);
+	 
 }

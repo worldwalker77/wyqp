@@ -17,7 +17,7 @@
 	    select product_id, room_card_num, price from t_product where product_id = #{productId}
 	</select>
 	
-	<select id="getProductList" resultMap="cn.worldwalker.game.wyqp.common.domain.base.UserModel">
+	<select id="getProductList" resultMap="productResultMap">
 	    select product_id, room_card_num, price from t_product 
 	</select>
 	

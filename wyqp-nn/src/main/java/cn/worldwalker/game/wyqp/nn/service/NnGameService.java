@@ -10,10 +10,12 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import cn.worldwalker.game.wyqp.common.domain.base.BaseMsg;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.Card;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
+import cn.worldwalker.game.wyqp.common.domain.base.UserModel;
 import cn.worldwalker.game.wyqp.common.domain.nn.NnMsg;
 import cn.worldwalker.game.wyqp.common.domain.nn.NnPlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
@@ -26,6 +28,7 @@ import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
 import cn.worldwalker.game.wyqp.common.result.Result;
 import cn.worldwalker.game.wyqp.common.service.BaseGameService;
 import cn.worldwalker.game.wyqp.common.utils.GameUtil;
+import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 import cn.worldwalker.game.wyqp.nn.cards.NnCardResource;
 import cn.worldwalker.game.wyqp.nn.cards.NnCardRule;
 import cn.worldwalker.game.wyqp.nn.enums.NnCardTypeEnum;
@@ -57,7 +60,8 @@ public class NnGameService extends BaseGameService{
 
 	@Override
 	public BaseRoomInfo doEntryRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
-		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(userInfo.getRoomId(), NnRoomInfo.class);
+		BaseMsg msg = request.getMsg();
+		NnRoomInfo roomInfo = redisOperationService.getRoomInfoByRoomId(msg.getRoomId(), NnRoomInfo.class);
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		NnPlayerInfo player = new NnPlayerInfo();
 		playerList.add(player);
@@ -450,16 +454,63 @@ public class NnGameService extends BaseGameService{
 		/**如果是第一局结束，则扣除房卡;扣除房卡异常不影响游戏进行，会将异常数据放入redis中，由定时任务进行补偿扣除*/
 		if (roomInfo.getCurGame() == 1) {
 			if (redisOperationService.isLoginFuseOpen()) {
+				log.info("扣除房卡开始===============");
 				try {
-					commonManager.deductRoomCard(roomInfo, RoomCardOperationEnum.consumeCard);
+					List<Integer> palyerIdList = commonManager.deductRoomCard(roomInfo, RoomCardOperationEnum.consumeCard);
+					log.info("palyerIdList:" + JsonUtil.toJson(palyerIdList));
+					for(Integer playerId : palyerIdList){
+						UserModel userM = commonManager.getUserById(playerId);
+						roomCardNumUpdate(userM.getRoomCardNum(), playerId);
+					}
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				log.info("扣除房卡结束===============");
 			}
 		}
 		
 		/**设置下一局的庄家id（抢庄的不设置）*/
 		setRoomBankerId(roomInfo);
+		
+	}
+	
+	public void test(){
+		NnRoomInfo roomInfo = new NnRoomInfo();
+		roomInfo.setRoomId(195886);
+		roomInfo.setRoomBankerId(876917);
+		roomInfo.setRoomBankerType(1);
+		roomInfo.setCurGame(1);
+		roomInfo.setGameType(1);
+		roomInfo.setTotalGames(10);
+		roomInfo.setPayType(2);
+		
+		NnPlayerInfo player = new NnPlayerInfo();
+		player.setPlayerId(20000);
+		player.setCardType(13);
+		NnPlayerInfo player1 = new NnPlayerInfo();
+		player1.setPlayerId(20001);
+		player1.setCardType(10);
+		player1.setStakeScore(2);
+		roomInfo.getPlayerList().add(player);
+		roomInfo.getPlayerList().add(player1);
+		
+		if (roomInfo.getCurGame() == 1) {
+			if (redisOperationService.isLoginFuseOpen()) {
+				log.info("扣除房卡开始===============");
+				try {
+					List<Integer> palyerIdList = commonManager.deductRoomCard(roomInfo, RoomCardOperationEnum.consumeCard);
+					log.info("palyerIdList:" + JsonUtil.toJson(palyerIdList));
+					for(Integer playerId : palyerIdList){
+						UserModel userM = commonManager.getUserById(playerId);
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				log.info("扣除房卡结束===============");
+			}
+		}
 		
 	}
 	

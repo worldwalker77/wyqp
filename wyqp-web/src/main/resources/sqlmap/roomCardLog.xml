@@ -16,22 +16,19 @@
 	</resultMap>
 	
 	 <insert id="insertRoomCardLog" parameterType="cn.worldwalker.game.wyqp.common.domain.base.RoomCardLogModel">  
-	     <!-- 使用这种方式要注意，resultType是要设置的，否则将抛异常，该值对应的User类中的主键类型 -->  
-	     <!-- keyProperty对应的是UserModel类中的主键名，假设取名为user_id，则这边也要改成user_id -->  
-	     <selectKey keyProperty="id" resultType="Long">  
-	         select LAST_INSERT_ID()  
-	     </selectKey>  
 	     insert into t_user_room_card_log( 
 	     					player_id, 
 	     					pre_room_card_num,
 	     					cur_room_card_num, 
+	     					diff_room_card_num,
 	     					operator_id, 
 	     					operator_type,
-	     					update_time) 
+	     					create_time) 
 	     			values(  
-	     					#{player_id}, 
+	     					#{playerId}, 
 	     					#{preRoomCardNum}, 
 	     					#{curRoomCardNum},
+	     					#{diffRoomCardNum},
 	     					#{operatorId}, 
 	     					#{operatorType},
 	     					now())    

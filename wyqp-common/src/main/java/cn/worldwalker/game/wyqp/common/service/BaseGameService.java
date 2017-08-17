@@ -36,6 +36,7 @@ import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
+import cn.worldwalker.game.wyqp.common.enums.PayTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.PayStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
@@ -61,7 +62,7 @@ import com.google.common.collect.ImmutableMap;
 
 public abstract class BaseGameService {
 	
-	private final static Log log = LogFactory.getLog(BaseGameService.class);
+	public final static Log log = LogFactory.getLog(BaseGameService.class);
 	
 	@Autowired
 	public RedisOperationService redisOperationService;
@@ -109,6 +110,7 @@ public abstract class BaseGameService {
 		userInfo.setHeadImgUrl(weixinUserInfo.getHeadImgUrl());
 		redisOperationService.setUserInfo(loginToken, userInfo);
 		userInfo.setToken(loginToken);
+		userInfo.setRoomCardNum(userModel.getRoomCardNum());
 		result.setData(userInfo);
 		return result;
 	}
@@ -237,25 +239,21 @@ public abstract class BaseGameService {
 			throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
 		}
 		
-		/**如果是aa支付，则校验房卡数量是否足够*/
-		//TODO
-//		if (PayTypeEnum.AAPay.type.equals(roomInfo.getPayType())) {
-//			ResultCode resultCode = commonService.roomCardCheck(msg.getPlayerId(), roomInfo.getPayType(), roomInfo.getTotalGames());
-//			if (!ResultCode.SUCCESS.equals(resultCode)) {
-//				ChannelContainer.sendErrorMsg(ctx, resultCode, MsgTypeEnum.entryRoom.msgType, request);
-//				return result;
-//			}
-//		}
-		
-		userInfo.setRoomId(roomId);
-		redisOperationService.setUserInfo(request.getToken(), userInfo);
-		
 		BaseRoomInfo roomInfo = doEntryRoom(ctx, request, userInfo);
+		if (redisOperationService.isLoginFuseOpen()) {
+			/**如果是aa支付，则校验房卡数量是否足够*/
+			if (PayTypeEnum.AAPay.type.equals(roomInfo.getPayType())) {
+				commonManager.roomCardCheck(userInfo.getPlayerId(), request.getGameType(), roomInfo.getPayType(), roomInfo.getTotalGames());
+			}
+		}
 		List playerList = roomInfo.getPlayerList();
 		int size = playerList.size();
 		if (size >= 6) {
 			throw new BusinessException(ExceptionEnum.EXCEED_MAX_PLAYER_NUM);
 		}
+		userInfo.setRoomId(roomId);
+		redisOperationService.setUserInfo(request.getToken(), userInfo);
+		
 		for(int i = 0; i < playerList.size(); i++ ){
 			BasePlayerInfo tempPlayerInfo = (BasePlayerInfo)playerList.get(i);
 			if (playerId.equals(tempPlayerInfo.getPlayerId())) {
@@ -707,14 +705,7 @@ public abstract class BaseGameService {
 				Integer roomCardNum = commonManager.updateOrderAndUser(playerId, order.getRoomCardNum(), Long.valueOf(outTradeNo), transactionId, totalPrice);
 				
 				/**推送房卡更新消息*/
-				Result result = new Result();
-				result.setMsgType(MsgTypeEnum.roomCardNumUpdate.msgType);
-				result.setGameType(0);
-				Map<String, Object> data = new HashMap<String, Object>();
-				data.put("playerId", playerId);
-				data.put("roomCardNum", roomCardNum);
-				result.setData(data);
-				channelContainer.sendTextMsgByPlayerIds(result, playerId);
+				roomCardNumUpdate(roomCardNum, playerId);
 				
 				/**告诉微信服务器，我收到信息了，不要在调用回调action了*/
 				log.info("回调成功："+responseStr);
@@ -725,6 +716,18 @@ public abstract class BaseGameService {
 			return PayCommonUtil.setXML(WeixinConstant.FAIL,"weixin pay server exception");
 		}
 		return PayCommonUtil.setXML(WeixinConstant.FAIL, "weixin pay fail");
+	}
+	
+	public void roomCardNumUpdate( Integer roomCardNum, Integer playerId){
+		/**推送房卡更新消息*/
+		Result result = new Result();
+		result.setMsgType(MsgTypeEnum.roomCardNumUpdate.msgType);
+		result.setGameType(0);
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("playerId", playerId);
+		data.put("roomCardNum", roomCardNum);
+		result.setData(data);
+		channelContainer.sendTextMsgByPlayerIds(result, playerId);
 	}
 	
 	/**

@@ -61,21 +61,22 @@ public class CommonManagerImpl implements CommonManager{
 	
 	@Transactional
 	@Override
-	public void deductRoomCard(BaseRoomInfo roomInfo, RoomCardOperationEnum operationEnum){
-		List<Integer> playerIdList = new ArrayList<Integer>();
+	public List<Integer> deductRoomCard(BaseRoomInfo roomInfo, RoomCardOperationEnum operationEnum){
+		List<Integer> playerIList = new ArrayList<Integer>();
 		if (roomInfo.getPayType() == 1) {/**房主付费*/
-			playerIdList.add(roomInfo.getRoomOwnerId());
+			playerIList.add(roomInfo.getRoomOwnerId());
 		}else{/**AA付费*/
 			List playerList = roomInfo.getPlayerList();
 			int size = playerList.size();
 			for(int i = 0; i < size; i++){
 				BasePlayerInfo player = (BasePlayerInfo)playerList.get(i);
-				playerIdList.add(player.getPlayerId());
+				playerIList.add(player.getPlayerId());
 			}
 		}
-		for(Integer playerId : playerIdList){
+		for(Integer playerId : playerIList){
 			doDeductRoomCard(roomInfo.getGameType(), roomInfo.getPayType(), roomInfo.getTotalGames(), operationEnum, playerId);
 		}
+		return playerIList;
 	}
 	@Override
 	public Integer doDeductRoomCard(Integer gameType, Integer payType, Integer totalGames, RoomCardOperationEnum operationEnum, Integer playerId){
@@ -86,10 +87,11 @@ public class CommonManagerImpl implements CommonManager{
 		UserModel userModel = null;
 		do {
 			userModel = userDao.getUserById(playerId);
-			map.put("id", playerId);
+			map.put("playerId", playerId);
 			map.put("deductNum", consumeEnum.needRoomCardNum);
 			map.put("roomCardNum", userModel.getRoomCardNum());
 			map.put("updateTime", userModel.getUpdateTime());
+			log.info("doDeductRoomCard, map:" + JsonUtil.toJson(map));
 			re = userDao.deductRoomCard(map);
 			if (re == 1) {
 				break;
@@ -214,5 +216,10 @@ public class CommonManagerImpl implements CommonManager{
 	@Override
 	public OrderModel getOderByOrderId(Long orderId) {
 		return orderDao.getOderByOrderId(orderId);
+	}
+	@Override
+	public UserModel getUserById(Integer playerId) {
+		// TODO Auto-generated method stub
+		return userDao.getUserById(playerId);
 	}
 }

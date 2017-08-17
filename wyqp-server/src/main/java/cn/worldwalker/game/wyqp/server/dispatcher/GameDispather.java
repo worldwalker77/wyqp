@@ -41,15 +41,42 @@ public class GameDispather {
 		try {
 			switch (gameTypeEnum) {
 				case common:
-					request = JsonUtil.toObject(textMsg, BaseRequest.class);
+					try {
+						request = JsonUtil.toObject(textMsg, BaseRequest.class);
+					} catch (Exception e) {
+						log.error("json解析异常,textMsg=" + textMsg, e);
+						request = new BaseRequest();
+						request.setGameType(0);
+						request.setMsgType(0);
+						channelContainer.sendErrorMsg(ctx, ExceptionEnum.PARAMS_ERROR, request);
+						return;
+					}
 					commonMsgDispatcher.textMsgProcess(ctx, request);
 					break;
 				case nn:
-					request = JsonUtil.toObject(textMsg, NnRequest.class);
+					try {
+						request = JsonUtil.toObject(textMsg, NnRequest.class);
+					} catch (Exception e) {
+						log.error("json解析异常,textMsg=" + textMsg, e);
+						request = new BaseRequest();
+						request.setGameType(0);
+						request.setMsgType(0);
+						channelContainer.sendErrorMsg(ctx, ExceptionEnum.PARAMS_ERROR, request);
+						return;
+					}
 					nnMsgDispatcher.textMsgProcess(ctx, request);
 					break;
 				case mj:
-					request = JsonUtil.toObject(textMsg, MjRequest.class);
+					try {
+						request = JsonUtil.toObject(textMsg, MjRequest.class);
+					} catch (Exception e) {
+						log.error("json解析异常,textMsg=" + textMsg, e);
+						request = new BaseRequest();
+						request.setGameType(0);
+						request.setMsgType(0);
+						channelContainer.sendErrorMsg(ctx, ExceptionEnum.PARAMS_ERROR, request);
+						return;
+					}
 					mjMsgDisPatcher.textMsgProcess(ctx, request);
 					break;
 				default:

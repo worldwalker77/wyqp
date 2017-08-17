@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.worldwalker.game.wyqp.common.dao.ProxyDao">
+	
+    <insert id="insertProxyUser" parameterType="cn.worldwalker.game.wyqp.common.domain.base.ProxyModel">  
+	     insert into t_proxy_user( 
+	     					proxy_id, 
+	     					player_id, 
+	     					nick_name,
+	     					create_time,
+	     					update_time) 
+	     			values( #{proxyId}, 
+	     					#{playerId}, 
+	     					#{nickName}, 
+	     					now(), 
+	     					now())    
+    </insert>  
+    
+    <select id="getProxyCountByProxyId"  parameterType = "Integer" resultType="Integer">
+	    select count(1) from t_proxy where proxy_id = #{proxyId} limit 1
+	</select>
+	
+	<select id="getProxyUserCountByPlayerId"  parameterType = "Integer" resultType="Integer">
+	    select count(1) from t_proxy_user where player_id = #{playerId} limit 1
+	</select>
+
+</mapper>
+
+

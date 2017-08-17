@@ -21,6 +21,7 @@ public class BaseMsg {
 	private String address;
 	private String x;
 	private String y;
+	private Integer proxyId;
 	
 	public Integer getPayType() {
 		return payType;
@@ -123,6 +124,12 @@ public class BaseMsg {
 	}
 	public void setNoticePlayerList(List<Integer> noticePlayerList) {
 		this.noticePlayerList = noticePlayerList;
+	}
+	public Integer getProxyId() {
+		return proxyId;
+	}
+	public void setProxyId(Integer proxyId) {
+		this.proxyId = proxyId;
 	}
 	
 }

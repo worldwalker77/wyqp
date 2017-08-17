@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cn.worldwalker.game.wyqp.common.dao.OrderDao;
 import cn.worldwalker.game.wyqp.common.dao.ProductDao;
+import cn.worldwalker.game.wyqp.common.dao.ProxyDao;
 import cn.worldwalker.game.wyqp.common.dao.RoomCardLogDao;
 import cn.worldwalker.game.wyqp.common.dao.UserDao;
 import cn.worldwalker.game.wyqp.common.dao.UserFeedbackDao;
@@ -23,6 +24,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.OrderModel;
 import cn.worldwalker.game.wyqp.common.domain.base.ProductModel;
+import cn.worldwalker.game.wyqp.common.domain.base.ProxyModel;
 import cn.worldwalker.game.wyqp.common.domain.base.RoomCardLogModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserModel;
@@ -49,6 +51,8 @@ public class CommonManagerImpl implements CommonManager{
 	private OrderDao orderDao;
 	@Autowired
 	private ProductDao productDao;
+	@Autowired
+	private ProxyDao proxyDao;
 	
 	@Override
 	public UserModel getUserByWxOpenId(String openId){
@@ -219,7 +223,26 @@ public class CommonManagerImpl implements CommonManager{
 	}
 	@Override
 	public UserModel getUserById(Integer playerId) {
-		// TODO Auto-generated method stub
 		return userDao.getUserById(playerId);
+	}
+	
+	@Override
+	public void insertProxyUser(Integer proxyId, Integer playerId, String nickName) {
+		ProxyModel model = new ProxyModel();
+		model.setProxyId(proxyId);
+		model.setPlayerId(playerId);
+		model.setNickName(nickName);
+		Integer res = proxyDao.insertProxyUser(model);
+		if (res <= 0) {
+			throw new BusinessException(ExceptionEnum.BIND_PROXY_FAIL);
+		}
+	}
+	@Override
+	public Integer getProxyCountByProxyId(Integer proxyId) {
+		return proxyDao.getProxyCountByProxyId(proxyId);
+	}
+	@Override
+	public Integer getProxyUserCountByPlayerId(Integer playerId) {
+		return proxyDao.getProxyUserCountByPlayerId(playerId);
 	}
 }

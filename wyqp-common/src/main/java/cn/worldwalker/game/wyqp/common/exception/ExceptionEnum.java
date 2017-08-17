@@ -15,7 +15,10 @@ public enum ExceptionEnum {
     ROOM_CARD_NOT_ENOUGH(9, "房卡数不够"),
     INSERT_ORDER_FAIL(10, "插入订单失败"),
     UPDATE_ORDER_FAIL(11, "更新订单支付状态失败"),
-    UNIFIED_ORDER_FAIL(12, "统一下单失败");
+    UNIFIED_ORDER_FAIL(12, "统一下单失败"),
+    BIND_PROXY_FAIL(13, "绑定代理失败"),
+    PROXY_NOT_EXIST(14, "次代理不存在"),
+    HAS_BIND_PROXY(15, "玩家已经绑定代理");
 
     public Integer   index;
     public String description;

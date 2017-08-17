@@ -36,8 +36,8 @@ import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
-import cn.worldwalker.game.wyqp.common.enums.PayTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.PayStatusEnum;
+import cn.worldwalker.game.wyqp.common.enums.PayTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
@@ -622,6 +622,28 @@ public abstract class BaseGameService {
 		commonManager.getProductList();
 		result.setData(commonManager.getProductList());
 		/**返回给当前玩家刷新信息*/
+		channelContainer.sendTextMsgByPlayerIds(result, userInfo.getPlayerId());
+	}
+	
+	public void bindProxy(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		Integer proxyId = request.getMsg().getProxyId();
+		if (proxyId == null) {
+			throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
+		}
+		Integer proxyCount = commonManager.getProxyCountByProxyId(proxyId);
+		if (proxyCount < 1) {
+			throw new BusinessException(ExceptionEnum.PROXY_NOT_EXIST);
+		}
+		Integer proxyUserCount = commonManager.getProxyUserCountByPlayerId(userInfo.getPlayerId());
+		if (proxyUserCount > 0) {
+			throw new BusinessException(ExceptionEnum.HAS_BIND_PROXY);
+		}
+		commonManager.insertProxyUser(proxyId, userInfo.getPlayerId(), userInfo.getNickName());
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		result.setGameType(GameTypeEnum.common.gameType);
+		result.setMsgType(MsgTypeEnum.bindProxy.msgType);
 		channelContainer.sendTextMsgByPlayerIds(result, userInfo.getPlayerId());
 	}
 	

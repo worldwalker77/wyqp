@@ -36,7 +36,13 @@ public interface CommonManager {
 	 
 	public List<ProductModel> getProductList();
 	
+	public void insertProxyUser(Integer proxyId, Integer playerId, String nickName);
+	
+	public Integer getProxyCountByProxyId(Integer proxyId);
+	
 	public OrderModel getOderByOrderId(Long orderId);
 	
 	public UserModel getUserById(Integer playerId);
+	
+	public Integer getProxyUserCountByPlayerId(Integer playerId);
 }

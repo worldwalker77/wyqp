@@ -46,6 +46,9 @@ public class CommonMsgDisPatcher extends BaseMsgDisPatcher{
 			case productList:
 				commonGameService.productList(ctx, request, userInfo);
 				break;
+			case bindProxy:
+				commonGameService.bindProxy(ctx, request, userInfo);
+				break;
 			default:
 				break;
 			}

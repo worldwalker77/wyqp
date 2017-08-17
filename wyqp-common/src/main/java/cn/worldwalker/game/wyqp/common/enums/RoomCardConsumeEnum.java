@@ -4,10 +4,10 @@ public enum RoomCardConsumeEnum {
 	
 	nn_roomOwnerPayTenGames(1, 1, 10, 4, "房主付费,10局4张房卡"),
 	nn_roomOwnerPayTwentyGames(1, 1, 20, 7, "房主付费,20局7张房卡"),
-	nn_roomOwnerPayThirtyGames(1, 1, 30, 10, "房主付费,30局10张房卡"),
+//	nn_roomOwnerPayThirtyGames(1, 1, 30, 10, "房主付费,30局10张房卡"),
 	nn_AAPayTenGames(1, 2, 10, 1, "AA制付费,10局每人1张房卡"),
-	nn_AAPayTwentyGames(1, 2, 20, 2, "AA制付费,20局每人2张房卡"),
-	nn_AAPayThirtyGames(1, 2, 30, 3, "AA制付费,30局每人3张房卡");
+	nn_AAPayTwentyGames(1, 2, 20, 2, "AA制付费,20局每人2张房卡");
+//	nn_AAPayThirtyGames(1, 2, 30, 3, "AA制付费,30局每人3张房卡");
 	
 	public Integer gameType;
 	public Integer payType;

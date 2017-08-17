@@ -14,4 +14,6 @@ public interface UserDao {
 	 
 	 public Integer deductRoomCard(Map<String, Object> map);
 	 
+	 public Integer addRoomCard(Map<String, Object> map);
+	 
 }

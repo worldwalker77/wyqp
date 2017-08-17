@@ -180,16 +180,28 @@ public class CommonManagerImpl implements CommonManager{
 	}
 	@Transactional
 	@Override
-	public void updateOrder(Long orderId, String transactionId,
-			Integer wxPayPrice) {
+	public Integer updateOrderAndUser(Integer playerId, Integer addRoomCardNum, Long orderId, String transactionId, Integer wxPayPrice) {
+		
 		OrderModel orderModel = new OrderModel();
 		orderModel.setOrderId(orderId);
 		orderModel.setTransactionId(transactionId);
 		orderModel.setWxPayPrice(wxPayPrice);
+		/**更新订单的最终支付状态*/
 		Integer res = orderDao.updateOrder(orderModel);
 		if (res <= 0) {
 			throw new BusinessException(ExceptionEnum.UPDATE_ORDER_FAIL);
 		}
+		/**根据订单号查询订单信息*/
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("playerId", playerId);
+		map.put("addNum", addRoomCardNum);
+		/**更新用户的房卡数*/
+		res = userDao.addRoomCard(map);
+		if (res <= 0) {
+			throw new BusinessException(ExceptionEnum.UPDATE_ORDER_FAIL);
+		}
+		UserModel user = userDao.getUserById(playerId);
+		return user.getRoomCardNum();
 	}
 	@Override
 	public ProductModel getProductById(Integer productId) {
@@ -198,5 +210,9 @@ public class CommonManagerImpl implements CommonManager{
 	@Override
 	public List<ProductModel> getProductList() {
 		return productDao.getProductList();
+	}
+	@Override
+	public OrderModel getOderByOrderId(Long orderId) {
+		return orderDao.getOderByOrderId(orderId);
 	}
 }

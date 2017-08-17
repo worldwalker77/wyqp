@@ -23,6 +23,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.BaseMsg;
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
+import cn.worldwalker.game.wyqp.common.domain.base.OrderModel;
 import cn.worldwalker.game.wyqp.common.domain.base.ProductModel;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
@@ -36,6 +37,7 @@ import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.PayTypeEnum;
+import cn.worldwalker.game.wyqp.common.enums.PayStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
@@ -638,7 +640,7 @@ public abstract class BaseGameService {
 			throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
 		}
 		Long orderId = commonManager.insertOrder(playerId, productId, productModel.getRoomCardNum(), productModel.getPrice());
-		SortedMap<String, Object> parameters = prepareOrder(ip, String.valueOf(orderId), productModel.getPrice());
+		SortedMap<String, Object> parameters = prepareOrder(ip, String.valueOf(orderId), productModel.getPrice(), productModel.getRemark());
 		/**生成签名*/
 		parameters.put("sign", PayCommonUtil.createSign(Charsets.UTF_8.toString(), parameters));
 		/**生成xml格式字符串*/
@@ -691,7 +693,20 @@ public abstract class BaseGameService {
 				String transactionId = (String) map.get("transaction_id");
 				String totlaFee = (String) map.get("total_fee");
 				Integer totalPrice = Integer.valueOf(totlaFee);
-				commonManager.updateOrder(Long.valueOf(outTradeNo), transactionId, totalPrice);
+				/**根据订单号查询订单信息*/
+				OrderModel order = commonManager.getOderByOrderId(Long.valueOf(outTradeNo));
+				Integer payStatus = order.getPayStatus();
+				
+				/**如果支付状态为已经支付，则说明此次回调为重复回调，直接返回成功*/
+				if (PayStatusEnum.pay.type.equals(payStatus)) {
+					return PayCommonUtil.setXML(WeixinConstant.SUCCESS, "OK");
+				}
+				Integer playerId = order.getPlayerId();
+				Integer roomCardNum = commonManager.updateOrderAndUser(playerId, order.getRoomCardNum(), Long.valueOf(outTradeNo), transactionId, totalPrice);
+				
+				/**推送房卡更新消息*/
+				roomCardNumUpdate(playerId, roomCardNum);
+				
 				/**告诉微信服务器，我收到信息了，不要在调用回调action了*/
 				log.info("回调成功："+responseStr);
 				return PayCommonUtil.setXML(WeixinConstant.SUCCESS, "OK");
@@ -703,6 +718,18 @@ public abstract class BaseGameService {
 		return PayCommonUtil.setXML(WeixinConstant.FAIL, "weixin pay fail");
 	}
 	
+	public void roomCardNumUpdate(Integer playerId, Integer roomCardNum){
+		/**推送房卡更新消息*/
+		Result result = new Result();
+		result.setMsgType(MsgTypeEnum.roomCardNumUpdate.msgType);
+		result.setGameType(0);
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("playerId", playerId);
+		data.put("roomCardNum", roomCardNum);
+		result.setData(data);
+		channelContainer.sendTextMsgByPlayerIds(result, playerId);
+	}
+	
 	/**
 	 * 生成订单信息
 	 * 
@@ -710,10 +737,10 @@ public abstract class BaseGameService {
 	 * @param orderId
 	 * @return
 	 */
-	private SortedMap<String, Object> prepareOrder(String ip, String orderId, int price) {
+	private SortedMap<String, Object> prepareOrder(String ip, String orderId, int price, String productBody) {
 		Map<String, Object> oparams = ImmutableMap.<String, Object> builder()
 				.put("appid", ConfigUtil.APPID)// 服务号的应用号
-				.put("body", WeixinConstant.PRODUCT_BODY)// 商品描述
+				.put("body", productBody)// 商品描述
 				.put("mch_id", ConfigUtil.MCH_ID)// 商户号 ？
 				.put("nonce_str", PayCommonUtil.CreateNoncestr())// 16随机字符串(大小写字母加数字)
 				.put("out_trade_no", orderId)// 商户订单号

@@ -33,7 +33,7 @@ public class GameUtil {
 		return MD5Util.encryptByMD5(temp);
 	}
 	public static void main(String[] args) {
-		System.out.println(genToken(123456));
+		System.out.println(genToken(null));
 	}
 	public static Integer[] getPlayerIdArr(List playerList){
 		int size = playerList.size();

@@ -35,6 +35,7 @@ import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
+import cn.worldwalker.game.wyqp.common.enums.PayTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.PlayerStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomStatusEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
@@ -107,6 +108,7 @@ public abstract class BaseGameService {
 		userInfo.setHeadImgUrl(weixinUserInfo.getHeadImgUrl());
 		redisOperationService.setUserInfo(loginToken, userInfo);
 		userInfo.setToken(loginToken);
+		userInfo.setRoomCardNum(userModel.getRoomCardNum());
 		result.setData(userInfo);
 		return result;
 	}
@@ -235,25 +237,21 @@ public abstract class BaseGameService {
 			throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
 		}
 		
-		/**如果是aa支付，则校验房卡数量是否足够*/
-		//TODO
-//		if (PayTypeEnum.AAPay.type.equals(roomInfo.getPayType())) {
-//			ResultCode resultCode = commonService.roomCardCheck(msg.getPlayerId(), roomInfo.getPayType(), roomInfo.getTotalGames());
-//			if (!ResultCode.SUCCESS.equals(resultCode)) {
-//				ChannelContainer.sendErrorMsg(ctx, resultCode, MsgTypeEnum.entryRoom.msgType, request);
-//				return result;
-//			}
-//		}
-		
-		userInfo.setRoomId(roomId);
-		redisOperationService.setUserInfo(request.getToken(), userInfo);
-		
 		BaseRoomInfo roomInfo = doEntryRoom(ctx, request, userInfo);
+		if (redisOperationService.isLoginFuseOpen()) {
+			/**如果是aa支付，则校验房卡数量是否足够*/
+			if (PayTypeEnum.AAPay.type.equals(roomInfo.getPayType())) {
+				commonManager.roomCardCheck(userInfo.getPlayerId(), request.getGameType(), roomInfo.getPayType(), roomInfo.getTotalGames());
+			}
+		}
 		List playerList = roomInfo.getPlayerList();
 		int size = playerList.size();
 		if (size >= 6) {
 			throw new BusinessException(ExceptionEnum.EXCEED_MAX_PLAYER_NUM);
 		}
+		userInfo.setRoomId(roomId);
+		redisOperationService.setUserInfo(request.getToken(), userInfo);
+		
 		for(int i = 0; i < playerList.size(); i++ ){
 			BasePlayerInfo tempPlayerInfo = (BasePlayerInfo)playerList.get(i);
 			if (playerId.equals(tempPlayerInfo.getPlayerId())) {

@@ -452,6 +452,7 @@ public class NnGameService extends BaseGameService{
 			if (redisOperationService.isLoginFuseOpen()) {
 				try {
 					commonManager.deductRoomCard(roomInfo, RoomCardOperationEnum.consumeCard);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

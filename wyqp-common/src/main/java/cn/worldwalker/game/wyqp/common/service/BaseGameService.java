@@ -62,7 +62,7 @@ import com.google.common.collect.ImmutableMap;
 
 public abstract class BaseGameService {
 	
-	private final static Log log = LogFactory.getLog(BaseGameService.class);
+	public final static Log log = LogFactory.getLog(BaseGameService.class);
 	
 	@Autowired
 	public RedisOperationService redisOperationService;
@@ -705,7 +705,7 @@ public abstract class BaseGameService {
 				Integer roomCardNum = commonManager.updateOrderAndUser(playerId, order.getRoomCardNum(), Long.valueOf(outTradeNo), transactionId, totalPrice);
 				
 				/**推送房卡更新消息*/
-				roomCardNumUpdate(playerId, roomCardNum);
+				roomCardNumUpdate(roomCardNum, playerId);
 				
 				/**告诉微信服务器，我收到信息了，不要在调用回调action了*/
 				log.info("回调成功："+responseStr);
@@ -718,7 +718,7 @@ public abstract class BaseGameService {
 		return PayCommonUtil.setXML(WeixinConstant.FAIL, "weixin pay fail");
 	}
 	
-	public void roomCardNumUpdate(Integer playerId, Integer roomCardNum){
+	public void roomCardNumUpdate( Integer roomCardNum, Integer playerId){
 		/**推送房卡更新消息*/
 		Result result = new Result();
 		result.setMsgType(MsgTypeEnum.roomCardNumUpdate.msgType);

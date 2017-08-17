@@ -20,7 +20,7 @@ public interface CommonManager {
 	
 	public List<UserRecordModel> getUserRecord(UserRecordModel model);
 	
-	public void deductRoomCard(BaseRoomInfo roomInfo, RoomCardOperationEnum operationEnum);
+	public List<Integer> deductRoomCard(BaseRoomInfo roomInfo, RoomCardOperationEnum operationEnum);
 	
 	public Integer doDeductRoomCard(Integer gameType, Integer payType, Integer totalGames, RoomCardOperationEnum operationEnum, Integer playerId);
 	
@@ -37,4 +37,6 @@ public interface CommonManager {
 	public List<ProductModel> getProductList();
 	
 	public OrderModel getOderByOrderId(Long orderId);
+	
+	public UserModel getUserById(Integer playerId);
 }

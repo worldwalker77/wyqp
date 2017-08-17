@@ -475,6 +475,45 @@ public class NnGameService extends BaseGameService{
 		
 	}
 	
+	public void test(){
+		NnRoomInfo roomInfo = new NnRoomInfo();
+		roomInfo.setRoomId(195886);
+		roomInfo.setRoomBankerId(876917);
+		roomInfo.setRoomBankerType(1);
+		roomInfo.setCurGame(1);
+		roomInfo.setGameType(1);
+		roomInfo.setTotalGames(10);
+		roomInfo.setPayType(2);
+		
+		NnPlayerInfo player = new NnPlayerInfo();
+		player.setPlayerId(20000);
+		player.setCardType(13);
+		NnPlayerInfo player1 = new NnPlayerInfo();
+		player1.setPlayerId(20001);
+		player1.setCardType(10);
+		player1.setStakeScore(2);
+		roomInfo.getPlayerList().add(player);
+		roomInfo.getPlayerList().add(player1);
+		
+		if (roomInfo.getCurGame() == 1) {
+			if (redisOperationService.isLoginFuseOpen()) {
+				log.info("扣除房卡开始===============");
+				try {
+					List<Integer> palyerIdList = commonManager.deductRoomCard(roomInfo, RoomCardOperationEnum.consumeCard);
+					log.info("palyerIdList:" + JsonUtil.toJson(palyerIdList));
+					for(Integer playerId : palyerIdList){
+						UserModel userM = commonManager.getUserById(playerId);
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				log.info("扣除房卡结束===============");
+			}
+		}
+		
+	}
+	
 	public static void main(String[] args) {
 		NnRoomInfo roomInfo = new NnRoomInfo();
 		roomInfo.setRoomId(195886);

@@ -1,6 +1,7 @@
 package cn.worldwalker.game.wyqp.common.manager;
 
 import java.util.List;
+import java.util.Map;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.OrderModel;
@@ -45,4 +46,7 @@ public interface CommonManager {
 	public UserModel getUserById(Integer playerId);
 	
 	public Integer getProxyUserCountByPlayerId(Integer playerId);
+	
+	public Integer getProxyIdByPlayerId(Integer playerId);
+	
 }

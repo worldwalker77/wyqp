@@ -647,6 +647,19 @@ public abstract class BaseGameService {
 		channelContainer.sendTextMsgByPlayerIds(result, userInfo.getPlayerId());
 	}
 	
+	public void checkBindProxy(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+		Integer proxyId = commonManager.getProxyIdByPlayerId(userInfo.getPlayerId());
+		if (proxyId == null) {
+			throw new BusinessException(ExceptionEnum.NEED_BIND_PROXY);
+		}		
+		Result result = new Result();
+		Map<String, Object> data = new HashMap<String, Object>();
+		result.setData(data);
+		result.setGameType(GameTypeEnum.common.gameType);
+		result.setMsgType(MsgTypeEnum.checkBindProxy.msgType);
+		channelContainer.sendTextMsgByPlayerIds(result, userInfo.getPlayerId());
+	}
+	
 	/**
 	 *  微信预支付 统一下单入口
 	 * @param productId

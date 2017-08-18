@@ -30,6 +30,7 @@ public enum MsgTypeEnum {
 	totalSettlement(25, "大结算"),
 	productList(26, "房卡商品列表"),
 	bindProxy(27, "绑定代理"),
+	checkBindProxy(28, "校验是否绑定代理"),
 	
 	/**斗牛特有100-199*/
 	readyRobBanker(100, "准备抢庄"),

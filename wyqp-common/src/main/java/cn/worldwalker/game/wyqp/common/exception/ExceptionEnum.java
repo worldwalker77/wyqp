@@ -18,7 +18,10 @@ public enum ExceptionEnum {
     UNIFIED_ORDER_FAIL(12, "统一下单失败"),
     BIND_PROXY_FAIL(13, "绑定代理失败"),
     PROXY_NOT_EXIST(14, "次代理不存在"),
-    HAS_BIND_PROXY(15, "玩家已经绑定代理");
+    HAS_BIND_PROXY(15, "玩家已经绑定代理"),
+    UPDATE_USER_ROOM_CARD_FAIL(16, "更新用户房卡失败"),
+    UPDATE_PROXY_INCOME_FAIL(17, "更新代理总收益失败"),
+    NEED_BIND_PROXY(18, "必须绑定推广后才能够购买房卡，请前往推广菜单绑定推广号");
 
     public Integer   index;
     public String description;

@@ -25,6 +25,23 @@
 	<select id="getProxyUserCountByPlayerId"  parameterType = "Integer" resultType="Integer">
 	    select count(1) from t_proxy_user where player_id = #{playerId} limit 1
 	</select>
+	
+	
+	<select id="getProxyIdByPlayerId"  parameterType = "Integer" resultType="Integer">
+	    select proxy_id from t_proxy_user 
+	    where player_id = #{playerId}
+	</select>
+	
+	<select id="getProxyTotalIncome"  parameterType = "Integer" resultType="Long">
+	    select total_income from t_proxy 
+	    where proxy_id = #{proxyId}
+	</select>
+	
+	<update id="updateProxyTotalIncome"  parameterType = "cn.worldwalker.game.wyqp.common.domain.base.ProxyModel">
+		update t_proxy 
+		set total_income = total_income + #{curIncome}, update_time = now()
+		where proxy_id = #{proxyId} and total_income = #{totalIncome}
+	</update>
 
 </mapper>
 

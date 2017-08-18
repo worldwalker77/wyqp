@@ -10,5 +10,11 @@ public interface ProxyDao {
 	 
 	 public Integer getProxyUserCountByPlayerId(Integer playerId);
 	 
+	 public Integer getProxyIdByPlayerId(Integer playerId);
+	 
+	 public Long getProxyTotalIncome(Integer proxyId);
+	 
+	 public Integer updateProxyTotalIncome(ProxyModel proxyModel);
+	 
 	 
 }

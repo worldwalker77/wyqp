@@ -197,15 +197,29 @@ public class CommonManagerImpl implements CommonManager{
 		if (res <= 0) {
 			throw new BusinessException(ExceptionEnum.UPDATE_ORDER_FAIL);
 		}
-		/**根据订单号查询订单信息*/
+		/**更新用户的房卡数*/
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("playerId", playerId);
 		map.put("addNum", addRoomCardNum);
-		/**更新用户的房卡数*/
 		res = userDao.addRoomCard(map);
 		if (res <= 0) {
-			throw new BusinessException(ExceptionEnum.UPDATE_ORDER_FAIL);
+			throw new BusinessException(ExceptionEnum.UPDATE_USER_ROOM_CARD_FAIL);
 		}
+		/**根据playerId去t_proxy_user表里面查proxy_id*/
+		Integer proxyId = proxyDao.getProxyIdByPlayerId(playerId);
+		/**根据proxy_id查询当前代理的总收益，主要是为更新做准备，防止更新覆盖*/
+		Long totalIncome = proxyDao.getProxyTotalIncome(proxyId);
+		/**更新代理总收益*/
+		ProxyModel proxyModel = new ProxyModel();
+		proxyModel.setTotalIncome(totalIncome);
+		/**用户充值的一半分给代理*/
+		proxyModel.setCurIncome(wxPayPrice/2);
+		proxyModel.setProxyId(proxyId);
+		res = proxyDao.updateProxyTotalIncome(proxyModel);
+		if (res <= 0) {
+			throw new BusinessException(ExceptionEnum.UPDATE_PROXY_INCOME_FAIL);
+		}
+		/**查询用户当前房卡数并返回*/
 		UserModel user = userDao.getUserById(playerId);
 		return user.getRoomCardNum();
 	}
@@ -244,5 +258,9 @@ public class CommonManagerImpl implements CommonManager{
 	@Override
 	public Integer getProxyUserCountByPlayerId(Integer playerId) {
 		return proxyDao.getProxyUserCountByPlayerId(playerId);
+	}
+	@Override
+	public Integer getProxyIdByPlayerId(Integer playerId) {
+		return proxyDao.getProxyIdByPlayerId(playerId);
 	}
 }

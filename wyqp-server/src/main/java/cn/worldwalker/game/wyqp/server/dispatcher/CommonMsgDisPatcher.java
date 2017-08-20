@@ -20,7 +20,7 @@ public class CommonMsgDisPatcher extends BaseMsgDisPatcher{
 	private CommonGameService commonGameService;
 	
 	@Override
-	public void requestDispatcher(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
+	public void requestDispatcher(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) throws Exception {
 		BaseMsg msg = request.getMsg();
 		Integer msgType = request.getMsgType();
 		MsgTypeEnum msgTypeEnum= MsgTypeEnum.getMsgTypeEnumByType(msgType);
@@ -41,6 +41,7 @@ public class CommonMsgDisPatcher extends BaseMsgDisPatcher{
 				channelContainer.sendTextMsgByPlayerIds(new Result(GameTypeEnum.nn.gameType, MsgTypeEnum.heartBeat.msgType), userInfo.getPlayerId());
 				break;
 			case refreshRoom:
+				channelContainer.addChannel(ctx, userInfo.getPlayerId());
 				commonGameService.commonRefreshRoom(ctx, request, userInfo);
 				break;
 			case productList:
@@ -51,6 +52,9 @@ public class CommonMsgDisPatcher extends BaseMsgDisPatcher{
 				break;
 			case checkBindProxy:
 				commonGameService.checkBindProxy(ctx, request, userInfo);
+				break;
+			case unifiedOrder:
+				commonGameService.unifiedOrder(ctx, request, userInfo);
 				break;
 			default:
 				break;

@@ -22,6 +22,7 @@ import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.DissolveStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
+import cn.worldwalker.game.wyqp.common.enums.OnlineStatusEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomCardOperationEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
@@ -613,9 +614,13 @@ public class NnGameService extends BaseGameService{
 			newPlayer.setRoomCardNum(player.getRoomCardNum());
 			newPlayer.setLevel(player.getLevel());
 			newPlayer.setStatus(player.getStatus());
-			newPlayer.setOnlineStatus(player.getOnlineStatus());
 			newPlayer.setTotalScore(player.getTotalScore());
 			newRoomInfo.getPlayerList().add(newPlayer);
+			if (playerId.equals(player.getPlayerId())) {
+				newPlayer.setOnlineStatus(OnlineStatusEnum.online.status);
+			}else{
+				newPlayer.setOnlineStatus(player.getOnlineStatus());
+			}
 			switch (roomStatusEnum) {
 				case justBegin:
 					break;

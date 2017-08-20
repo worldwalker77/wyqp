@@ -94,7 +94,7 @@ public abstract class BaseMsgDisPatcher {
 		
 	}
 	
-	public abstract void requestDispatcher(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo);
+	public abstract void requestDispatcher(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) throws Exception;
 	
 	private static Map<Integer, MsgTypeEnum> notNeedLockMsgTypeMap = new HashMap<Integer, MsgTypeEnum>();
 	static{
@@ -108,5 +108,6 @@ public abstract class BaseMsgDisPatcher {
 		notNeedLockMsgTypeMap.put(MsgTypeEnum.productList.msgType, MsgTypeEnum.productList);
 		notNeedLockMsgTypeMap.put(MsgTypeEnum.bindProxy.msgType, MsgTypeEnum.bindProxy);
 		notNeedLockMsgTypeMap.put(MsgTypeEnum.checkBindProxy.msgType, MsgTypeEnum.checkBindProxy);
+		notNeedLockMsgTypeMap.put(MsgTypeEnum.unifiedOrder.msgType, MsgTypeEnum.unifiedOrder);
 	}
 }

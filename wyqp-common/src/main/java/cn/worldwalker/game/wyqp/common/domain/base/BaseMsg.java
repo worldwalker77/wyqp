@@ -22,6 +22,7 @@ public class BaseMsg {
 	private String x;
 	private String y;
 	private Integer proxyId;
+	private Integer productId;
 	
 	public Integer getPayType() {
 		return payType;
@@ -130,6 +131,12 @@ public class BaseMsg {
 	}
 	public void setProxyId(Integer proxyId) {
 		this.proxyId = proxyId;
+	}
+	public Integer getProductId() {
+		return productId;
+	}
+	public void setProductId(Integer productId) {
+		this.productId = productId;
 	}
 	
 }

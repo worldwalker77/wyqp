@@ -9,6 +9,7 @@
 		<result column="product_id" property="productId"/>
 		<result column="room_card_num" property="roomCardNum"/>
 		<result column="price" property="price"/>
+		<result column="show_price" property="showPrice"/>
 		<result column="remark" property="remark"/>
 		<result column="create_time" property="createTime"/>
 		<result column="update_time" property="updateTime"/>
@@ -19,7 +20,7 @@
 	</select>
 	
 	<select id="getProductList" resultMap="productResultMap">
-	    select product_id, room_card_num, price from t_product 
+	    select product_id, room_card_num, price, show_price from t_product 
 	</select>
 	
 

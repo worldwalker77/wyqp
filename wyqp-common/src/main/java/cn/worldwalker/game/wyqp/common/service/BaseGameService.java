@@ -661,7 +661,56 @@ public abstract class BaseGameService {
 	}
 	
 	/**
-	 *  微信预支付 统一下单入口
+	 *  微信预支付 统一下单入口(websocket协议)
+	 * @param productId
+	 * @param playerId
+	 * @param ip
+	 * @return
+	 * @throws Exception
+	 */
+	public void unifiedOrder(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) throws Exception{
+		BaseMsg msg = request.getMsg();
+		Integer productId = msg.getProductId();
+		Integer playerId = userInfo.getPlayerId();
+		String ip = userInfo.getRemoteIp();
+		
+		ProductModel productModel = commonManager.getProductById(productId);
+		if (productModel == null) {
+			throw new BusinessException(ExceptionEnum.PARAMS_ERROR);
+		}
+		Long orderId = commonManager.insertOrder(playerId, productId, productModel.getRoomCardNum(), productModel.getPrice());
+		SortedMap<String, Object> parameters = prepareOrder(ip, String.valueOf(orderId), productModel.getPrice(), productModel.getRemark());
+		/**生成签名*/
+		parameters.put("sign", PayCommonUtil.createSign(Charsets.UTF_8.toString(), parameters));
+		/**生成xml格式字符串*/
+		String requestXML = PayCommonUtil.getRequestXml(parameters);
+		String responseStr = HttpUtil.httpsRequest(ConfigUtil.UNIFIED_ORDER_URL, "POST", requestXML);
+		/**检验API返回的数据里面的签名是否合法，避免数据在传输的过程中被第三方篡改*/
+		if (!PayCommonUtil.checkIsSignValidFromResponseString(responseStr)) {
+			log.error("微信统一下单失败,签名可能被篡改 "+responseStr);
+			throw new BusinessException(ExceptionEnum.UNIFIED_ORDER_FAIL);
+		}
+		/**解析结果 resultStr*/
+		SortedMap<String, Object> resutlMap = XMLUtil.doXMLParse(responseStr);
+		if (resutlMap != null && WeixinConstant.FAIL.equals(resutlMap.get("return_code"))) {
+			log.error("微信统一下单失败,订单编号: " + orderId + " 失败原因:"+ resutlMap.get("return_msg"));
+			throw new BusinessException(ExceptionEnum.UNIFIED_ORDER_FAIL);
+		}
+		/**获取到 prepayid*/
+		/**商户系统先调用该接口在微信支付服务后台生成预支付交易单，返回正确的预支付交易回话标识后再在APP里面调起支付。*/
+		SortedMap<String, Object> map = buildClientJson(resutlMap);
+		map.put("outTradeNo", orderId);
+		log.info("统一下定单成功 "+map.toString());
+		
+		Result result = new Result();
+		result.setGameType(GameTypeEnum.common.gameType);
+		result.setMsgType(MsgTypeEnum.unifiedOrder.msgType);
+		result.setData(map);
+		channelContainer.sendTextMsgByPlayerIds(result, playerId);
+	}
+	
+	/**
+	 *  微信预支付 统一下单入口(http协议)
 	 * @param productId
 	 * @param playerId
 	 * @param ip

@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,8 +39,9 @@ public class WxPayController {
 	
 	@RequestMapping("unifiedOrder")
 	@ResponseBody
-	public Result unifiedOrder(String token, Integer productId, HttpServletRequest request){
+	public Result unifiedOrder(String token, Integer productId, HttpServletRequest request, HttpServletResponse response){
 		Result result = new Result();
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		if (StringUtils.isEmpty(token) || productId == null) {
 			result.setCode(ExceptionEnum.PARAMS_ERROR.index);
 			result.setDesc(ExceptionEnum.PARAMS_ERROR.description);

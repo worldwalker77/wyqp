@@ -1,5 +1,8 @@
 package cn.worldwalker.game.wyqp.web.game;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,13 +50,15 @@ public class GameController {
 		return result;
 	}
 	
-	@RequestMapping("test")
+	@RequestMapping("versionUpdate")
 	@ResponseBody
-	public Result getIpByRoomId(String token, Long roomId, HttpServletResponse response){
+	public Map<String, Object> getIpByRoomId(HttpServletResponse response){
 		Result result = new Result();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("code_url", "http://119.23.57.236:8081/clientversion/170819173506/game_code_170819173506.zip");
+		map.put("update_url", "http://119.23.57.236:8081/clientversion/170819173506/resource");
 		response.addHeader("Access-Control-Allow-Origin", "*");
-		nnGameService.test();
-		return result;
+		return map;
 		
 	}
 	

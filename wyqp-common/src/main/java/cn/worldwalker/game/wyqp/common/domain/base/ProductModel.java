@@ -7,6 +7,8 @@ public class ProductModel {
 	private Integer roomCardNum;
 	/**价格，单位分**/
 	private Integer price;
+	/**价格，单位元**/
+	private String showPrice;
 	
 	private String remark;
 	
@@ -33,6 +35,12 @@ public class ProductModel {
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	public String getShowPrice() {
+		return showPrice;
+	}
+	public void setShowPrice(String showPrice) {
+		this.showPrice = showPrice;
 	}
 	
 	

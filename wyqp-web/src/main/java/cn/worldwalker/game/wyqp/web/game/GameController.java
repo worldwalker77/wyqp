@@ -53,13 +53,13 @@ public class GameController {
 	
 	@RequestMapping("version")
 	@ResponseBody
-	public VersionModel version(HttpServletResponse response){
+	public Map<String, Object> version(HttpServletResponse response){
 		VersionModel versionModel = commonManager.getVersion(new VersionModel());
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("code_url", versionModel.getCodeUrl());
 		map.put("update_url", versionModel.getUpdateUrl());
 		response.addHeader("Access-Control-Allow-Origin", "*");
-		return versionModel;
+		return map;
 		
 	}
 	

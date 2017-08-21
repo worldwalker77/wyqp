@@ -9,6 +9,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.ProductModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserRecordModel;
+import cn.worldwalker.game.wyqp.common.domain.base.VersionModel;
 import cn.worldwalker.game.wyqp.common.enums.RoomCardOperationEnum;
 
 public interface CommonManager {
@@ -48,5 +49,7 @@ public interface CommonManager {
 	public Integer getProxyUserCountByPlayerId(Integer playerId);
 	
 	public Integer getProxyIdByPlayerId(Integer playerId);
+	
+	public VersionModel getVersion(VersionModel model);
 	
 }

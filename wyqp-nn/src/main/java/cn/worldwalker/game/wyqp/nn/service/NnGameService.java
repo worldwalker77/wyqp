@@ -33,6 +33,7 @@ import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 import cn.worldwalker.game.wyqp.nn.cards.NnCardResource;
 import cn.worldwalker.game.wyqp.nn.cards.NnCardRule;
 import cn.worldwalker.game.wyqp.nn.enums.NnCardTypeEnum;
+import cn.worldwalker.game.wyqp.nn.enums.NnMultipleLimitEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnPlayerStatusEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnRoomBankerTypeEnum;
 import cn.worldwalker.game.wyqp.nn.enums.NnRoomStatusEnum;
@@ -52,7 +53,7 @@ public class NnGameService extends BaseGameService{
 		if (!NnRoomBankerTypeEnum.robBanker.type.equals(msg.getRoomBankerType())) {
 			roomInfo.setRoomBankerId(msg.getPlayerId());
 		}
-		roomInfo.setMultipleLimit(msg.getMultipleLimit());
+		roomInfo.setMultipleLimit(NnMultipleLimitEnum.getNnMultipleLimitEnum(msg.getMultipleLimit()).multiple);
 		List<NnPlayerInfo> playerList = roomInfo.getPlayerList();
 		NnPlayerInfo player = new NnPlayerInfo();
 		playerList.add(player);
@@ -399,7 +400,7 @@ public class NnGameService extends BaseGameService{
 					roomBankerPlayer.setTotalScore(roomBankerPlayer.getTotalScore() + roomBankerPlayer.getCurScore());
 					roomBankerPlayer.setLoseTimes(roomBankerPlayer.getLoseTimes() + 1);
 				}else{
-					Integer cardTypeMultiple = NnCardTypeEnum.getNnCardTypeEnum(player.getCardType()).multiple;
+					Integer cardTypeMultiple = NnCardTypeEnum.getNnCardTypeEnum(roomBankerPlayer.getCardType()).multiple;
 					Integer settedMultiple = roomInfo.getMultipleLimit();
 					Integer multiple = cardTypeMultiple;
 					if (cardTypeMultiple > settedMultiple) {
@@ -481,10 +482,11 @@ public class NnGameService extends BaseGameService{
 		roomInfo.setRoomId(195886);
 		roomInfo.setRoomBankerId(876917);
 		roomInfo.setRoomBankerType(1);
-		roomInfo.setCurGame(1);
+		roomInfo.setCurGame(2);
 		roomInfo.setGameType(1);
 		roomInfo.setTotalGames(10);
 		roomInfo.setPayType(2);
+		roomInfo.setMultipleLimit(1);
 		
 		NnPlayerInfo player = new NnPlayerInfo();
 		player.setPlayerId(20000);
@@ -518,21 +520,24 @@ public class NnGameService extends BaseGameService{
 	public static void main(String[] args) {
 		NnRoomInfo roomInfo = new NnRoomInfo();
 		roomInfo.setRoomId(195886);
-		roomInfo.setRoomBankerId(876917);
+		roomInfo.setRoomBankerId(20000);
 		roomInfo.setRoomBankerType(1);
-		roomInfo.setCurGame(1);
-		roomInfo.setTotalGames(2);
+		roomInfo.setCurGame(2);
+		roomInfo.setGameType(1);
+		roomInfo.setTotalGames(10);
 		roomInfo.setPayType(2);
+		roomInfo.setMultipleLimit(3);
 		
 		NnPlayerInfo player = new NnPlayerInfo();
-		player.setPlayerId(876917);
-		player.setCardType(13);
+		player.setPlayerId(20000);
+		player.setCardType(10);
 		NnPlayerInfo player1 = new NnPlayerInfo();
-		player1.setPlayerId(432313);
-		player1.setCardType(10);
-		player1.setStakeScore(2);
+		player1.setPlayerId(20001);
+		player1.setCardType(1);
+		player1.setStakeScore(1);
 		roomInfo.getPlayerList().add(player);
 		roomInfo.getPlayerList().add(player1);
+//		calculateScoreAndRoomBanker(roomInfo);
 	}
 	
 	

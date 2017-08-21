@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BaseMsg;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
+import cn.worldwalker.game.wyqp.common.domain.base.VersionModel;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
 import cn.worldwalker.game.wyqp.common.manager.CommonManager;
 import cn.worldwalker.game.wyqp.common.result.Result;
@@ -50,15 +51,15 @@ public class GameController {
 		return result;
 	}
 	
-	@RequestMapping("versionUpdate")
+	@RequestMapping("version")
 	@ResponseBody
-	public Map<String, Object> getIpByRoomId(HttpServletResponse response){
-		Result result = new Result();
+	public VersionModel version(HttpServletResponse response){
+		VersionModel versionModel = commonManager.getVersion(new VersionModel());
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("code_url", "http://119.23.57.236:8081/clientversion/170819173506/game_code_170819173506.zip");
-		map.put("update_url", "http://119.23.57.236:8081/clientversion/170819173506/resource");
+		map.put("code_url", versionModel.getCodeUrl());
+		map.put("update_url", versionModel.getUpdateUrl());
 		response.addHeader("Access-Control-Allow-Origin", "*");
-		return map;
+		return versionModel;
 		
 	}
 	

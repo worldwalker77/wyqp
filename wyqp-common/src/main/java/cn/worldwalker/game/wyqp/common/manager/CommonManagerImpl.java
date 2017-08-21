@@ -20,6 +20,7 @@ import cn.worldwalker.game.wyqp.common.dao.RoomCardLogDao;
 import cn.worldwalker.game.wyqp.common.dao.UserDao;
 import cn.worldwalker.game.wyqp.common.dao.UserFeedbackDao;
 import cn.worldwalker.game.wyqp.common.dao.UserRecordDao;
+import cn.worldwalker.game.wyqp.common.dao.VersionDao;
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.OrderModel;
@@ -29,6 +30,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.RoomCardLogModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserRecordModel;
+import cn.worldwalker.game.wyqp.common.domain.base.VersionModel;
 import cn.worldwalker.game.wyqp.common.enums.RoomCardConsumeEnum;
 import cn.worldwalker.game.wyqp.common.enums.RoomCardOperationEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
@@ -53,6 +55,8 @@ public class CommonManagerImpl implements CommonManager{
 	private ProductDao productDao;
 	@Autowired
 	private ProxyDao proxyDao;
+	@Autowired
+	private VersionDao versionDao;
 	
 	@Override
 	public UserModel getUserByWxOpenId(String openId){
@@ -262,5 +266,9 @@ public class CommonManagerImpl implements CommonManager{
 	@Override
 	public Integer getProxyIdByPlayerId(Integer playerId) {
 		return proxyDao.getProxyIdByPlayerId(playerId);
+	}
+	@Override
+	public VersionModel getVersion(VersionModel model) {
+		return versionDao.getVersion(model);
 	}
 }

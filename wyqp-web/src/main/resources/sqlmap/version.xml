@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.worldwalker.game.wyqp.common.dao.VersionDao">
+
+	<resultMap id="versionResultMap" type="cn.worldwalker.game.wyqp.common.domain.base.VersionModel" >
+		<result column="code_url" property="codeUrl"/>
+		<result column="update_url" property="updateUrl"/>
+		<result column="new_feature" property="newFeature"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+	</resultMap>
+	
+	<select id="getVersion"  parameterType = "cn.worldwalker.game.wyqp.common.domain.base.VersionModel" resultMap="versionResultMap">
+	    select code_url, update_url,new_feature from t_version limit 1
+	</select>
+	
+</mapper>
+
+

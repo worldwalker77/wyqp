@@ -54,6 +54,13 @@ public class CommonGameService extends BaseGameService{
 			return;
 		}
 		RedisRelaModel rrm = redisOperationService.getGameTypeUpdateTimeByRoomId(roomId);
+		/**如果为null，则说明可能是解散房间后，玩家的userInfo里面的roomId没有清空，需要清空掉*/
+		if (rrm == null) {
+			userInfo.setRoomId(null);
+			redisOperationService.setUserInfo(request.getToken(), userInfo);
+			channelContainer.sendTextMsgByPlayerIds(new Result(0, MsgTypeEnum.entryHall.msgType), userInfo.getPlayerId());
+			return;
+		}
 		Integer realGameType = rrm.getGameType();
 		/**设置真是的gameType*/
 		request.setGameType(realGameType);

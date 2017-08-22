@@ -313,6 +313,10 @@ public abstract class BaseGameService {
 		if (playerList.size() == 1) {
 			/**解散房间*/
 			redisOperationService.cleanPlayerAndRoomInfo(roomId, GameUtil.getPlayerIdStrArr(playerList));
+			/**将用户缓存信息里面的roomId设置为null*/
+			userInfo.setRoomId(null);
+			redisOperationService.setUserInfo(request.getToken(), userInfo);
+			
 			result.setMsgType(MsgTypeEnum.successDissolveRoom.msgType);
 			data.put("roomId", roomId);
 			channelContainer.sendTextMsgByPlayerIds(result, playerId);

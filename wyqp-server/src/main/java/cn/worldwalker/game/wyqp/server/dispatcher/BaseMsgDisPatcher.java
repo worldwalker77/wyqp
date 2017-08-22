@@ -18,6 +18,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.exception.BusinessException;
 import cn.worldwalker.game.wyqp.common.exception.ExceptionEnum;
+import cn.worldwalker.game.wyqp.common.result.Result;
 import cn.worldwalker.game.wyqp.common.roomlocks.RoomLockContainer;
 import cn.worldwalker.game.wyqp.common.service.RedisOperationService;
 import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
@@ -63,18 +64,24 @@ public abstract class BaseMsgDisPatcher {
 		Lock lock = null;
 		try {
 			if (!notNeedLockMsgTypeMap.containsKey(request.getMsgType())) {
+				/**如果不存在房间号*/
 				if (!redisOperationService.isRoomIdExist(msg.getRoomId())) {
-					throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
-				}
-				lock = RoomLockContainer.getLockByRoomId(msg.getRoomId());
-				if (lock == null) {
-					synchronized (BaseMsgDisPatcher.class) {
-						if (lock == null) {
-							RoomLockContainer.setLockByRoomId(msg.getRoomId(), new ReentrantLock());
+					/**如果是非刷新房间的请求，则报错，提示房间号不存在*/
+					if (MsgTypeEnum.refreshRoom.msgType != request.getMsgType()) {
+						throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
+					}
+				}else{/**如果房间号存在*/
+					lock = RoomLockContainer.getLockByRoomId(msg.getRoomId());
+					if (lock == null) {
+						synchronized (BaseMsgDisPatcher.class) {
+							if (lock == null) {
+								lock = new ReentrantLock();
+								RoomLockContainer.setLockByRoomId(msg.getRoomId(), lock);
+							}
 						}
 					}
+					lock.lock();
 				}
-				lock.lock();
 			}
 			requestDispatcher(ctx, request, userInfo);
 		} catch (BusinessException e) {

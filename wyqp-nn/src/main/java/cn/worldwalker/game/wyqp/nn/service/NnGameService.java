@@ -322,7 +322,12 @@ public class NnGameService extends BaseGameService{
 			}
 		}
 		if (showCardNum == size) {
-			calculateScoreAndRoomBanker(roomInfo);
+			try {
+				calculateScoreAndRoomBanker(roomInfo);
+			} catch (Exception e) {
+				log.error("roomInfo:" + JsonUtil.toJson(roomInfo), e);
+				throw e;
+			}
 			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			NnRoomInfo newRoomInfo = new NnRoomInfo();
 			newRoomInfo.setTotalWinnerId(roomInfo.getTotalWinnerId());

@@ -26,7 +26,7 @@ public class ConfigUtil {
 	// 微信支付统一接口的回调actionhttp://newcapi2.test.xxxxx.com
 	// 本地 使用 public final static String NOTIFY_URL = "http://newcapi2.test.xxxxx.com/weixin/pay/callback/pay.action";
 	// 测试服 使用 
-	public final static String NOTIFY_URL = "http://119.23.57.236:8081/game/wxPayCallBack";
+	public final static String NOTIFY_URL = "http://game.wyqp.worldwalker.cn/game/wxPayCallBack";
 	// 正式服 使用如下
 //	public final static String NOTIFY_URL = "https://pay.xxxxxx.com/weixin/pay/callback/pay.action";
 	// 微信支付成功支付后跳转的地址 web端使用

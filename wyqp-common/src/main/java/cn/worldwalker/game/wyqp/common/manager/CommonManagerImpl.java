@@ -211,15 +211,23 @@ public class CommonManagerImpl implements CommonManager{
 		}
 		/**根据playerId去t_proxy_user表里面查proxy_id*/
 		Integer proxyId = proxyDao.getProxyIdByPlayerId(playerId);
-		/**根据proxy_id查询当前代理的总收益，主要是为更新做准备，防止更新覆盖*/
-		Long totalIncome = proxyDao.getProxyTotalIncome(proxyId);
-		/**更新代理总收益*/
+		/**根据proxy_id查询当前代理的总收益及当前账户余额，主要是为更新做准备，防止更新覆盖*/
+		ProxyModel resModel = proxyDao.getProxyInfo(proxyId);
+		/**更新代理总收益,用户充值的一半分给代理*/
 		ProxyModel proxyModel = new ProxyModel();
-		proxyModel.setTotalIncome(totalIncome);
-		/**用户充值的一半分给代理*/
-		proxyModel.setCurIncome(wxPayPrice/2);
+		Integer temp = wxPayPrice/2;
+		/**总收益，防止覆盖更新*/
+		proxyModel.setTotalIncome(resModel.getTotalIncome());
+		proxyModel.setCurIncome(temp);
+		/**更新代理账户余额,用户充值的一半分给代理*/
+		/**账户余额，防止覆盖更新*/
+		proxyModel.setRemainderAmount(resModel.getRemainderAmount());
+		proxyModel.setCurRemainder(temp);
+		/**提现金额，防止覆盖更新*/
+		proxyModel.setExtractAmount(resModel.getExtractAmount());
 		proxyModel.setProxyId(proxyId);
-		res = proxyDao.updateProxyTotalIncome(proxyModel);
+		/**以总收益、账户余额、已提现金额当做版本号更新代理总收益及账户余额*/
+		res = proxyDao.updateProxyInfo(proxyModel);
 		if (res <= 0) {
 			throw new BusinessException(ExceptionEnum.UPDATE_PROXY_INCOME_FAIL);
 		}

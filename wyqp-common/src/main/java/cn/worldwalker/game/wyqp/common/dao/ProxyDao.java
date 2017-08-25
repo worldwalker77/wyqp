@@ -17,4 +17,9 @@ public interface ProxyDao {
 	 public Integer updateProxyTotalIncome(ProxyModel proxyModel);
 	 
 	 
+	 public ProxyModel getProxyInfo(Integer proxyId);
+	 
+	 public Integer updateProxyInfo(ProxyModel proxyModel);
+	 
+	 
 }

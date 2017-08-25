@@ -9,6 +9,7 @@ public class ProxyModel {
 	private Long remainderAmount;
 	private Long totalIncome;
 	private Integer curIncome;
+	private Integer curRemainder;
 	
 	public Integer getProxyId() {
 		return proxyId;
@@ -51,6 +52,12 @@ public class ProxyModel {
 	}
 	public void setCurIncome(Integer curIncome) {
 		this.curIncome = curIncome;
+	}
+	public Integer getCurRemainder() {
+		return curRemainder;
+	}
+	public void setCurRemainder(Integer curRemainder) {
+		this.curRemainder = curRemainder;
 	}
 	
 }

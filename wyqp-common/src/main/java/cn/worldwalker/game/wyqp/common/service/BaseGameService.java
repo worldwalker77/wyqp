@@ -239,7 +239,12 @@ public abstract class BaseGameService {
 			throw new BusinessException(ExceptionEnum.ROOM_ID_NOT_EXIST);
 		}
 		
+		
 		BaseRoomInfo roomInfo = doEntryRoom(ctx, request, userInfo);
+		
+		if (roomInfo.getStatus() > RoomStatusEnum.justBegin.status) {
+			throw new BusinessException(ExceptionEnum.NOT_IN_READY_STATUS);
+		}
 		if (redisOperationService.isLoginFuseOpen()) {
 			/**如果是aa支付，则校验房卡数量是否足够*/
 			if (PayTypeEnum.AAPay.type.equals(roomInfo.getPayType())) {

@@ -42,6 +42,18 @@
 		set total_income = total_income + #{curIncome}, update_time = now()
 		where proxy_id = #{proxyId} and total_income = #{totalIncome}
 	</update>
+	
+	
+	<select id="getProxyInfo"  parameterType = "Integer" resultType="cn.worldwalker.game.wyqp.common.domain.base.ProxyModel">
+	    select total_income as totalIncome, extract_amount as extractAmount, remainder_amount as remainderAmount from t_proxy 
+	    where proxy_id = #{proxyId}
+	</select>
+	
+	<update id="updateProxyInfo"  parameterType = "cn.worldwalker.game.wyqp.common.domain.base.ProxyModel">
+		update t_proxy 
+		set total_income = total_income + #{curIncome}, remainder_amount = remainder_amount + #{curRemainder}, update_time = now()
+		where proxy_id = #{proxyId} and total_income = #{totalIncome} and remainder_amount = #{remainderAmount}  and extract_amount = #{extractAmount}
+	</update>
 
 </mapper>
 

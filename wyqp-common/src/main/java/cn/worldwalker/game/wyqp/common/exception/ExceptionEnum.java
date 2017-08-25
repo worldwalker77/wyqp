@@ -21,7 +21,8 @@ public enum ExceptionEnum {
     HAS_BIND_PROXY(15, "玩家已经绑定代理"),
     UPDATE_USER_ROOM_CARD_FAIL(16, "更新用户房卡失败"),
     UPDATE_PROXY_INCOME_FAIL(17, "更新代理总收益失败"),
-    NEED_BIND_PROXY(18, "必须绑定推广后才能够购买房卡，请前往推广菜单绑定推广号");
+    NEED_BIND_PROXY(18, "必须绑定推广后才能够购买房卡，请前往推广菜单绑定推广号"),
+    NOT_IN_READY_STATUS(19, "此房间已经在游戏中，不能加入");
 
     public Integer   index;
     public String description;

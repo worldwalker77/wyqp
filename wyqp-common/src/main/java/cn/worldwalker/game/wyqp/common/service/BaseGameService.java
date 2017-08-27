@@ -466,11 +466,13 @@ public abstract class BaseGameService {
 			playerIdArr[0] = msg.getPlayerId();
 			playerIdArr[1] = msg.getOtherPlayerId();
 			channelContainer.sendTextMsgByPlayerIds(result, playerIdArr);
+			return;
 		}else if(ChatTypeEnum.voiceChat.type == msg.getChatType()){
 			data.put("playerId", msg.getPlayerId());
 			data.put("chatMsg", msg.getChatMsg());
 			data.put("chatType", msg.getChatType());
 			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArrWithOutSelf(playerList, msg.getPlayerId()));
+			return;
 		}
 		
 		data.put("playerId", msg.getPlayerId());

@@ -1,6 +1,5 @@
 package cn.worldwalker.game.wyqp.common.domain.base;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,13 +19,13 @@ public class UserRecordModel {
 	
 	private Integer score;
 	
-	private String nickNames;
-	
-	private List<String> nickNameList = new ArrayList<String>();
+	private String recordInfo;
 	
 	private String remark; 
 	
 	private Date createTime;
+	
+	private List<RecordModel> recordList;
 
 	public Long getId() {
 		return id;
@@ -68,21 +67,6 @@ public class UserRecordModel {
 		this.score = score;
 	}
 
-	public String getNickNames() {
-		return nickNames;
-	}
-
-	public void setNickNames(String nickNames) {
-		this.nickNames = nickNames;
-	}
-
-	public List<String> getNickNameList() {
-		return nickNameList;
-	}
-
-	public void setNickNameList(List<String> nickNameList) {
-		this.nickNameList = nickNameList;
-	}
 
 	public Date getCreateTime() {
 		return createTime;
@@ -115,5 +99,22 @@ public class UserRecordModel {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+
+	public String getRecordInfo() {
+		return recordInfo;
+	}
+
+	public void setRecordInfo(String recordInfo) {
+		this.recordInfo = recordInfo;
+	}
+
+	public List<RecordModel> getRecordList() {
+		return recordList;
+	}
+
+	public void setRecordList(List<RecordModel> recordList) {
+		this.recordList = recordList;
+	}
+
 
 }

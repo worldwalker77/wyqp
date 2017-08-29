@@ -12,7 +12,7 @@
 		<result column="pay_type" property="payType"/>
 		<result column="total_games" property="totalGames"/>
 		<result column="score" property="score"/>
-		<result column="nick_names" property="nickNames"/>
+		<result column="record_info" property="recordInfo"/>
 		<result column="remark" property="remark"/>
 		<result column="create_time" property="createTime"/>
 	</resultMap>
@@ -30,7 +30,7 @@
 	     					pay_type,
 	     					total_games,
 	     					score, 
-	     					nick_names,
+	     					record_info,
 	     					remark,
 	     					create_time) 
 	     			values(  
@@ -40,7 +40,7 @@
 	     					#{payType},
 	     					#{totalGames},
 	     					#{score},
-	     					#{nickNames},
+	     					#{recordInfo},
 	     					#{remark},
 	     					#{createTime})    
     </insert> 
@@ -52,17 +52,17 @@
 	     					pay_type,
 	     					total_games,
 	     					score,
-	     					nick_names, 
+	     					record_info,
 	     					remark,
 	     					create_time)  
         values  
         <foreach collection="list" item="item" index="index" separator="," >  
-            (#{item.playerId},#{item.gameType},#{item.roomId},#{item.payType},#{item.totalGames},#{item.score},#{item.nickNames},#{item.remark},#{item.createTime})  
+            (#{item.playerId},#{item.gameType},#{item.roomId},#{item.payType},#{item.totalGames},#{item.score},#{item.recordInfo},#{item.remark},#{item.createTime})  
         </foreach>  
     </insert>  
-    
+     
     <select id="getUserRecord"  parameterType = "cn.worldwalker.game.wyqp.common.domain.base.UserRecordModel" resultMap="userRecordResultMap">
-	    select * from t_user_record where player_id = #{playerId} and game_type = #{gameType} order by create_time desc,score desc limit 20
+	    select room_id,create_time, record_info, remark from t_user_record where player_id = #{playerId} and game_type = #{gameType} order by create_time desc limit 20
 	</select>
 </mapper>
 

@@ -552,9 +552,6 @@ public abstract class BaseGameService {
 		qmodel.setGameType(request.getGameType());
 		qmodel.setPlayerId(userInfo.getPlayerId());
 		List<UserRecordModel> list = commonManager.getUserRecord(qmodel);
-		for(UserRecordModel model : list){
-			model.setNickNameList(JsonUtil.toObject(model.getNickNames(), List.class));
-		}
 		result.setMsgType(MsgTypeEnum.userRecord.msgType);
 		result.setData(list);
 		channelContainer.sendTextMsgByPlayerIds(result, msg.getPlayerId());

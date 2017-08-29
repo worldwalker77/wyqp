@@ -26,6 +26,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.OrderModel;
 import cn.worldwalker.game.wyqp.common.domain.base.ProductModel;
 import cn.worldwalker.game.wyqp.common.domain.base.ProxyModel;
+import cn.worldwalker.game.wyqp.common.domain.base.RecordModel;
 import cn.worldwalker.game.wyqp.common.domain.base.RoomCardLogModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserModel;
@@ -129,8 +130,15 @@ public class CommonManagerImpl implements CommonManager{
 	}
 	@Override
 	public List<UserRecordModel> getUserRecord(UserRecordModel model) {
-		return userRecordDao.getUserRecord(model);
+		List<UserRecordModel> list = userRecordDao.getUserRecord(model);
+		for(UserRecordModel userRecordModel : list){
+			userRecordModel.setRecordList(JsonUtil.json2list(userRecordModel.getRecordInfo(), RecordModel.class));
+			userRecordModel.setRecordInfo(null);
+		}
+		return list;
 	}
+	
+	
 	@Override
 	public void addUserRecord(BaseRoomInfo roomInfo) {
 		List playerList = roomInfo.getPlayerList();
@@ -138,12 +146,17 @@ public class CommonManagerImpl implements CommonManager{
 			return;
 		}
 		int size = playerList.size();
-		List<String> nickNameList = new ArrayList<String>();
+		List<RecordModel> recordModelList = new ArrayList<RecordModel>();
 		for(int i = 0; i < size; i++){
 			BasePlayerInfo player = (BasePlayerInfo)playerList.get(i);
-			nickNameList.add(player.getNickName());
+			RecordModel recordModel = new RecordModel();
+			recordModel.setHeadImgUrl(player.getHeadImgUrl());
+			recordModel.setNickName(player.getNickName());
+			recordModel.setPlayerId(player.getPlayerId());
+			recordModel.setScore(player.getTotalScore());
+			recordModelList.add(recordModel);
 		}
-		String nickNames = JsonUtil.toJson(nickNameList);
+		String recordInfo = JsonUtil.toJson(recordModelList);
 		List<UserRecordModel> modelList = new ArrayList<UserRecordModel>();
 		Date createTime = new Date();
 		for(int i = 0; i < size; i++){
@@ -155,8 +168,8 @@ public class CommonManagerImpl implements CommonManager{
 			model.setPayType(roomInfo.getPayType());
 			model.setTotalGames(roomInfo.getTotalGames());
 			model.setScore(player.getTotalScore());
-			model.setNickNames(nickNames);
-//			model.setRemark(RoomCardConsumeEnum.getRoomCardConsumeEnum(roomInfo.getGameType(), roomInfo.getPayType(), roomInfo.getTotalGames()).desc);
+			model.setRecordInfo(recordInfo);
+			model.setRemark(RoomCardConsumeEnum.getRoomCardConsumeEnum(roomInfo.getGameType(), roomInfo.getPayType(), roomInfo.getTotalGames()).desc);
 			model.setCreateTime(createTime);
 			modelList.add(model);
 		}

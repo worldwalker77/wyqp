@@ -1,6 +1,8 @@
 package cn.worldwalker.game.wyqp.common.utils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -8,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 
 
@@ -80,17 +83,23 @@ public class JsonUtil {
     /**
      * json array string convert to list with javaBean
      */
-//    public static <T> List<T> json2list(String jsonArrayStr, Class<T> clazz)
-//            throws Exception {
-//        List<Map<String, Object>> list = objectMapper.readValue(jsonArrayStr,
-//                new TypeReference<List<T>>() {
-//                });
-//        List<T> result = new ArrayList<T>();
-//        for (Map<String, Object> map : list) {
-//            result.add(map2pojo(map, clazz));
-//        }
-//        return result;
-//    }
+    public static <T> List<T> json2list(String jsonArrayStr, Class<T> clazz)
+             {
+        List<T> result = null;
+		try {
+			List<Map<String, Object>> list = objectMapper.readValue(jsonArrayStr,
+			        new TypeReference<List<T>>() {
+			        });
+			result = new ArrayList<T>();
+			for (Map<String, Object> map : list) {
+			    result.add(map2pojo(map, clazz));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return result;
+    }
 
     /**
      * map convert to javaBean

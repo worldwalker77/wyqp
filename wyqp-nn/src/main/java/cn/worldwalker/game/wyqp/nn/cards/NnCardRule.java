@@ -74,7 +74,7 @@ public class NnCardRule {
 						nnCardList.add(cardList.get(i));
 						nnCardList.add(cardList.get(j));
 						nnCardList.add(cardList.get(k));
-						/**牛牛*/
+						/**有牛的情况下，如果是牛牛*/
 						if (isNiuNiu(cardList)) {
 							return NnCardTypeEnum.NIU_NIU.cardType;
 						}

@@ -59,10 +59,7 @@ public class NnCardRule {
 		if (isGoldNiu(cardList)) {
 			return NnCardTypeEnum.GOLD_NIU.cardType;
 		}
-		/**牛牛*/
-		if (isNiuNiu(cardList)) {
-			return NnCardTypeEnum.NIU_NIU.cardType;
-		}
+		
 		/**有牛牌型*/
 		Integer value0 = 0;
 		Integer value1 = 0;
@@ -77,6 +74,10 @@ public class NnCardRule {
 						nnCardList.add(cardList.get(i));
 						nnCardList.add(cardList.get(j));
 						nnCardList.add(cardList.get(k));
+						/**牛牛*/
+						if (isNiuNiu(cardList)) {
+							return NnCardTypeEnum.NIU_NIU.cardType;
+						}
 						return getNiuNum(cardList, i, j, k);
 					}
 				}

@@ -25,6 +25,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.OrderModel;
 import cn.worldwalker.game.wyqp.common.domain.base.ProductModel;
+import cn.worldwalker.game.wyqp.common.domain.base.RecordModel;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
@@ -552,6 +553,10 @@ public abstract class BaseGameService {
 		qmodel.setGameType(request.getGameType());
 		qmodel.setPlayerId(userInfo.getPlayerId());
 		List<UserRecordModel> list = commonManager.getUserRecord(qmodel);
+		for(UserRecordModel model : list){
+			model.setRecordList(JsonUtil.json2list(model.getRecordInfo(), RecordModel.class));
+			model.setRecordInfo(null);
+		}
 		result.setMsgType(MsgTypeEnum.userRecord.msgType);
 		result.setData(list);
 		channelContainer.sendTextMsgByPlayerIds(result, msg.getPlayerId());

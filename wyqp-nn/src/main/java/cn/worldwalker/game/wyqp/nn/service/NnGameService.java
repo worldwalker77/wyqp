@@ -216,6 +216,7 @@ public class NnGameService extends BaseGameService{
 			redisOperationService.setRoomIdRoomInfo(roomId, roomInfo);
 			result.setMsgType(MsgTypeEnum.readyStake.msgType);
 			data.put("roomBankerId", roomInfo.getRoomBankerId());
+			data.put("curGame", roomInfo.getCurGame());
 			channelContainer.sendTextMsgByPlayerIds(result, GameUtil.getPlayerIdArr(playerList));
 			return ;
 		}

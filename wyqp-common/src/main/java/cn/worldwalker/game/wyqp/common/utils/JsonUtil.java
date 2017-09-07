@@ -12,6 +12,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import cn.worldwalker.game.wyqp.common.domain.base.RecordModel;
+
 
 
 @SuppressWarnings("unchecked")
@@ -100,6 +102,25 @@ public class JsonUtil {
 		}
         return result;
     }
+    
+    public static void main(String[] args) {
+    	List<RecordModel> list = new ArrayList<RecordModel>();
+    	RecordModel model = new RecordModel();
+    	model.setScore(-13);
+    	model.setPlayerId(909098);
+    	model.setNickName("nickName_909098");
+    	list.add(model);
+    	RecordModel model1 = new RecordModel();
+    	model1.setScore(13);
+    	model1.setPlayerId(102384);
+    	model1.setNickName("nickName_102384");
+    	list.add(model1);
+    	
+    	String a = JsonUtil.toJson(list);
+    	
+    	list =JsonUtil.json2list(a, RecordModel.class);
+    	System.out.println(JsonUtil.toJson(list));
+	}
 
     /**
      * map convert to javaBean

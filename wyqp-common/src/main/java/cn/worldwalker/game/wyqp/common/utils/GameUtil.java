@@ -30,7 +30,7 @@ public class GameUtil {
 	}
 	public static String genToken(Integer playerId){
 		String temp = playerId + System.currentTimeMillis() + Thread.currentThread().getName();
-		return MD5Util.encryptByMD5(temp);
+		return MD5Util1.encryptByMD5(temp);
 	}
 	public static void main(String[] args) {
 		System.out.println(genToken(null));

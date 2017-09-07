@@ -3,7 +3,7 @@ package cn.worldwalker.game.wyqp.common.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MD5Util {
+public class MD5Util1 {
 	
     // 全局数组
     private final static String[] strDigits = { "0", "1", "2", "3", "4", "5",

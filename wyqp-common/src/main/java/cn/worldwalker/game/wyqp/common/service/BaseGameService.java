@@ -201,9 +201,9 @@ public abstract class BaseGameService {
 		playerInfo.setWinTimes(0);
 		playerInfo.setLoseTimes(0);
 		/**设置地理位置信息*/
-		playerInfo.setAddress(msg.getAddress());
-		playerInfo.setX(msg.getX());
-		playerInfo.setY(msg.getY());
+		playerInfo.setAddress(userInfo.getAddress());
+		playerInfo.setX(userInfo.getX());
+		playerInfo.setY(userInfo.getY());
 		/**设置当前用户ip*/
 		playerInfo.setIp(userInfo.getRemoteIp());
 		playerInfo.setNickName(userInfo.getNickName());
@@ -280,9 +280,9 @@ public abstract class BaseGameService {
 		playerInfo.setLoseTimes(0);
 		playerInfo.setIp(userInfo.getRemoteIp());
 		/**设置地理位置信息*/
-		playerInfo.setAddress(msg.getAddress());
-		playerInfo.setX(msg.getX());
-		playerInfo.setY(msg.getY());
+		playerInfo.setAddress(userInfo.getAddress());
+		playerInfo.setX(userInfo.getX());
+		playerInfo.setY(userInfo.getY());
 		roomInfo.setUpdateTime(new Date());
 		
 		redisOperationService.setRoomIdGameTypeUpdateTime(roomId, request.getGameType(), new Date());
@@ -553,10 +553,6 @@ public abstract class BaseGameService {
 		qmodel.setGameType(request.getGameType());
 		qmodel.setPlayerId(userInfo.getPlayerId());
 		List<UserRecordModel> list = commonManager.getUserRecord(qmodel);
-		for(UserRecordModel model : list){
-			model.setRecordList(JsonUtil.json2list(model.getRecordInfo(), RecordModel.class));
-			model.setRecordInfo(null);
-		}
 		result.setMsgType(MsgTypeEnum.userRecord.msgType);
 		result.setData(list);
 		channelContainer.sendTextMsgByPlayerIds(result, msg.getPlayerId());

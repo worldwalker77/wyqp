@@ -104,7 +104,7 @@ public abstract class BaseGameService {
 		userInfo.setRoomId(roomId);
 		userInfo.setNickName(weixinUserInfo.getName());
 		userInfo.setLevel(userModel.getUserLevel() == null ? 1 : userModel.getUserLevel());
-		userInfo.setServerIp("119.23.57.236");
+		userInfo.setServerIp(IPUtil.getLocalIp());
 		userInfo.setPort("9000");
 		userInfo.setRemoteIp(IPUtil.getRemoteIp(request));
 		String loginToken = GameUtil.genToken(userModel.getPlayerId());
@@ -125,7 +125,7 @@ public abstract class BaseGameService {
 		userInfo.setRoomId(roomId);
 		userInfo.setNickName("nickName_" + playerId);
 		userInfo.setLevel(1);
-		userInfo.setServerIp("119.23.57.236");
+		userInfo.setServerIp(IPUtil.getLocalIp());
 		userInfo.setPort("9000");
 		userInfo.setRemoteIp(IPUtil.getRemoteIp(request));
 		String loginToken =GameUtil.genToken(playerId);

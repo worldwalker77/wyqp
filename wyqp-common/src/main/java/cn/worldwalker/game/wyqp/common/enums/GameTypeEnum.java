@@ -4,7 +4,8 @@ public enum GameTypeEnum {
 	
 	common(0, "房间之外的请求gameType为0"),
 	nn(1, "牛牛"),
-	mj(2, "麻将");
+	mj(2, "麻将"),
+	jh(3, "金花");
 	
 	public Integer gameType;
 	public String desc;

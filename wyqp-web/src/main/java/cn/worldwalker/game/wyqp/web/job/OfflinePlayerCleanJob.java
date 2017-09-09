@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
+import cn.worldwalker.game.wyqp.common.domain.jh.JhRoomInfo;
+import cn.worldwalker.game.wyqp.common.domain.mj.MjRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
@@ -36,6 +38,12 @@ public class OfflinePlayerCleanJob extends SingleServerJobByRedis{
 				if (GameTypeEnum.nn.gameType.equals(model.getGameType()) ) {
 					roomInfo = redisOperationService.getRoomInfoByRoomId(model.getRoomId(), NnRoomInfo.class);
 					result.setGameType(GameTypeEnum.nn.gameType);
+				}else if(GameTypeEnum.mj.gameType.equals(model.getGameType()) ){
+					roomInfo = redisOperationService.getRoomInfoByRoomId(model.getRoomId(), MjRoomInfo.class);
+					result.setGameType(GameTypeEnum.mj.gameType);
+				}else if(GameTypeEnum.jh.gameType.equals(model.getGameType()) ){
+					roomInfo = redisOperationService.getRoomInfoByRoomId(model.getRoomId(), JhRoomInfo.class);
+					result.setGameType(GameTypeEnum.jh.gameType);
 				}
 				if (roomInfo == null) {
 					/**如果无房间信息，则说明可能其他离线玩家已经将房间删除，不需要再推送消息给其他玩家*/

@@ -8,54 +8,57 @@ import org.springframework.stereotype.Service;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
-import cn.worldwalker.game.wyqp.nn.service.NnGameService;
-@Service(value="nnMsgDispatcher")
-public class NnMsgDispatcher extends BaseMsgDisPatcher {
+import cn.worldwalker.game.wyqp.jh.service.JhGameService;
+@Service(value="jhMsgDispatcher")
+public class JhMsgDispatcher extends BaseMsgDisPatcher {
 	@Autowired
-	private NnGameService nnGameService;
+	private JhGameService jhGameService;
 	@Override
 	public void requestDispatcher(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo) {
 		Integer msgType = request.getMsgType();
 		MsgTypeEnum msgTypeEnum= MsgTypeEnum.getMsgTypeEnumByType(msgType);
 		switch (msgTypeEnum) {
 			case createRoom:
-				nnGameService.createRoom(ctx, request, userInfo);
+				jhGameService.createRoom(ctx, request, userInfo);
 				break;
 			case entryRoom:
-				nnGameService.entryRoom(ctx, request, userInfo);
+				jhGameService.entryRoom(ctx, request, userInfo);
 				break;
 			case ready:
-				nnGameService.ready(ctx, request, userInfo);
+				jhGameService.ready(ctx, request, userInfo);
 				break;
-			case robBanker:
-				nnGameService.robBanker(ctx, request, userInfo);
+			case stake:
+				jhGameService.stake(ctx, request, userInfo);
 				break;
-			case stakeScore:
-				nnGameService.stakeScore(ctx, request, userInfo);
+			case manualCardsCompare:
+				jhGameService.manualCardsCompare(ctx, request, userInfo);
 				break;
-			case showCard:
-				nnGameService.showCard(ctx, request, userInfo);
+			case watchCards:
+				jhGameService.watchCards(ctx, request, userInfo);
+				break;
+			case discardCards:
+				jhGameService.discardCards(ctx, request, userInfo);
 				break;
 			case dissolveRoom:
-				nnGameService.dissolveRoom(ctx, request, userInfo);
+				jhGameService.dissolveRoom(ctx, request, userInfo);
 				break;
 			case agreeDissolveRoom:
-				nnGameService.agreeDissolveRoom(ctx, request, userInfo);
+				jhGameService.agreeDissolveRoom(ctx, request, userInfo);
 				break;
 			case disagreeDissolveRoom:
-				nnGameService.disagreeDissolveRoom(ctx, request, userInfo);
+				jhGameService.disagreeDissolveRoom(ctx, request, userInfo);
 				break;
 			case delRoomConfirmBeforeReturnHall:
-				nnGameService.delRoomConfirmBeforeReturnHall(ctx, request, userInfo);
+				jhGameService.delRoomConfirmBeforeReturnHall(ctx, request, userInfo);
 				break;
 			case queryPlayerInfo:
-				nnGameService.queryPlayerInfo(ctx, request, userInfo);
+				jhGameService.queryPlayerInfo(ctx, request, userInfo);
 				break;
 			case chatMsg:
-				nnGameService.chatMsg(ctx, request, userInfo);
+				jhGameService.chatMsg(ctx, request, userInfo);
 				break;
 			case userRecord:
-				nnGameService.userRecord(ctx, request, userInfo);
+				jhGameService.userRecord(ctx, request, userInfo);
 				break;
 			default:
 				break;

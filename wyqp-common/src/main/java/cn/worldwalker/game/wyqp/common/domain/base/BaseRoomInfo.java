@@ -1,10 +1,7 @@
 package cn.worldwalker.game.wyqp.common.domain.base;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import cn.worldwalker.game.wyqp.common.domain.nn.NnPlayerInfo;
 
 public class BaseRoomInfo {
 	/**房间id*/

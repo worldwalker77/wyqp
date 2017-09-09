@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
+import cn.worldwalker.game.wyqp.common.domain.jh.JhRoomInfo;
+import cn.worldwalker.game.wyqp.common.domain.mj.MjRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.service.RedisOperationService;
@@ -27,6 +29,10 @@ public class RoomInfoCleanJob extends SingleServerJobByRedis {
 				BaseRoomInfo roomInfo = null;
 				if (GameTypeEnum.nn.gameType.equals(model.getGameType()) ) {
 					roomInfo = redisOperationService.getRoomInfoByRoomId(model.getRoomId(), NnRoomInfo.class);
+				}else if(GameTypeEnum.mj.gameType.equals(model.getGameType()) ){
+					roomInfo = redisOperationService.getRoomInfoByRoomId(model.getRoomId(), MjRoomInfo.class);
+				}else if(GameTypeEnum.jh.gameType.equals(model.getGameType()) ){
+					roomInfo = redisOperationService.getRoomInfoByRoomId(model.getRoomId(), JhRoomInfo.class);
 				}
 				if (roomInfo == null) {
 					redisOperationService.delGameTypeUpdateTimeByRoomId(model.getRoomId());

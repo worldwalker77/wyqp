@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
+import cn.worldwalker.game.wyqp.common.domain.jh.JhRequest;
 import cn.worldwalker.game.wyqp.common.domain.mj.MjRequest;
 import cn.worldwalker.game.wyqp.common.domain.nn.NnRequest;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
@@ -32,7 +33,8 @@ public class GameDispather {
 	private BaseMsgDisPatcher nnMsgDispatcher;
 	@Resource(name="commonMsgDispatcher")
 	private BaseMsgDisPatcher commonMsgDispatcher;
-	
+	@Resource(name="jhMsgDispatcher")
+	private BaseMsgDisPatcher jhMsgDispatcher;
 	public void gameProcess(ChannelHandlerContext ctx, String textMsg){
 		JSONObject obj = JSONObject.fromObject(textMsg);
 		Integer gameType = obj.getInt("gameType");
@@ -79,7 +81,21 @@ public class GameDispather {
 					}
 					mjMsgDisPatcher.textMsgProcess(ctx, request);
 					break;
+				case jh:
+					try {
+						request = JsonUtil.toObject(textMsg, JhRequest.class);
+					} catch (Exception e) {
+						log.error("json解析异常,textMsg=" + textMsg, e);
+						request = new BaseRequest();
+						request.setGameType(0);
+						request.setMsgType(0);
+						channelContainer.sendErrorMsg(ctx, ExceptionEnum.PARAMS_ERROR, request);
+						return;
+					}
+					jhMsgDispatcher.textMsgProcess(ctx, request);
+					break;
 				default:
+					channelContainer.sendErrorMsg(ctx, ExceptionEnum.PARAMS_ERROR, request);
 					break;
 				}
 		} catch (BusinessException e) {

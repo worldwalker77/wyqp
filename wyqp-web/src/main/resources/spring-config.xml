@@ -21,7 +21,7 @@ http://www.springframework.org/schema/task/spring-task-3.0.xsd
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>classpath:important.properties</value>
+                <value>classpath:sjsj_important.properties</value>
             </list>
         </property>
     </bean>

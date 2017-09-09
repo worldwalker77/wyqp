@@ -22,7 +22,15 @@ public enum ExceptionEnum {
     UPDATE_USER_ROOM_CARD_FAIL(16, "更新用户房卡失败"),
     UPDATE_PROXY_INCOME_FAIL(17, "更新代理总收益失败"),
     NEED_BIND_PROXY(18, "必须绑定推广后才能够购买房卡，请前往推广菜单绑定推广号"),
-    NOT_IN_READY_STATUS(19, "此房间已经在游戏中，不能加入");
+    NOT_IN_READY_STATUS(19, "此房间已经在游戏中，不能加入"),
+    
+	/**金花*/
+    IS_NOT_YOUR_TURN(20, "抱歉，还没轮到你说话"),
+	STAKE_SCORE_ERROR_1(21, "你的跟注分数必须大于或等于前一个玩家"),
+	STAKE_SCORE_ERROR_2(22, "你的跟注分数必须大于或等于前一个玩家跟注分数的两倍"),
+	STAKE_SCORE_ERROR_3(23, "你的跟注分数必须大于或等于前一个玩家的跟注分数一半"),
+	PLAYER_STATUS_ERROR_1(24, "当前玩家状态错误，必须是未看牌或者已看牌"),
+	MUST_WATCH_CARD(25, "玩家看牌才能参与比牌");
 
     public Integer   index;
     public String description;

@@ -1,60 +1,42 @@
 package cn.worldwalker.game.wyqp.common.domain.jh;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
-import cn.worldwalker.game.wyqp.common.domain.base.Card;
 
 public class JhPlayerInfo extends BasePlayerInfo{
-	/**押注分数 1,2,3,4,5*/
-	private Integer stakeScore;
-	/**玩家抢庄时间*/
-	private Long robBankerTime;
-	/**有牛的情况下，返回的三张和为10的倍数的三张牌*/
-	private List<Card> nnCardList;
-	/**抢庄的时候先给的四张牌*/
-	private List<Card> robFourCardList;
-	/**抢庄的时候第五张牌*/
-	private Card fifthCard;
+	private Integer stakeTimes;
+	/**当前跟注分数*/
+	private Integer curStakeScore;
+	/**当前局总的跟注分数*/
+	private Integer curTotalStakeScore;
+	/**当前玩家已经押注分数列表，断线重连时需要根据这个展示桌面上的压分*/
+	private List<Integer> stakeScoreList = new ArrayList<Integer>();
 	
-	public Integer getStakeScore() {
-		return stakeScore;
+	public Integer getCurStakeScore() {
+		return curStakeScore;
 	}
-
-	public void setStakeScore(Integer stakeScore) {
-		this.stakeScore = stakeScore;
+	public void setCurStakeScore(Integer curStakeScore) {
+		this.curStakeScore = curStakeScore;
 	}
-
-	public Long getRobBankerTime() {
-		return robBankerTime;
+	public Integer getCurTotalStakeScore() {
+		return curTotalStakeScore;
 	}
-
-	public void setRobBankerTime(Long robBankerTime) {
-		this.robBankerTime = robBankerTime;
+	public void setCurTotalStakeScore(Integer curTotalStakeScore) {
+		this.curTotalStakeScore = curTotalStakeScore;
 	}
-
-	public List<Card> getNnCardList() {
-		return nnCardList;
+	public List<Integer> getStakeScoreList() {
+		return stakeScoreList;
 	}
-
-	public void setNnCardList(List<Card> nnCardList) {
-		this.nnCardList = nnCardList;
+	public void setStakeScoreList(List<Integer> stakeScoreList) {
+		this.stakeScoreList = stakeScoreList;
 	}
-
-	public List<Card> getRobFourCardList() {
-		return robFourCardList;
+	public Integer getStakeTimes() {
+		return stakeTimes;
 	}
-
-	public void setRobFourCardList(List<Card> robFourCardList) {
-		this.robFourCardList = robFourCardList;
-	}
-
-	public Card getFifthCard() {
-		return fifthCard;
-	}
-
-	public void setFifthCard(Card fifthCard) {
-		this.fifthCard = fifthCard;
+	public void setStakeTimes(Integer stakeTimes) {
+		this.stakeTimes = stakeTimes;
 	}
 
 }

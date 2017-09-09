@@ -8,6 +8,8 @@ public class JhMsg extends BaseMsg{
 	
 	private Integer stakeTimesLimit;
 	
+	private Integer curStakeScore;//当前押注分数
+	
 	public Integer getStakeLimit() {
 		return stakeLimit;
 	}
@@ -19,6 +21,12 @@ public class JhMsg extends BaseMsg{
 	}
 	public void setStakeTimesLimit(Integer stakeTimesLimit) {
 		this.stakeTimesLimit = stakeTimesLimit;
+	}
+	public Integer getCurStakeScore() {
+		return curStakeScore;
+	}
+	public void setCurStakeScore(Integer curStakeScore) {
+		this.curStakeScore = curStakeScore;
 	}
 	
 }

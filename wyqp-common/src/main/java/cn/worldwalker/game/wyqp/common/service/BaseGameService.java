@@ -19,13 +19,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
+import cn.worldwalker.game.wyqp.common.constant.Constant;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseMsg;
 import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.OrderModel;
 import cn.worldwalker.game.wyqp.common.domain.base.ProductModel;
-import cn.worldwalker.game.wyqp.common.domain.base.RecordModel;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserFeedbackModel;
 import cn.worldwalker.game.wyqp.common.domain.base.UserInfo;
@@ -49,7 +49,6 @@ import cn.worldwalker.game.wyqp.common.roomlocks.RoomLockContainer;
 import cn.worldwalker.game.wyqp.common.rpc.WeiXinRpc;
 import cn.worldwalker.game.wyqp.common.utils.GameUtil;
 import cn.worldwalker.game.wyqp.common.utils.IPUtil;
-import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.ConfigUtil;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.DateUtils;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.HttpUtil;
@@ -145,6 +144,7 @@ public abstract class BaseGameService {
 		/**将channel与playerId进行映射*/
 		channelContainer.addChannel(ctx, playerId);
 		channelContainer.sendTextMsgByPlayerIds(result, playerId);
+		notice(ctx, request, userInfo);
 	}
 	
 	public void createRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
@@ -668,6 +668,16 @@ public abstract class BaseGameService {
 		result.setMsgType(MsgTypeEnum.checkBindProxy.msgType);
 		channelContainer.sendTextMsgByPlayerIds(result, userInfo.getPlayerId());
 	}
+	
+	public void notice(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
+        Result result = new Result();
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("noticeContent", Constant.wyqpNoticeMsg);
+        result.setData(data);
+        result.setGameType(GameTypeEnum.common.gameType);
+        result.setMsgType(MsgTypeEnum.notice.msgType);
+        channelContainer.sendTextMsgByPlayerIds(result, userInfo.getPlayerId());
+    }
 	
 	/**
 	 *  微信预支付 统一下单入口(websocket协议)

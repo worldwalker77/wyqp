@@ -141,6 +141,17 @@ public class GameUtil {
 		}
 	}
 	
+	public static Integer getPlayerStatus(List playerList, Integer playerId){
+		int size = playerList.size();
+		for(int i = 0; i < size; i++){
+			BasePlayerInfo playerInfo = (BasePlayerInfo)playerList.get(i);
+			if (playerInfo.getPlayerId().equals(playerId)) {
+				return playerInfo.getStatus();
+			}
+		}
+		return null;
+	}
+	
 	/**
 	   * 计算两点之间距离
 	   * @param start
@@ -184,5 +195,58 @@ public class GameUtil {
 	   }
 
 	 }
+	
+	
+	public static Integer getNextOperatePlayerIdByRoomBankerId(List playerList, Integer roomBankerId){
+		
+		int size = playerList.size();
+		Integer nextOperatePlayerId = null;
+		for(int i = 0; i < size; i++ ){
+			BasePlayerInfo player = (BasePlayerInfo)playerList.get(i);
+			if (player.getPlayerId().equals(roomBankerId)) {
+				if (i == size - 1) {
+					nextOperatePlayerId = ((BasePlayerInfo)playerList.get(0)).getPlayerId();
+					break;
+				}else{
+					nextOperatePlayerId = ((BasePlayerInfo)playerList.get(i + 1)).getPlayerId();
+					break;
+				}
+			}
+		}
+		return nextOperatePlayerId;
+	}
+	
+	public static Integer getNextOperatePlayerId(List playerList, Integer curPlayerId){
+		
+		List alivePlayerList = getAlivePlayerList(playerList);
+		int size = alivePlayerList.size();
+		Integer nextOperatePlayerId = null;
+		for(int i = 0; i < size; i++ ){
+			BasePlayerInfo player = (BasePlayerInfo)alivePlayerList.get(i);
+			if (player.getPlayerId().equals(curPlayerId)) {
+				if (i == size - 1) {
+					nextOperatePlayerId = ((BasePlayerInfo)alivePlayerList.get(0)).getPlayerId();
+					break;
+				}else{
+					nextOperatePlayerId = ((BasePlayerInfo)alivePlayerList.get(i + 1)).getPlayerId();
+					break;
+				}
+			}
+		}
+		return nextOperatePlayerId;
+	}
+	
+	public static List getAlivePlayerList(List playerList){
+		List alivePlayerList = new ArrayList<>();
+		int size = playerList.size();
+		for(int  i = 0; i < size; i++){
+			BasePlayerInfo player = (BasePlayerInfo)playerList.get(i);
+			/**金花特有，3：未看牌，4：已看牌*/
+			if (player.getStatus().equals(3) || player.getStatus().equals(4)) {
+				alivePlayerList.add(player);
+			}
+		}
+		return alivePlayerList;
+	}
 		
 }

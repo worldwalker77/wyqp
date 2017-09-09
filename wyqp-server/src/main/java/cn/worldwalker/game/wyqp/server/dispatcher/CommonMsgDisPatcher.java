@@ -55,6 +55,8 @@ public class CommonMsgDisPatcher extends BaseMsgDisPatcher{
 				break;
 			case unifiedOrder:
 				commonGameService.unifiedOrder(ctx, request, userInfo);
+			case notice:
+				commonGameService.notice(ctx, request, userInfo);
 				break;
 			default:
 				break;

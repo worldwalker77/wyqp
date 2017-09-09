@@ -39,9 +39,15 @@ public enum MsgTypeEnum {
 	robBankerOverTime(102, "抢庄超过10s时间限制"),
 	readyStake(103, "准备压分"),
 	stakeScore(104, "压分"),
-	showCard(105, "亮牌");
+	showCard(105, "亮牌"),
 	/**麻将特有200-299*/
 	
+	/**金花特有300-399*/
+	stake(300, "压分"),
+	autoCardsCompare(301, "到达跟注数量上限的自动比牌"),
+	manualCardsCompare(302, "局中发起比牌"),
+	watchCards(303, "看牌"),
+	discardCards(304, "弃牌");
 	
 	public int msgType;
 	public String desc;

@@ -37,5 +37,14 @@ public class Constant {
 	
 	public static String getOpenidAndAccessCode = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + appId + "&secret=" + appSecret + "&grant_type=authorization_code&code=CODE";
 
+	public static String wyqpNoticeMsg = "游戏忠告:文明游戏，禁止赌博及其他违法行为  游戏代理及相关咨询加微信：suixing1881";
 	
+	
+	/******************金花相关********************/
+	/**底注*/
+	public final static Integer stakeButtom = 1;
+	/**押注的上限*/
+	public final static Integer stakeLimit = 10;
+	/**跟注次数上限*/
+	public final static Integer stakeTimesLimit = 30;
 }

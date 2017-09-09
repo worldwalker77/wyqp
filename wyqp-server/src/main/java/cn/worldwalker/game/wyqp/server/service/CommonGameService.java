@@ -1,8 +1,8 @@
 package cn.worldwalker.game.wyqp.server.service;
 
-import java.util.List;
-
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,7 @@ import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
 import cn.worldwalker.game.wyqp.common.result.Result;
 import cn.worldwalker.game.wyqp.common.service.BaseGameService;
+import cn.worldwalker.game.wyqp.jh.service.JhGameService;
 import cn.worldwalker.game.wyqp.mj.service.MjGameService;
 import cn.worldwalker.game.wyqp.nn.service.NnGameService;
 
@@ -26,6 +27,9 @@ public class CommonGameService extends BaseGameService{
 	
 	@Autowired
 	private MjGameService mjGameService;
+	
+	@Autowired
+	private JhGameService jhGameService;
 	
 	public void commonEntryRoom(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
 		Integer roomId = request.getMsg().getRoomId();
@@ -40,6 +44,9 @@ public class CommonGameService extends BaseGameService{
 				break;
 			case mj:
 				mjGameService.entryRoom(ctx, request, userInfo);
+				break;
+			case jh:
+				jhGameService.entryRoom(ctx, request, userInfo);
 				break;
 			default:
 				break;
@@ -71,6 +78,9 @@ public class CommonGameService extends BaseGameService{
 				break;
 			case mj:
 				nnGameService.refreshRoom(ctx, request, userInfo);
+				break;
+			case jh:
+				jhGameService.refreshRoom(ctx, request, userInfo);
 				break;
 			default:
 				break;

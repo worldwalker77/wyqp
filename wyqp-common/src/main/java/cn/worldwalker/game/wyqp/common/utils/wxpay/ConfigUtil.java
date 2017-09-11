@@ -1,5 +1,7 @@
 package cn.worldwalker.game.wyqp.common.utils.wxpay;
 
+import cn.worldwalker.game.wyqp.common.utils.CustomizedPropertyConfigurer;
+
 /**
  * 
  * @author wangkai
@@ -11,28 +13,8 @@ public class ConfigUtil {
 	/**
 	 * 服务号相关信息
 	 */
-	public final static String APPID = "wx8c5ef676dbc373bf";// 应用号
-	public final static String APP_SECRECT = "24ad27bef1473bb34c53c5dc9b4f6927";// 应用密码
-	// public final static String TOKEN = "weixinCourse";//服务号的配置token
-	public final static String MCH_ID = "1487423432";// 商户号 xxxx 公众号商户id
-														// xxxxx
-	public final static String API_KEY = "e9bc04Cd6f65d6E81cb9815A069dF76f";// API密钥
-	public final static String SIGN_TYPE = "MD5";// 签名加密方式
-	public final static String TRADE_TYPE = "APP";// 支付类型
 	
-	public final static String CERT_FILE = System.getProperty("user.dir")
-			+ System.getProperty("file.separator")+"fscert"+System.getProperty("file.separator")+"apiclient_cert.p12";//微信企业支付证书
-
-	// 微信支付统一接口的回调actionhttp://newcapi2.test.xxxxx.com
-	// 本地 使用 public final static String NOTIFY_URL = "http://newcapi2.test.xxxxx.com/weixin/pay/callback/pay.action";
-	// 测试服 使用 
-	public final static String NOTIFY_URL = "http://game.wyqp.worldwalker.cn/game/wxPayCallBack";
-	// 正式服 使用如下
-//	public final static String NOTIFY_URL = "https://pay.xxxxxx.com/weixin/pay/callback/pay.action";
-	// 微信支付成功支付后跳转的地址 web端使用
-	public final static String SUCCESS_URL = "http://14.117.25.80:8016/wxweb/contents/config/pay_success.jsp";
-	// oauth2授权时回调action
-	public final static String REDIRECT_URI = "http://14.117.25.80:8016/GoMyTrip/a.jsp?port=8016";
+	
 	/**
 	 * 微信基础接口地址
 	 */

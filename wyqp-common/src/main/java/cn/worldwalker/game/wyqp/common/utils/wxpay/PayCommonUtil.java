@@ -14,6 +14,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.JDOMException;
 import org.xml.sax.SAXException;
 
+import cn.worldwalker.game.wyqp.common.constant.Constant;
+
 /**
  * 
  * @author wangkai
@@ -77,7 +79,7 @@ public class PayCommonUtil {
 				sb.append(key + "=" + value + "&");
 			}
 		}
-		sb.append("key=" + ConfigUtil.API_KEY);
+		sb.append("key=" + Constant.API_KEY);
 		//注意sign转为大写
 		return MD5Util.MD5Encode(sb.toString(), characterEncoding).toUpperCase();
 	}

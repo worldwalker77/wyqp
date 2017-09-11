@@ -18,13 +18,14 @@ http://www.springframework.org/schema/task/spring-task-3.0.xsd
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
 	</context:component-scan>
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:sjsj_important.properties</value>
-            </list>
-        </property>
-    </bean>
+    <!-- 配置文件 -->
+    <bean id="configBean" class="cn.worldwalker.game.wyqp.common.utils.CustomizedPropertyConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:sjsj_important.properties</value>
+			</list>
+		</property>
+	</bean>
 	<import resource="spring-config-service.xml" />
 	<import resource="spring-config-datasource.xml" />
 	<import resource="spring-config-dao.xml" />

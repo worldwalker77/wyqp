@@ -672,7 +672,7 @@ public abstract class BaseGameService {
 	public void notice(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
         Result result = new Result();
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("noticeContent", Constant.wyqpNoticeMsg);
+        data.put("noticeContent", Constant.noticeMsg);
         result.setData(data);
         result.setGameType(GameTypeEnum.common.gameType);
         result.setMsgType(MsgTypeEnum.notice.msgType);
@@ -842,15 +842,15 @@ public abstract class BaseGameService {
 	 */
 	private SortedMap<String, Object> prepareOrder(String ip, String orderId, int price, String productBody) {
 		Map<String, Object> oparams = ImmutableMap.<String, Object> builder()
-				.put("appid", ConfigUtil.APPID)// 服务号的应用号
+				.put("appid", Constant.APPID)// 服务号的应用号
 				.put("body", productBody)// 商品描述
-				.put("mch_id", ConfigUtil.MCH_ID)// 商户号 ？
+				.put("mch_id", Constant.MCH_ID)// 商户号 ？
 				.put("nonce_str", PayCommonUtil.CreateNoncestr())// 16随机字符串(大小写字母加数字)
 				.put("out_trade_no", orderId)// 商户订单号
 				.put("total_fee", price)// 支付金额 单位分 注意:前端负责传入分
 				.put("spbill_create_ip", ip)// IP地址
-				.put("notify_url", ConfigUtil.NOTIFY_URL) // 微信回调地址
-				.put("trade_type", ConfigUtil.TRADE_TYPE)// 支付类型 app
+				.put("notify_url", Constant.WEIXIN_PAY_CALL_BACK_URL) // 微信回调地址
+				.put("trade_type", Constant.TRADE_TYPE)// 支付类型 app
 				.build();
 		return MapUtils.sortMap(oparams);
 	}
@@ -866,10 +866,10 @@ public abstract class BaseGameService {
 			Map<String, Object> resutlMap) throws UnsupportedEncodingException {
 		// 获取微信返回的签名
 		Map<String, Object> params = ImmutableMap.<String, Object> builder()
-				.put("appid", ConfigUtil.APPID)
+				.put("appid", Constant.APPID)
 				.put("noncestr", PayCommonUtil.CreateNoncestr())
 				.put("package", "Sign=WXPay")
-				.put("partnerid", ConfigUtil.MCH_ID)
+				.put("partnerid", Constant.MCH_ID)
 				.put("prepayid", resutlMap.get("prepay_id"))
 				.put("timestamp", DateUtils.getTimeStamp()) // 10 位时间戳
 				.build();

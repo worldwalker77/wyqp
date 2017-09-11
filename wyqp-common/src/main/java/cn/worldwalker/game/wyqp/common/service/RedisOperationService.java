@@ -29,16 +29,16 @@ public class RedisOperationService {
 	
 	/**房间是否存在*/
 	public boolean isRoomIdExist(Integer roomId){
-		return jedisTemplate.hexists(Constant.wyqpRoomIdGameTypeUpdateTimeMap, String.valueOf(roomId));
+		return jedisTemplate.hexists(Constant.roomIdGameTypeUpdateTimeMap, String.valueOf(roomId));
 	}
 	
 	/**roomId->roomInfo 映射*/
 	public void setRoomIdRoomInfo(Integer roomId, BaseRoomInfo roomInfo){
-		jedisTemplate.hset(Constant.wyqpRoomIdRoomInfoMap, String.valueOf(roomId), JsonUtil.toJson(roomInfo));
+		jedisTemplate.hset(Constant.roomIdRoomInfoMap, String.valueOf(roomId), JsonUtil.toJson(roomInfo));
 	}
 	
 	public <T> T getRoomInfoByRoomId(Integer roomId, Class<T> clazz){
-		String roomInfoStr = jedisTemplate.hget(Constant.wyqpRoomIdRoomInfoMap, String.valueOf(roomId));
+		String roomInfoStr = jedisTemplate.hget(Constant.roomIdRoomInfoMap, String.valueOf(roomId));
 		if (StringUtils.isBlank(roomInfoStr)) {
 			return null;
 		}
@@ -47,16 +47,16 @@ public class RedisOperationService {
 	
 	/**roomId->gameType,updateTime 映射*/
 	public void setRoomIdGameTypeUpdateTime(Integer roomId, Integer gameType, Date updateTime){
-		jedisTemplate.hset(Constant.wyqpRoomIdGameTypeUpdateTimeMap, String.valueOf(roomId), gameType + "_" + updateTime.getTime());
+		jedisTemplate.hset(Constant.roomIdGameTypeUpdateTimeMap, String.valueOf(roomId), gameType + "_" + updateTime.getTime());
 	}
 	
 	public void setRoomIdGameTypeUpdateTime(Integer roomId, Date updateTime){
 		RedisRelaModel redisRelaModel = getGameTypeUpdateTimeByRoomId(roomId);
-		jedisTemplate.hset(Constant.wyqpRoomIdGameTypeUpdateTimeMap, String.valueOf(roomId), redisRelaModel.getGameType() + "_" + updateTime.getTime());
+		jedisTemplate.hset(Constant.roomIdGameTypeUpdateTimeMap, String.valueOf(roomId), redisRelaModel.getGameType() + "_" + updateTime.getTime());
 	}
 	
 	public RedisRelaModel getGameTypeUpdateTimeByRoomId(Integer roomId){
-		String str = jedisTemplate.hget(Constant.wyqpRoomIdGameTypeUpdateTimeMap, String.valueOf(roomId));
+		String str = jedisTemplate.hget(Constant.roomIdGameTypeUpdateTimeMap, String.valueOf(roomId));
 		if (StringUtils.isBlank(str)) {
 			return null;
 		}
@@ -65,12 +65,12 @@ public class RedisOperationService {
 	}
 	
 	public void delGameTypeUpdateTimeByRoomId(Integer roomId){
-		jedisTemplate.hdel(Constant.wyqpRoomIdGameTypeUpdateTimeMap, String.valueOf(roomId));
+		jedisTemplate.hdel(Constant.roomIdGameTypeUpdateTimeMap, String.valueOf(roomId));
 	}
 	
 	
 	public List<RedisRelaModel> getAllRoomIdGameTypeUpdateTime(){
-		Map<String, String> map = jedisTemplate.hgetAll(Constant.wyqpRoomIdGameTypeUpdateTimeMap);
+		Map<String, String> map = jedisTemplate.hgetAll(Constant.roomIdGameTypeUpdateTimeMap);
 		if (map == null) {
 			return null;
 		}
@@ -87,11 +87,11 @@ public class RedisOperationService {
 	
 	/**playerId->roomId,gameType 映射*/
 	public void setPlayerIdRoomIdGameType(Integer playerId, Integer roomId, Integer gameType){
-		jedisTemplate.hset(Constant.wyqpPlayerIdRoomIdGameTypeMap, String.valueOf(playerId), roomId + "_" + gameType);
+		jedisTemplate.hset(Constant.playerIdRoomIdGameTypeMap, String.valueOf(playerId), roomId + "_" + gameType);
 	}
 	
 	public RedisRelaModel getRoomIdGameTypeByPlayerId(Integer playerId){
-		String str = jedisTemplate.hget(Constant.wyqpPlayerIdRoomIdGameTypeMap, String.valueOf(playerId));
+		String str = jedisTemplate.hget(Constant.playerIdRoomIdGameTypeMap, String.valueOf(playerId));
 		if (StringUtils.isBlank(str)) {
 			return null;
 		}
@@ -101,15 +101,15 @@ public class RedisOperationService {
 	
 	/**offline playerId->roomId,gameType 映射*/
 	public void setOfflinePlayerIdRoomIdGameTypeTime(Integer playerId, Integer roomId, Integer gameType, Date time){
-		jedisTemplate.hset(Constant.wyqpOfflinePlayerIdRoomIdGameTypeTimeMap, String.valueOf(playerId), roomId + "_" + gameType + "_" + time.getTime());
+		jedisTemplate.hset(Constant.offlinePlayerIdRoomIdGameTypeTimeMap, String.valueOf(playerId), roomId + "_" + gameType + "_" + time.getTime());
 	}
 	
 	public void hdelOfflinePlayerIdRoomIdGameTypeTime(Integer playerId){
-		jedisTemplate.hdel(Constant.wyqpOfflinePlayerIdRoomIdGameTypeTimeMap, String.valueOf(playerId));
+		jedisTemplate.hdel(Constant.offlinePlayerIdRoomIdGameTypeTimeMap, String.valueOf(playerId));
 	}
 	
 	public RedisRelaModel getRoomIdGameTypeTimeByOfflinePlayerId(Integer playerId){
-		String str = jedisTemplate.hget(Constant.wyqpOfflinePlayerIdRoomIdGameTypeTimeMap, String.valueOf(playerId));
+		String str = jedisTemplate.hget(Constant.offlinePlayerIdRoomIdGameTypeTimeMap, String.valueOf(playerId));
 		if (StringUtils.isBlank(str)) {
 			return null;
 		}
@@ -118,7 +118,7 @@ public class RedisOperationService {
 	}
 	
 	public List<RedisRelaModel> getAllOfflinePlayerIdRoomIdGameTypeTime(){
-		Map<String, String> map = jedisTemplate.hgetAll(Constant.wyqpOfflinePlayerIdRoomIdGameTypeTimeMap);
+		Map<String, String> map = jedisTemplate.hgetAll(Constant.offlinePlayerIdRoomIdGameTypeTimeMap);
 		if (map == null) {
 			return null;
 		}
@@ -135,15 +135,15 @@ public class RedisOperationService {
 	
 	/**ip->roomId->time 映射*/
 	public void setIpRoomIdTime(Integer roomId){
-		jedisTemplate.hset(Constant.wyqpIpRoomIdTimeMap, String.valueOf(roomId), String.valueOf(System.currentTimeMillis()));
+		jedisTemplate.hset(Constant.ipRoomIdTimeMap, String.valueOf(roomId), String.valueOf(System.currentTimeMillis()));
 	}
 	
 	public void delIpRoomIdTime(Integer roomId){
-		jedisTemplate.hdel(Constant.wyqpIpRoomIdTimeMap, String.valueOf(roomId));
+		jedisTemplate.hdel(Constant.ipRoomIdTimeMap, String.valueOf(roomId));
 	}
 	
 	public Map<String, String> getAllIpRoomIdTime(){
-		return jedisTemplate.hgetAll(Constant.wyqpIpRoomIdTimeMap);
+		return jedisTemplate.hgetAll(Constant.ipRoomIdTimeMap);
 	}
 	
 	
@@ -169,16 +169,16 @@ public class RedisOperationService {
 	public void incrIpConnectCount(int incrBy){
 		String ip = IPUtil.getLocalIp();
   	    if (StringUtils.isNotBlank(ip)) {
-  	    	jedisTemplate.hincrBy(Constant.wyqpIpConnectCountMap, IPUtil.getLocalIp(), incrBy);
+  	    	jedisTemplate.hincrBy(Constant.ipConnectCountMap, IPUtil.getLocalIp(), incrBy);
   	    }
 	}
 	
 	/**清理用户及房间信息*/
 	public void cleanPlayerAndRoomInfo(Integer roomId, String... playerIds){
-		jedisTemplate.hdel(Constant.wyqpRoomIdRoomInfoMap, String.valueOf(roomId));
-		jedisTemplate.hdel(Constant.wyqpRoomIdGameTypeUpdateTimeMap, String.valueOf(roomId));
-		jedisTemplate.hdel(Constant.wyqpPlayerIdRoomIdGameTypeMap, playerIds);
-		jedisTemplate.hdel(Constant.wyqpOfflinePlayerIdRoomIdGameTypeTimeMap, playerIds);
+		jedisTemplate.hdel(Constant.roomIdRoomInfoMap, String.valueOf(roomId));
+		jedisTemplate.hdel(Constant.roomIdGameTypeUpdateTimeMap, String.valueOf(roomId));
+		jedisTemplate.hdel(Constant.playerIdRoomIdGameTypeMap, playerIds);
+		jedisTemplate.hdel(Constant.offlinePlayerIdRoomIdGameTypeTimeMap, playerIds);
 		RoomLockContainer.delLockByRoomId(roomId);
 	}
 	
@@ -186,12 +186,12 @@ public class RedisOperationService {
 	public void lpushRoomCardOperationFailInfo(Integer playerId, Integer gameType, Integer payType, 
 													Integer totalGames, RoomCardOperationEnum roomCardOperationEnum){
 		RoomCardOperationFailInfo failInfo = new RoomCardOperationFailInfo(playerId,gameType,payType,totalGames,roomCardOperationEnum.type);
-		jedisTemplate.lpush(Constant.wyqpRoomCardOperationFailList, JsonUtil.toJson(failInfo));
+		jedisTemplate.lpush(Constant.roomCardOperationFailList, JsonUtil.toJson(failInfo));
 		
 	}
 	
 	public RoomCardOperationFailInfo rpopRoomCardOperationFailInfo(){
-		String failInfoStr = jedisTemplate.rpop(Constant.wyqpRoomCardOperationFailList);
+		String failInfoStr = jedisTemplate.rpop(Constant.roomCardOperationFailList);
 		if (StringUtils.isBlank(failInfoStr)) {
 			return null;
 		}
@@ -200,14 +200,14 @@ public class RedisOperationService {
 	
 	
 	public boolean isLogFuseOpen(){
-		if ("1".equals(jedisTemplate.get(Constant.wyqpLogInfoFuse))) {
+		if ("1".equals(jedisTemplate.get(Constant.logInfoFuse))) {
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean isLoginFuseOpen(){
-		if ("1".equals(jedisTemplate.get(Constant.wyqpLoginFuse))) {
+		if ("1".equals(jedisTemplate.get(Constant.loginFuse))) {
 			return true;
 		}
 		return false;

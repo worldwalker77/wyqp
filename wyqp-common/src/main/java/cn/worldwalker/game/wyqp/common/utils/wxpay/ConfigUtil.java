@@ -1,6 +1,5 @@
 package cn.worldwalker.game.wyqp.common.utils.wxpay;
 
-import cn.worldwalker.game.wyqp.common.utils.CustomizedPropertyConfigurer;
 
 /**
  * 

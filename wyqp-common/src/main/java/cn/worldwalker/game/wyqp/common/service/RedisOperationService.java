@@ -167,9 +167,9 @@ public class RedisOperationService {
 	
 	/****/
 	public void incrIpConnectCount(int incrBy){
-		String ip = IPUtil.getLocalIp();
+		String ip = Constant.localIp;
   	    if (StringUtils.isNotBlank(ip)) {
-  	    	jedisTemplate.hincrBy(Constant.ipConnectCountMap, IPUtil.getLocalIp(), incrBy);
+  	    	jedisTemplate.hincrBy(Constant.ipConnectCountMap, Constant.localIp, incrBy);
   	    }
 	}
 	

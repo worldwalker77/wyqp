@@ -49,7 +49,6 @@ import cn.worldwalker.game.wyqp.common.roomlocks.RoomLockContainer;
 import cn.worldwalker.game.wyqp.common.rpc.WeiXinRpc;
 import cn.worldwalker.game.wyqp.common.utils.GameUtil;
 import cn.worldwalker.game.wyqp.common.utils.IPUtil;
-import cn.worldwalker.game.wyqp.common.utils.wxpay.ConfigUtil;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.DateUtils;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.HttpUtil;
 import cn.worldwalker.game.wyqp.common.utils.wxpay.MapUtils;
@@ -103,7 +102,7 @@ public abstract class BaseGameService {
 		userInfo.setRoomId(roomId);
 		userInfo.setNickName(weixinUserInfo.getName());
 		userInfo.setLevel(userModel.getUserLevel() == null ? 1 : userModel.getUserLevel());
-		userInfo.setServerIp(IPUtil.getLocalIp());
+		userInfo.setServerIp(Constant.localIp);
 		userInfo.setPort("9000");
 		userInfo.setRemoteIp(IPUtil.getRemoteIp(request));
 		String loginToken = GameUtil.genToken(userModel.getPlayerId());
@@ -124,7 +123,7 @@ public abstract class BaseGameService {
 		userInfo.setRoomId(roomId);
 		userInfo.setNickName("nickName_" + playerId);
 		userInfo.setLevel(1);
-		userInfo.setServerIp(IPUtil.getLocalIp());
+		userInfo.setServerIp(Constant.localIp);
 		userInfo.setPort("9000");
 		userInfo.setRemoteIp(IPUtil.getRemoteIp(request));
 		String loginToken =GameUtil.genToken(playerId);
@@ -185,7 +184,7 @@ public abstract class BaseGameService {
 		roomInfo.setTotalGames(msg.getTotalGames());
 		roomInfo.setCurGame(0);
 		roomInfo.setStatus(RoomStatusEnum.justBegin.status);
-		roomInfo.setServerIp(IPUtil.getLocalIp());
+		roomInfo.setServerIp(Constant.localIp);
 		Date date = new Date();
 		roomInfo.setCreateTime(date);
 		roomInfo.setUpdateTime(date);
@@ -703,7 +702,7 @@ public abstract class BaseGameService {
 		parameters.put("sign", PayCommonUtil.createSign(Charsets.UTF_8.toString(), parameters));
 		/**生成xml格式字符串*/
 		String requestXML = PayCommonUtil.getRequestXml(parameters);
-		String responseStr = HttpUtil.httpsRequest(ConfigUtil.UNIFIED_ORDER_URL, "POST", requestXML);
+		String responseStr = HttpUtil.httpsRequest(Constant.UNIFIED_ORDER_URL, "POST", requestXML);
 		/**检验API返回的数据里面的签名是否合法，避免数据在传输的过程中被第三方篡改*/
 		if (!PayCommonUtil.checkIsSignValidFromResponseString(responseStr)) {
 			log.error("微信统一下单失败,签名可能被篡改 "+responseStr);
@@ -748,7 +747,7 @@ public abstract class BaseGameService {
 		parameters.put("sign", PayCommonUtil.createSign(Charsets.UTF_8.toString(), parameters));
 		/**生成xml格式字符串*/
 		String requestXML = PayCommonUtil.getRequestXml(parameters);
-		String responseStr = HttpUtil.httpsRequest(ConfigUtil.UNIFIED_ORDER_URL, "POST", requestXML);
+		String responseStr = HttpUtil.httpsRequest(Constant.UNIFIED_ORDER_URL, "POST", requestXML);
 		/**检验API返回的数据里面的签名是否合法，避免数据在传输的过程中被第三方篡改*/
 		if (!PayCommonUtil.checkIsSignValidFromResponseString(responseStr)) {
 			log.error("微信统一下单失败,签名可能被篡改 "+responseStr);

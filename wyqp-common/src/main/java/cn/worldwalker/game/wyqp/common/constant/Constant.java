@@ -26,9 +26,11 @@ public class Constant {
 	/**登录切换开关*/
 	public final static String loginFuse = curCompany + "login_fuse";
 	
+	/**本机ip地址*/
+	public final static String localIp = CustomizedPropertyConfigurer.getContextProperty("local.ip");
 	
 	/**牛牛中，庄类型为抢庄的时候，机器ip与房间id，time的list 映射*/
-	public final static String ipRoomIdTimeMap = curCompany + "ip_room_id_time_map_" + IPUtil.getLocalIp();
+	public final static String ipRoomIdTimeMap = curCompany + "ip_room_id_time_map_" + localIp;
 	
 
 	public static String noticeMsg = "游戏忠告:文明游戏，禁止赌博及其他违法行为  游戏代理及相关咨询加微信：" + CustomizedPropertyConfigurer.getContextProperty("proxy.cus.weixin");
@@ -61,4 +63,5 @@ public class Constant {
 	public final static String UNIFIED_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 	/**微信支付回调地址*/
 	public final static String WEIXIN_PAY_CALL_BACK_URL = CustomizedPropertyConfigurer.getContextProperty("weixin.pay.call.back.url");
+	
 }

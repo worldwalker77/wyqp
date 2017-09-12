@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cn.worldwalker.game.wyqp.common.channel.ChannelContainer;
+import cn.worldwalker.game.wyqp.common.constant.Constant;
 import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
@@ -32,7 +33,7 @@ public class NnRobBankerOverTimeNoticeJob {
 	private ChannelContainer channelContainer;
 	
 	public void doTask(){
-		String ip = IPUtil.getLocalIp();
+		String ip = Constant.localIp;
 		if (StringUtils.isBlank(ip)) {
 			return;
 		}

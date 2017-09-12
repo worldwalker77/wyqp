@@ -14,9 +14,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.util.Args;
@@ -105,38 +102,6 @@ public class HttpUtil {
 	 *            密钥
 	 * @return
 	 */
-	public static Token getToken(String appid, String appsecret) {
-		Args.notNull(appid, "appid ");
-		Args.notNull(appsecret, "appsecre ");
-		Token token = null;
-		String requestUrl = ConfigUtil.TOKEN_URL.replace("APPID", appid)
-				.replace("APPSECRET", appsecret);
-		// 发起GET请求获取凭证
-		String httpsRequest = null;
-		try {
-			httpsRequest = httpsRequest(requestUrl, "GET", null);
-		} catch (Exception e) {
-			log.error("http 请求异常 cause " + e.getMessage());
-		}
-		// JSONObject jsonObject =
-		// JSONObject.fromObject(httpsRequest(requestUrl, "GET", null));
-//		JSONObject jsonObject = JSONObject.parseObject(httpsRequest);
-//
-//		if (null != jsonObject) {
-//			try {
-//				token = new Token();
-//				token.setAccessToken(jsonObject.getString("access_token"));
-//				token.setExpiresIn(jsonObject.getInteger("expires_in"));
-//			} catch (JSONException e) {
-//				token = null;
-//				// 获取token失败
-//				log.error("获取token失败 errcode:{} errmsg:{}",
-//						jsonObject.getInteger("errcode"),
-//						jsonObject.getString("errmsg"));
-//			}
-//		}
-		return token;
-	}
 
 	public static String urlEncodeUTF8(String source) {
 		Args.notNull(source, "source");

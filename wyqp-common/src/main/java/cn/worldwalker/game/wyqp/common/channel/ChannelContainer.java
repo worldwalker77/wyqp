@@ -22,6 +22,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.BasePlayerInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRequest;
 import cn.worldwalker.game.wyqp.common.domain.base.BaseRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.base.RedisRelaModel;
+import cn.worldwalker.game.wyqp.common.domain.jh.JhRoomInfo;
 import cn.worldwalker.game.wyqp.common.domain.nn.NnRoomInfo;
 import cn.worldwalker.game.wyqp.common.enums.GameTypeEnum;
 import cn.worldwalker.game.wyqp.common.enums.MsgTypeEnum;
@@ -132,6 +133,8 @@ public class ChannelContainer {
 					roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, NnRoomInfo.class);
 				}else if(GameTypeEnum.mj.gameType == gameType){
 					
+				}else if(GameTypeEnum.jh.gameType == gameType){
+					roomInfo = redisOperationService.getRoomInfoByRoomId(roomId, JhRoomInfo.class);
 				}
 				List playerList = roomInfo.getPlayerList();
 				List<Integer> playerIdList = new ArrayList<Integer>();

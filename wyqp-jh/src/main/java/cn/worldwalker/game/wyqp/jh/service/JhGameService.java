@@ -644,6 +644,8 @@ public class JhGameService extends BaseGameService{
 				maxTotalScore = tempTotalScore;
 				totalWinnerId = player.getPlayerId();
 			}
+			/**清空押注list*/
+			player.getStakeScoreList().clear();
 		}
 		roomInfo.setTotalWinnerId(totalWinnerId);
 		/**如果当前局数小于总局数，则设置为当前局结束*/

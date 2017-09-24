@@ -17,19 +17,22 @@ public enum ExceptionEnum {
     UPDATE_ORDER_FAIL(11, "更新订单支付状态失败"),
     UNIFIED_ORDER_FAIL(12, "统一下单失败"),
     BIND_PROXY_FAIL(13, "绑定代理失败"),
-    PROXY_NOT_EXIST(14, "次代理不存在"),
+    PROXY_NOT_EXIST(14, "此代理不存在"),
     HAS_BIND_PROXY(15, "玩家已经绑定代理"),
     UPDATE_USER_ROOM_CARD_FAIL(16, "更新用户房卡失败"),
     UPDATE_PROXY_INCOME_FAIL(17, "更新代理总收益失败"),
     NEED_BIND_PROXY(18, "必须绑定推广后才能够购买房卡，请前往推广菜单绑定推广号"),
     NOT_IN_READY_STATUS(19, "此房间已经在游戏中，不能加入"),
+    QUERY_WEIXIN_USER_INFO_FAIL(20, "获取微信用户信息失败"),
+    /**斗牛100-199*/
     
-	/**金花*/
-    IS_NOT_YOUR_TURN(20, "抱歉，还没轮到你说话"),
-	STAKE_SCORE_ERROR_1(21, "你的跟注分数必须大于或等于前一个玩家"),
-	STAKE_SCORE_ERROR_2(22, "你的跟注分数必须大于或等于前一个玩家跟注分数的两倍"),
-	STAKE_SCORE_ERROR_3(23, "你的跟注分数必须大于或等于前一个玩家的跟注分数一半"),
-	PLAYER_STATUS_ERROR_1(24, "当前玩家状态错误，必须是未看牌或者已看牌"),
+    /**斗牛200-299*/
+	/**金花300-399*/
+    IS_NOT_YOUR_TURN(300, "抱歉，还没轮到你说话"),
+	STAKE_SCORE_ERROR_1(301, "你的跟注分数必须大于或等于前一个玩家"),
+	STAKE_SCORE_ERROR_2(302, "你的跟注分数必须大于或等于前一个玩家跟注分数的两倍"),
+	STAKE_SCORE_ERROR_3(303, "你的跟注分数必须大于或等于前一个玩家的跟注分数一半"),
+	PLAYER_STATUS_ERROR_1(304, "当前玩家状态错误，必须是未看牌或者已看牌"),
 	MUST_WATCH_CARD(25, "玩家看牌才能参与比牌");
 
     public Integer   index;

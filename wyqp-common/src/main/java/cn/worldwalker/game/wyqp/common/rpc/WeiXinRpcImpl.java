@@ -2,6 +2,8 @@ package cn.worldwalker.game.wyqp.common.rpc;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import cn.worldwalker.game.wyqp.common.constant.Constant;
@@ -10,7 +12,7 @@ import cn.worldwalker.game.wyqp.common.domain.base.WeiXinUserInfo;
 import cn.worldwalker.game.wyqp.common.utils.HttpClientUtil;
 @Service
 public class WeiXinRpcImpl implements WeiXinRpc{
-
+	public final static Log log = LogFactory.getLog(WeiXinRpcImpl.class);
 	@Override
 	public WeiXinUserInfo getWeiXinUserInfo(String code) {
 		WeiXinAccess weiXinAccess = getWeiXinAccess(code);
@@ -29,8 +31,11 @@ public class WeiXinRpcImpl implements WeiXinRpc{
 		url = url.replace("ACCESS_TOKEN", access_token);
 		url = url.replace("OPENID", openid);
 		JSONObject obj = HttpClientUtil.httpRequest(url, "POST", null);
-		if (obj != null && obj.containsKey("errcode"))
+		if (obj != null && obj.containsKey("errcode")){
+			log.error("获取微信信息失败，access_token:" + access_token + "openid:" + openid + ", 返回结果：" + obj.toString());
 			return null;
+		}
+			
 		WeiXinUserInfo weixinUserInfo = new WeiXinUserInfo();
 		weixinUserInfo.setCity(obj.getString("city"));
 		weixinUserInfo.setCountry(obj.getString("country"));
@@ -47,8 +52,10 @@ public class WeiXinRpcImpl implements WeiXinRpc{
 		String url = Constant.getOpenidAndAccessCode;
 		url = url.replace("CODE", code);
 		JSONObject obj = HttpClientUtil.httpRequest(url, "POST", null);
-		if (obj != null && obj.containsKey("errcode"))
+		if (obj != null && obj.containsKey("errcode")){
+			log.error("获取微信accessToken失败，code:" + code + ", 返回结果：" + obj.toString());
 			return null;
+		}
 		else{
 			WeiXinAccess weiXinAccess = new WeiXinAccess();
 			String openid = obj.getString("openid");

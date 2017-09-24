@@ -80,7 +80,7 @@ public abstract class BaseGameService {
 		}
 		WeiXinUserInfo weixinUserInfo = weiXinRpc.getWeiXinUserInfo(code);
 		if (null == weixinUserInfo) {
-			throw new BusinessException(ExceptionEnum.SYSTEM_ERROR);
+			throw new BusinessException(ExceptionEnum.QUERY_WEIXIN_USER_INFO_FAIL);
 		}
 		UserModel userModel = commonManager.getUserByWxOpenId(weixinUserInfo.getOpneid());
 		if (null == userModel) {

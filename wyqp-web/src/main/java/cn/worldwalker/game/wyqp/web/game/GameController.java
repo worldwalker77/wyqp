@@ -56,7 +56,7 @@ public class GameController {
 				result = commonGameService.login1(code, deviceType, request);
 			}
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("code:" + code, e);
 			result = new Result();
 			result.setCode(1);
 			result.setDesc("系统异常");

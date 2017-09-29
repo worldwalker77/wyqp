@@ -463,6 +463,7 @@ public class JhGameService extends BaseGameService{
 			throw new BusinessException(ExceptionEnum.PLAYER_NOT_IN_ROOM);
 		}
 		Integer nextOperatePlayerId = GameUtil.getNextOperatePlayerId(playerList, playerId);
+		roomInfo.setCurPlayerId(nextOperatePlayerId);
 		/**设置当前玩家状态为主动弃牌*/
 		GameUtil.setPlayerStatus(playerList, playerId, JhPlayerStatusEnum.autoDiscard.status);
 		

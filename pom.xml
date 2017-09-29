@@ -23,7 +23,7 @@
 	<spring-tx.version>4.0.4.RELEASE</spring-tx.version>
 	<mybatis-spring.version>1.2.0</mybatis-spring.version>
 	<mybatis.version>3.2.2</mybatis.version>
-	<mysql-connector-java.version>5.0.8</mysql-connector-java.version>
+	<mysql-connector-java.version>5.1.30</mysql-connector-java.version>
 	<commons-dbcp.version>1.4</commons-dbcp.version>
 	<cglib-nodep.version>2.1_3</cglib-nodep.version>
 	<velocity.version>1.7</velocity.version>

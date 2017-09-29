@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.worldwalker.game.wyqp.common.constant.Constant;
 import cn.worldwalker.game.wyqp.common.dao.OrderDao;
 import cn.worldwalker.game.wyqp.common.dao.ProductDao;
 import cn.worldwalker.game.wyqp.common.dao.ProxyDao;
@@ -222,8 +223,16 @@ public class CommonManagerImpl implements CommonManager{
 		if (res <= 0) {
 			throw new BusinessException(ExceptionEnum.UPDATE_USER_ROOM_CARD_FAIL);
 		}
+		
 		/**根据playerId去t_proxy_user表里面查proxy_id*/
 		Integer proxyId = proxyDao.getProxyIdByPlayerId(playerId);
+		
+		/*************如果没有绑定代理则不走代理提成流程****************************************/
+		if (proxyId == null) {
+			/**查询用户当前房卡数并返回*/
+			UserModel user = userDao.getUserById(playerId);
+			return user.getRoomCardNum();
+		}
 		/**根据proxy_id查询当前代理的总收益及当前账户余额，主要是为更新做准备，防止更新覆盖*/
 		ProxyModel resModel = proxyDao.getProxyInfo(proxyId);
 		/**更新代理总收益,用户充值的一半分给代理*/
@@ -291,5 +300,9 @@ public class CommonManagerImpl implements CommonManager{
 	@Override
 	public VersionModel getVersion(VersionModel model) {
 		return versionDao.getVersion(model);
+	}
+	@Override
+	public Integer addRoomCard(Map<String, Object> map) {
+		return userDao.addRoomCard(map);
 	}
 }

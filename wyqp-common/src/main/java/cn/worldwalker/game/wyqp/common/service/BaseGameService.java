@@ -88,7 +88,7 @@ public abstract class BaseGameService {
 			userModel.setNickName(weixinUserInfo.getName());
 			userModel.setHeadImgUrl(weixinUserInfo.getHeadImgUrl());
 			userModel.setWxOpenId(weixinUserInfo.getOpneid());
-			userModel.setRoomCardNum(20);
+			userModel.setRoomCardNum(10);
 			commonManager.insertUser(userModel);
 		}
 		/**从redis查看此用户是否有roomId*/
@@ -647,6 +647,15 @@ public abstract class BaseGameService {
 			throw new BusinessException(ExceptionEnum.HAS_BIND_PROXY);
 		}
 		commonManager.insertProxyUser(proxyId, userInfo.getPlayerId(), userInfo.getNickName());
+		/**绑定代理后送15张房卡*/
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("addNum", 15);
+		param.put("playerId", userInfo.getPlayerId());
+		commonManager.addRoomCard(param);
+		/**更新后再查询*/
+		UserModel userModel = commonManager.getUserById(userInfo.getPlayerId());
+		/**推送房卡更新消息*/
+		roomCardNumUpdate(userModel.getRoomCardNum(), userInfo.getPlayerId());
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);
@@ -656,10 +665,12 @@ public abstract class BaseGameService {
 	}
 	
 	public void checkBindProxy(ChannelHandlerContext ctx, BaseRequest request, UserInfo userInfo){
-		Integer proxyId = commonManager.getProxyIdByPlayerId(userInfo.getPlayerId());
-		if (proxyId == null) {
-			throw new BusinessException(ExceptionEnum.NEED_BIND_PROXY);
-		}		
+		if (!"sjsj".equals(Constant.curCompany)) {
+			Integer proxyId = commonManager.getProxyIdByPlayerId(userInfo.getPlayerId());
+			if (proxyId == null) {
+				throw new BusinessException(ExceptionEnum.NEED_BIND_PROXY);
+			}
+		}
 		Result result = new Result();
 		Map<String, Object> data = new HashMap<String, Object>();
 		result.setData(data);

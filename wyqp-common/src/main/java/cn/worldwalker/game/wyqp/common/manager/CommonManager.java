@@ -52,4 +52,6 @@ public interface CommonManager {
 	
 	public VersionModel getVersion(VersionModel model);
 	
+	public Integer addRoomCard(Map<String, Object> map);
+	
 }

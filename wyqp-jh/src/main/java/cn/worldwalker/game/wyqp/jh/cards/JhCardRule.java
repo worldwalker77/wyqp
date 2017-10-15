@@ -25,7 +25,7 @@ public class JhCardRule {
 		if ((card1.getCardValue().equals(card0.getCardValue() + 1) && card2.getCardValue().equals(card1.getCardValue() + 1)
 			|| card0.getCardValue() == 14 && card1.getCardValue() == 2 && card2.getCardValue() == 3)
 			&& card1.getCardSuit().equals(card0.getCardSuit()) && card2.getCardSuit().equals(card1.getCardSuit())) {
-			return JhCardTypeEnum.STRAIGHT.cardType;
+			return JhCardTypeEnum.FLUSH.cardType;
 		}
 		/**金花*/
 		if (card1.getCardSuit().equals(card0.getCardSuit()) && card2.getCardSuit().equals(card1.getCardSuit())) {

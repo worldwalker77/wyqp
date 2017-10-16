@@ -42,7 +42,8 @@ public enum MsgTypeEnum {
 	showCard(105, "亮牌"),
 	
 	/**麻将特有200-299*/
-	playDice(201, "掷色子"),
+	playDice(200, "掷色子"),
+	moPai(201, "返回摸牌"),
 	chuPai(202, "出牌"),
 	noticeCanChiPai(203, "通知可以吃牌"),//告诉客户端吃、碰还是杠,也可能是都可以
 	chiPai(204, "吃牌"),//需要告诉服务端吃、碰还是杠；同时服务端也需要校验

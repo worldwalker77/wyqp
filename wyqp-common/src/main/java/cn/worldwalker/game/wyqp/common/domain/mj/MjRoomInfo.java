@@ -26,5 +26,12 @@ public class MjRoomInfo extends BaseRoomInfo{
 	public void setCurCardIndex(Integer curCardIndex) {
 		this.curCardIndex = curCardIndex;
 	}
+	public LinkedHashMap<Integer, Map<Integer, String>> getCanOperationMap() {
+		return canOperationMap;
+	}
+	public void setCanOperationMap(
+			LinkedHashMap<Integer, Map<Integer, String>> canOperationMap) {
+		this.canOperationMap = canOperationMap;
+	}
 	
 }

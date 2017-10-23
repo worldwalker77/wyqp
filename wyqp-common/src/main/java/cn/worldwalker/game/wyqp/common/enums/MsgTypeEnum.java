@@ -45,13 +45,12 @@ public enum MsgTypeEnum {
 	playDice(200, "掷色子"),
 	moPai(201, "返回摸牌"),
 	chuPai(202, "出牌"),
-	noticeCanChiPai(203, "通知可以吃牌"),//告诉客户端吃、碰还是杠,也可能是都可以
+	noticeCanChiPai(203, "通知可以吃牌或胡牌"),//告诉客户端吃、碰还是杠或胡,也可能是都可以
 	chiPai(204, "吃牌"),//需要告诉服务端吃、碰还是杠；同时服务端也需要校验
-	noticeHasChiPai(205, "通知已经吃牌"),//告诉客户端是吃、碰还是杠
-	noticeCanHuPai(206, "通知可以胡牌"),
+	pengPai(205, "碰牌"),
+	gangPai(206, "杠牌"),
 	huPai(207, "胡牌"),//服务端校验
-	noticeHasHuPai(208, "通知已经胡牌"),//告诉客户端胡牌的类型
-	pass(209, "过"),
+	pass(208, "过"),
 	
 	/**金花特有300-399*/
 	stake(300, "压分"),

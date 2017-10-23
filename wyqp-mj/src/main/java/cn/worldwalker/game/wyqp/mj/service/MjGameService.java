@@ -39,7 +39,6 @@ public class MjGameService extends BaseGameService{
 			}
 		}
 		MjPlayerInfo playerInfo = new MjPlayerInfo();
-		playerInfo.setHuPai(false);
 		playerList.add(playerInfo);
 		return roomInfo;
 	}
@@ -53,7 +52,6 @@ public class MjGameService extends BaseGameService{
 	@Override
 	public BaseRoomInfo getRoomInfo(ChannelHandlerContext ctx,
 			BaseRequest request, UserInfo userInfo) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

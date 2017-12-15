@@ -62,22 +62,22 @@ public class TableMgr {
 
 	public boolean load() {
 		for (int i = 0; i < 9; ++i) {
-			String path = "tbl/table_";
+			String path = Constants.path + "table_";
 			m_check_table[i].load(path + i + ".tbl");
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			String path = "tbl/eye_table_";
+			String path = Constants.path + "eye_table_";
 			m_check_eye_table[i].load(path + i + ".tbl");
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			String path = "tbl/feng_table_";
+			String path = Constants.path + "feng_table_";
 			m_check_feng_table[i].load(path + i + ".tbl");
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			String path = "tbl/feng_eye_table_";
+			String path = Constants.path + "feng_eye_table_";
 			m_check_feng_eye_table[i].load(path + i + ".tbl");
 		}
 		return true;
@@ -85,12 +85,12 @@ public class TableMgr {
 
 	public boolean dump_table() {
 		for (int i = 0; i < 9; ++i) {
-			String path = "tbl/table_";
+			String path = Constants.path + "table_";
 			m_check_table[i].dump(path + i + ".tbl");
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			String path = "tbl/eye_table_";
+			String path = Constants.path + "eye_table_";
 			m_check_eye_table[i].dump(path + i + ".tbl");
 		}
 		return true;
@@ -98,12 +98,12 @@ public class TableMgr {
 
 	public boolean dump_feng_table() {
 		for (int i = 0; i < 9; ++i) {
-			String path = "tbl/feng_table_";
+			String path = Constants.path + "feng_table_";
 			m_check_feng_table[i].dump(path + i + ".tbl");
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			String path = "tbl/feng_eye_table_";
+			String path = Constants.path + "feng_eye_table_";
 			m_check_feng_eye_table[i].dump(path + i + ".tbl");
 		}
 

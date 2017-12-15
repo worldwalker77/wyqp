@@ -36,7 +36,7 @@ public class Hulib
 	{
 		return m_hulib;
 	}
-
+	
 	boolean split(int[] cards, int gui_num, ProbabilityItemTable ptbl)
 	{
 		if (!_split(cards, gui_num, 0, 0, 8, true, ptbl))

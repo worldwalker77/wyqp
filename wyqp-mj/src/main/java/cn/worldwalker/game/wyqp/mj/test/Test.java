@@ -13,7 +13,10 @@ public class Test //extends TestCase
 	{
 		
 	}
-
+	public static void main(String[] args) {
+		Test t = new Test();
+		t.testOne();
+	}
 	public void testOne()
 	{
 		int guiIndex = 33;
@@ -25,9 +28,7 @@ public class Test //extends TestCase
 
 		System.out.println("测试1种,癞子:" + guiIndex);
 		Program.print_cards(cards);
-		Hulib.getInstance().get_hu_info(cards, 34, guiIndex);
-//		assertEquals(Hulib.getInstance().get_hu_info(cards, 34, guiIndex),true);
-		
+		System.out.println(Hulib.getInstance().get_hu_info(cards, 34, guiIndex));
 		guiIndex = 34;
 		cards = new int[]{ 
 			0, 0, 0, 1, 1, 1, 0, 0, 0, /* 万 */ 
@@ -37,7 +38,7 @@ public class Test //extends TestCase
 
 		System.out.println("测试1种,癞子:" + guiIndex);
 		Program.print_cards(cards);
-//		assertEquals(Hulib.getInstance().get_hu_info(cards, 34, guiIndex),true);
+		Hulib.getInstance().get_hu_info(cards, 34, guiIndex);
 		
 		guiIndex = 18;
 		cards = new int[]{ 
@@ -48,6 +49,6 @@ public class Test //extends TestCase
 
 		System.out.println("测试1种,癞子:" + guiIndex);
 		Program.print_cards(cards);
-//		assertEquals(Hulib.getInstance().get_hu_info(cards, 34, guiIndex),true);
+		Hulib.getInstance().get_hu_info(cards, 34, guiIndex);
 	}
 }

@@ -1,5 +1,7 @@
 package cn.worldwalker.game.wyqp.mj.test;
 
+import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
+
 public class Hulib
 {
 	static Hulib m_hulib = new Hulib();
@@ -122,6 +124,7 @@ public class Hulib
 			boolean eye = item.eye;
 
 			int gui = gui_num - item.gui_num;
+			System.out.println(JsonUtil.toJson(ptbl));
 			if (check_probability_sub(ptbl, eye, gui, 1, ptbl.array_num))
 			{
 				return true;

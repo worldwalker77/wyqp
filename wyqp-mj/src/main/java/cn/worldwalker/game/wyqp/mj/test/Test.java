@@ -25,10 +25,10 @@ public class Test //extends TestCase
 			1, 1, 1, 0, 0, 0, 0, 0, 0, /* 筒 */
 			2, 0, 0, 0, 0, 0, 0, 0, 0, /* 条 */
 			0, 0, 0, 0, 0, 0, 0 };//字
-
-		System.out.println("测试1种,癞子:" + guiIndex);
-		Program.print_cards(cards);
-		System.out.println(Hulib.getInstance().get_hu_info(cards, 34, guiIndex));
+//
+//		System.out.println("测试1种,癞子:" + guiIndex);
+//		Program.print_cards(cards);
+//		System.out.println(Hulib.getInstance().get_hu_info(cards, 34, guiIndex));
 		guiIndex = 34;
 		cards = new int[]{ 
 			0, 0, 0, 1, 1, 1, 0, 0, 0, /* 万 */ 

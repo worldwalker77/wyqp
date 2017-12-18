@@ -19,7 +19,14 @@ public class TableMgr {
 	public static TableMgr getInstance() {
 		return mgr;
 	}
-
+	/**
+	 * 校验单一花色是否满足胡牌条件
+	 * @param key 单一花色手牌key
+	 * @param gui_num 鬼牌数量
+	 * @param eye 是否带将
+	 * @param chi 是否风
+	 * @return
+	 */
 	public boolean check(int key, int gui_num, boolean eye, boolean chi) {
 		SetTable tbl;
 

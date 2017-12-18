@@ -17,11 +17,14 @@ public class Hulib
 		if (curCard < 34)
 		{
 			hand_cards_tmp[curCard]++;
+			System.out.println(JsonUtil.toJson(hand_cards_tmp));
 		}
 		int gui_num = 0;
 		if (gui_index < 34)
 		{
+			/**guipai数量*/
 			gui_num = hand_cards_tmp[gui_index];
+			/**手牌中去掉guipai*/
 			hand_cards_tmp[gui_index] = 0;
 		}
 
@@ -30,8 +33,10 @@ public class Hulib
 		{
 			return false;
 		}
-
-		return check_probability(ptbl, gui_num);
+		boolean testFlag = check_probability(ptbl, gui_num);
+		System.out.println(JsonUtil.toJson(ptbl.m));
+		System.out.println(JsonUtil.toJson(ptbl));
+		return testFlag;
 	}
 
 	public static Hulib getInstance()
@@ -55,9 +60,11 @@ public class Hulib
 
 	boolean _split(int[] cards, int gui_num, int color, int min, int max, boolean chi, ProbabilityItemTable ptbl)
 	{
+		//pai的key
 		int key = 0;
+		//pai的数量
 		int num = 0;
-
+		//计算pai的key及数量
 		for (int i = min ; i <= max ; ++i)
 		{
 			key = key * 10 + cards[i];
@@ -81,10 +88,12 @@ public class Hulib
 		int anum = ptbl.array_num;
 		for (int i = 0 ; i <= gui_num ; ++i)
 		{
+			//pai的数量 + gui pai的数量对3求余
 			int yu = (num + i) % 3;
 			if (yu == 1)
 				continue;
 			boolean eye = (yu == 2);
+			//根据gui pai数量、是否有将、是否为风（chi?），查询对应的表，判断是否有值
 			if (find || TableMgr.getInstance().check(key, i, eye, chi))
 			{
 				ProbabilityItem item = ptbl.m[anum][ptbl.m_num[anum]];
@@ -100,7 +109,7 @@ public class Hulib
 		{
 			return false;
 		}
-
+		//
 		ptbl.array_num++;
 		return true;
 	}
@@ -124,7 +133,6 @@ public class Hulib
 			boolean eye = item.eye;
 
 			int gui = gui_num - item.gui_num;
-			System.out.println(JsonUtil.toJson(ptbl));
 			if (check_probability_sub(ptbl, eye, gui, 1, ptbl.array_num))
 			{
 				return true;
@@ -194,8 +202,9 @@ class ProbabilityItem
 class ProbabilityItemTable
 {
 	ProbabilityItem[][] m = new ProbabilityItem[4][5];
-
+	//四钟花色
 	public int array_num;
+	//每种花色对应的鬼牌数
 	public int[] m_num;
 
 	public ProbabilityItemTable()

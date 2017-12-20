@@ -40,7 +40,7 @@ public class Test //extends TestCase
 
 		System.out.println("测试1种,laizi:" + guiIndex);
 		Program.print_cards(cards);
-		System.out.println(Hulib.getInstance().get_hu_info(cards, 34, guiIndex));
+//		System.out.println(Hulib.getInstance().get_hu_info(cards, 34, guiIndex));
 		
 		guiIndex = 18;
 		cards = new int[]{ 
@@ -51,7 +51,7 @@ public class Test //extends TestCase
 
 		System.out.println("测试1种,laizi:" + guiIndex);
 		Program.print_cards(cards);
-		System.out.println(Hulib.getInstance().get_hu_info(cards, 34, guiIndex));
+//		System.out.println(Hulib.getInstance().get_hu_info(cards, 34, guiIndex));
 		
 		
 		guiIndex = 18;
@@ -63,6 +63,6 @@ public class Test //extends TestCase
 
 		System.out.println("测试1种,laizi:" + guiIndex);
 		Program.print_cards(cards);
-		System.out.println(Hulib.getInstance().get_hu_info(cards, 34, guiIndex));
+//		System.out.println(Hulib.getInstance().get_hu_info(cards, 34, guiIndex));
 	}
 }

@@ -1,26 +1,32 @@
 package cn.worldwalker.game.wyqp.mj.test;
 
+import java.util.List;
+
 import cn.worldwalker.game.wyqp.common.utils.JsonUtil;
 
 public class Hulib
 {
 	static Hulib m_hulib = new Hulib();
-
-	public boolean get_hu_info(int[] hand_cards, int curCard, int gui_index)
-	{
-		int[] hand_cards_tmp = new int[34];
-		for (int i = 0 ; i < 34 ; ++i)
-		{
-			hand_cards_tmp[i] = hand_cards[i];
+	static int indexLine = 31;//31-41表示中发白春夏秋冬梅兰竹菊（花牌），如果要胡牌，必须得牌索引都小于31
+	public boolean get_hu_info(List<Integer> handCardsList, int curCard, int gui_index)
+	{	
+		/**校验手牌，如果手牌中有31-41的花牌，则不能胡牌*/
+		int size = handCardsList.size();
+		for(int i = 0; i < size; i++){
+			if (handCardsList.get(i) >= indexLine) {
+				return false;
+			}
 		}
-
-		if (curCard < 34)
+		int[] hand_cards_tmp = new int[indexLine];
+		for(int i = 0; i < size; i++){
+			hand_cards_tmp[handCardsList.get(i)]++;
+		}
+		if (curCard < indexLine)
 		{
 			hand_cards_tmp[curCard]++;
-			System.out.println(JsonUtil.toJson(hand_cards_tmp));
 		}
 		int gui_num = 0;
-		if (gui_index < 34)
+		if (gui_index < indexLine)
 		{
 			/**guipai数量*/
 			gui_num = hand_cards_tmp[gui_index];
@@ -52,7 +58,7 @@ public class Hulib
 			return false;
 		if (!_split(cards, gui_num, 2, 18, 26, true, ptbl))
 			return false;
-		if (!_split(cards, gui_num, 3, 27, 33, false, ptbl))
+		if (!_split(cards, gui_num, 3, 27, indexLine - 1, false, ptbl))
 			return false;
 
 		return true;
@@ -170,19 +176,33 @@ public class Hulib
 		return false;
 	}
 
-	boolean check_7dui(int[] cards)
+	boolean check_7dui(List<Integer> handCardsList, int curCard)
 	{
-		int c = 0;
-		for (int i = 0 ; i < 34 ; ++i)
+		int size = handCardsList.size();
+		/**如果手牌数量小于13则说明吃过牌，不能胡七对*/
+		if (size < 13) {
+			return false;
+		}
+		/**如果手牌中有花牌，也不能胡牌*/
+		for(int i = 0; i < size; i++){
+			if (handCardsList.get(i) >= indexLine) {
+				return false;
+			}
+		}
+		/**将手牌进行格式化*/
+		int[] cards = new int[indexLine];
+		for(int i = 0; i < size; i++){
+			cards[handCardsList.get(i)]++;
+		}
+		/**将当前牌加入到手牌中*/
+		if (curCard < indexLine) {
+			cards[curCard]++;
+		}
+		for (int i = 0 ; i < indexLine ; ++i)
 		{
 			if (cards[i] % 2 != 0)
 				return false;
-			c += cards[i];
 		}
-
-		if (c != 34)
-			return false;
-
 		return true;
 	}
 }
